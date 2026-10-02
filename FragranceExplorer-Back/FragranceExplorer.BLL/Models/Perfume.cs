@@ -1,4 +1,4 @@
-﻿using FragranceExplorer.BLL.Constants;
+using FragranceExplorer.BLL.Constants;
 using FragranceExplorer.BLL.Enums;
 
 namespace FragranceExplorer.BLL.Models;
@@ -39,7 +39,10 @@ public class Perfume
                 ErrorMessagesConstants.InvalidGenderCategory);
         }
 
-        if (rating >= ScentConstants.MinPerfumeRating || rating <= ScentConstants.MaxPerfumeRating)
+        // FIX: (rating >= Min || rating <= Max) was always true for any number
+        // causing an ArgumentOutOfRangeException to be erroneously thrown for all valid values
+        // Fixed range check to (< Min || > Max).
+        if (rating < ScentConstants.MinPerfumeRating || rating > ScentConstants.MaxPerfumeRating)
         {
             throw new ArgumentOutOfRangeException(
                 nameof(rating),

@@ -8,6 +8,10 @@ public class Perfume
     private readonly List<PerfumeNote> _notes = [];
     private readonly List<PerfumeAccord> _accords = [];
 
+    public List<PerfumeNote> Notes => _notes;
+
+    public List<PerfumeAccord> Accords => _accords;
+
     public int Id { get; private set; }
 
     public string Name { get; private set; }
@@ -18,7 +22,7 @@ public class Perfume
 
     public string? ImageUrl { get; private set; }
 
-    public double? Rating { get; private set; }
+    public double Rating { get; private set; }
 
     public Perfume(
         int id,
@@ -39,9 +43,6 @@ public class Perfume
                 ErrorMessagesConstants.InvalidGenderCategory);
         }
 
-        // FIX: (rating >= Min || rating <= Max) was always true for any number
-        // causing an ArgumentOutOfRangeException to be erroneously thrown for all valid values
-        // Fixed range check to (< Min || > Max).
         if (rating < ScentConstants.MinPerfumeRating || rating > ScentConstants.MaxPerfumeRating)
         {
             throw new ArgumentOutOfRangeException(
@@ -60,6 +61,19 @@ public class Perfume
     public void AddNote(PerfumeNote note)
     {
         ArgumentNullException.ThrowIfNull(note);
+
+        bool hasFlatNotes = _notes.Any(n => n.NoteLayer == NoteLayer.Flat);
+
+        if (note.NoteLayer != NoteLayer.Flat && hasFlatNotes)
+        {
+            throw new ArgumentException(ErrorMessagesConstants.ErrorPyramidAddedToFlat(note.Name));
+        }
+
+        if (note.NoteLayer == NoteLayer.Flat && !hasFlatNotes)
+        {
+            throw new ArgumentException(ErrorMessagesConstants.ErrorFlatAddedToPyramid(note.Name));
+        }
+
         _notes.Add(note);
     }
 
@@ -69,29 +83,44 @@ public class Perfume
         _accords.Add(accord);
     }
 
-    public ScentVector ToAccordVector()
+    public ScentVector<PerfumeAccord> ToAccordsVector()
     {
-        var vector = new ScentVector();
+        var vector = new ScentVector<PerfumeAccord>();
 
         foreach (var accord in _accords)
         {
-            var significance = accord.CalculateSignificance();
-            vector.AddAccordSignificance(accord.Name.ToLower(), significance);
+            vector.AddSignificance(accord);
         }
 
         return vector;
     }
 
-    public Dictionary<string, double> ToNoteWeights()
+    public ScentVector<PerfumeNote> ToNotesVector()
     {
-        var weights = new Dictionary<string, double>();
+        var vector = new ScentVector<PerfumeNote>();
 
-        foreach(var note in _notes)
+        foreach (var note in _notes)
         {
-            var significance = note.CalculateSignificance();
-            weights[note.Name] = significance;
+            vector.AddSignificance(note);
         }
 
-        return weights;
+        return vector;
+    }
+
+    public ScentVector<PerfumeNote> ToNotesVectorByLayer(NoteLayer layer)
+    {
+        var vector = new ScentVector<PerfumeNote>();
+
+        foreach (var note in _notes.Where(n => n.NoteLayer == layer))
+        {
+            vector.AddSignificance(note);
+        }
+
+        return vector;
+    }
+
+    public bool IsFlatStructure()
+    {
+        return _notes.Any(n => n.NoteLayer == NoteLayer.Flat);
     }
 }

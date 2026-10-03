@@ -1,17 +1,17 @@
 ﻿namespace FragranceExplorer.BLL.Models;
 
-public sealed class ScentVector : IEquatable<ScentVector>
+public sealed class ScentVector<T>
+    where T : ScentComponent
 {
     private readonly Dictionary<string, double> _significances = [];
 
     public IReadOnlyDictionary<string, double> Significances => _significances.AsReadOnly();
 
-    public void AddAccordSignificance(string accordName, double significance)
+    public void AddSignificance(T scentComponent)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(accordName);
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(significance);
+        ArgumentNullException.ThrowIfNull(scentComponent);
 
-        _significances.Add(accordName, significance);
+        _significances.TryAdd(scentComponent.Name, scentComponent.Intensity);
     }
 
     public ScentVector()
@@ -24,7 +24,7 @@ public sealed class ScentVector : IEquatable<ScentVector>
         _significances = significances;
     }
 
-    public double DotProduct(ScentVector other)
+    public double DotProduct(ScentVector<T> other)
     {
         ArgumentNullException.ThrowIfNull(other);
 
@@ -44,92 +44,14 @@ public sealed class ScentVector : IEquatable<ScentVector>
         return sum;
     }
 
-    public static ScentVector operator +(ScentVector left, ScentVector right)
+    public double Magnitude()
     {
-        ArgumentNullException.ThrowIfNull(left);
-        ArgumentNullException.ThrowIfNull(right);
-
-        var resultSignificances = new Dictionary<string, double>(left._significances);
-
-        foreach(var (key, value) in right._significances)
+        double sumOfSquares = 0.0;
+        foreach(var item in _significances)
         {
-            resultSignificances[key] = resultSignificances.GetValueOrDefault(key) + value;
+            sumOfSquares += Math.Pow(item.Value, 2);
         }
 
-        return new ScentVector(resultSignificances);
+        return Math.Sqrt(sumOfSquares);
     }
-
-    public static ScentVector operator *(ScentVector left, double right)
-    {
-        ArgumentNullException.ThrowIfNull(left);
-
-        var resultSignificances = new Dictionary<string, double>();
-
-        foreach(var (key, value) in left._significances)
-        {
-            resultSignificances[key] = value * right;
-        }
-
-        return new ScentVector(resultSignificances);
-    }
-
-    public static ScentVector operator *(double left, ScentVector right) => right * left;
-
-    public override bool Equals(object? obj)
-    {
-        return Equals(obj as ScentVector);
-    }
-
-    public bool Equals(ScentVector? other)
-    {
-        if (ReferenceEquals(this, other))
-            return true;
-
-        if (other is null)
-            return false;
-
-        if (ReferenceEquals(_significances, other._significances))
-            return true;
-
-        if (_significances.Count != other._significances.Count)
-            return false;
-
-        foreach (var (key, value) in _significances)
-        {
-            if (!other._significances.TryGetValue(key, out var otherValue))
-                return false;
-
-            if (!EqualityComparer<double>.Default.Equals(value, otherValue))
-                return false;
-        }
-
-        return true;
-    }
-
-    public override int GetHashCode()
-    {
-        var hash = new HashCode();
-        hash.Add(_significances.Count);
-
-        int elementsHash = 0;
-        foreach (var (key, value) in _significances)
-        {
-            elementsHash ^= HashCode.Combine(key, value);
-        }
-
-        hash.Add(elementsHash);
-        return hash.ToHashCode();
-    }
-
-    public static bool operator ==(ScentVector? left, ScentVector? right)
-    {
-        if (left is null)
-        {
-            return right is null;
-        }
-
-        return left.Equals(right);
-    }
-
-    public static bool operator !=(ScentVector? left, ScentVector? right) => !(left == right);
 }

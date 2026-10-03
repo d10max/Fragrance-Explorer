@@ -1,7 +1,9 @@
-
 using FragranceExplorer.BLL.DataSetParser.Common;
 using FragranceExplorer.BLL.DataSetParser.Interfaces;
 using FragranceExplorer.BLL.DataSetParser.Services;
+using FragranceExplorer.BLL.Repositories;
+using FragranceExplorer.BLL.Services;
+using FragranceExplorer.BLL.Strategies;
 
 namespace FragranceExplorer_Back;
 
@@ -21,7 +23,34 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
+        builder.Services.AddSingleton<IPerfumeDataSetParser, PerfumeDataSetParser>();
+
+        builder.Services.AddSingleton<InMemoryPerfumeRepository>();
+        builder.Services.AddSingleton<IPerfumeRepository>(sp => sp.GetRequiredService<InMemoryPerfumeRepository>());
+
+        builder.Services.AddSingleton<NoteJaccardSimilarityStrategy>();
+        builder.Services.AddSingleton<AccordCosineSimilarityStrategy>();
+
+        builder.Services.AddSingleton<RecommendationEngine>(sp =>
+        {
+            var accordStrategy = sp.GetRequiredService<AccordCosineSimilarityStrategy>();
+            var noteStrategy = sp.GetRequiredService<NoteJaccardSimilarityStrategy>();
+
+            return new RecommendationEngine(accordStrategy, noteStrategy);
+        });
+
         var app = builder.Build();
+
+        using (var scope = app.Services.CreateScope())
+        {
+            var repository = scope.ServiceProvider.GetRequiredService<InMemoryPerfumeRepository>();
+
+            Console.WriteLine("Починаємо завантаження датасету в пам'ять.");
+
+            await repository.InitializeAsync();
+
+            Console.WriteLine("Датасет успішно завантажено.");
+        }
 
         if (app.Environment.IsDevelopment())
         {
@@ -95,21 +124,18 @@ public class Program
                 Console.WriteLine($"Рейтинг:     {perfume.Rating:F2} / 5.00");
                 Console.WriteLine($"Зображення:  {perfume.ImageUrl ?? "немає"}");
 
-                var accordVector = perfume.ToAccordVector();
+                var accordVector = perfume.ToAccordsVector();
                 var accordDetails = accordVector.Significances.Select(kv => $"{kv.Key} ({kv.Value:F2})");
                 Console.WriteLine($"Акорди:      {string.Join(", ", accordDetails)}");
 
-                var noteWeights = perfume.ToNoteWeights();
-                Console.WriteLine($"Кількість нот: {noteWeights.Count}");
-                var topNotes = noteWeights.Take(5).Select(kv => $"{kv.Key} ({kv.Value:F2})");
-                Console.WriteLine($"Зразок нот:  {string.Join(", ", topNotes)}");
+                var noteVector = perfume.ToNotesVector();
+                var noteDetails = noteVector.Significances.Select(kv => $"{kv.Key} ({kv.Value:F2})");
+                Console.WriteLine($"Ноти:      {string.Join(", ", noteDetails)}");
                 Console.WriteLine();
             }
             // Періодичний статус прогресу для великого датасету
-            else if (count % 10_000 == 0)
-            {
-                Console.WriteLine($"[ПРОГРЕС] Оброблено {count:N0} парфумів... ({stopwatch.ElapsedMilliseconds} мс)");
-            }
+            Console.WriteLine($"[ПРОГРЕС] Оброблено {count:N0} парфумів... ({stopwatch.ElapsedMilliseconds} мс)");
+
         }
 
         stopwatch.Stop();

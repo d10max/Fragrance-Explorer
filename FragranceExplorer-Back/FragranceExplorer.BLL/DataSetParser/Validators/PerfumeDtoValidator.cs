@@ -48,7 +48,7 @@ public class PerfumeDtoValidator : BaseValidator<RawPerfumeDto>
     {
         if (rating.HasValue && (rating.Value < ScentConstants.MinPerfumeRating || rating.Value > ScentConstants.MaxPerfumeRating))
         {
-            errors.Add($"Perfume rating must be between {ScentConstants.MinPerfumeRating} and {ScentConstants.MaxPerfumeRating}. Received: {rating.Value}");
+            errors.Add(FormattableString.Invariant($"Perfume rating must be between {ScentConstants.MinPerfumeRating} and {ScentConstants.MaxPerfumeRating}. Received: {rating.Value}"));
         }
     }
 

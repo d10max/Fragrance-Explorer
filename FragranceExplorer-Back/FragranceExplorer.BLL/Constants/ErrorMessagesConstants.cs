@@ -1,6 +1,4 @@
-﻿using FragranceExplorer.BLL.Enums;
-using FragranceExplorer.BLL.Models;
-
+﻿
 namespace FragranceExplorer.BLL.Constants;
 
 public static class ErrorMessagesConstants

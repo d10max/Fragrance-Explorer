@@ -1,6 +1,6 @@
 using FragranceExplorer.BLL.DataSetParser.Models;
-using FragranceExplorer.BLL.Enums;
 using FragranceExplorer.BLL.Models;
+using FragranceExplorer.DAL.Enums;
 
 namespace FragranceExplorer.BLL.DataSetParser.Interfaces;
 

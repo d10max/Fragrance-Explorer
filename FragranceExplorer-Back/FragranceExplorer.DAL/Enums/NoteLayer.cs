@@ -1,4 +1,4 @@
-﻿namespace FragranceExplorer.BLL.Enums;
+﻿namespace FragranceExplorer.DAL.Enums;
 
 public enum NoteLayer
 {

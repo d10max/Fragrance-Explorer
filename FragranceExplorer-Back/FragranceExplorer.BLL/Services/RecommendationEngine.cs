@@ -1,7 +1,7 @@
 ﻿using FragranceExplorer.BLL.Constants;
-using FragranceExplorer.BLL.Enums;
 using FragranceExplorer.BLL.Models;
 using FragranceExplorer.BLL.Strategies;
+using FragranceExplorer.DAL.Enums;
 
 namespace FragranceExplorer.BLL.Services;
 

@@ -1,0 +1,178 @@
+@use 'assets/variables/typography.scss' as t;
+
+@mixin _text($family, $weight, $size, $lh, $style: t.$fs-normal) {
+    font-family: $family;
+    font-weight: $weight;
+    font-size: $size;
+    line-height: $lh;
+    font-style: $style;
+}
+
+// headings and titles (Cormorant Garamond)
+@mixin heading-hero-h1 {
+    @include _text(
+        t.$font-serif,
+        t.$fw-regular,
+        t.$hero-h1-size,
+        t.$hero-h1-height
+    );
+}
+
+@mixin heading-section-h2 {
+    @include _text(
+        t.$font-serif,
+        t.$fw-regular,
+        t.$section-h2-size,
+        t.$section-h2-height
+    );
+}
+
+@mixin heading-profile-h3 {
+    @include _text(
+        t.$font-serif,
+        t.$fw-regular,
+        t.$profile-h3-size,
+        t.$profile-h3-height
+    );
+}
+
+@mixin title-card-perfume {
+    @include _text(
+        t.$font-serif,
+        t.$fw-regular,
+        t.$card-title-size,
+        t.$card-title-height
+    );
+}
+
+@mixin title-starter-kit {
+    @include _text(
+        t.$font-serif,
+        t.$fw-regular,
+        t.$starter-kit-size,
+        t.$starter-kit-height
+    );
+}
+
+@mixin editorial-rank-number {
+    @include _text(
+        t.$font-serif,
+        t.$fw-regular,
+        t.$rank-number-size,
+        t.$rank-number-height
+    );
+}
+
+@mixin title-slot-perfume {
+    @include _text(
+        t.$font-serif,
+        t.$fw-regular,
+        t.$slot-title-size,
+        t.$slot-title-height
+    );
+}
+
+@mixin editorial-vibe-quote-italic {
+    @include _text(
+        t.$font-serif,
+        t.$fw-regular,
+        t.$vibe-quote-size,
+        t.$vibe-quote-height,
+        t.$fs-italic
+    );
+}
+
+// ui and body elements (Inter)
+@mixin body-hero-description {
+    @include _text(
+        t.$font-sans,
+        t.$fw-regular,
+        t.$hero-desc-size,
+        t.$hero-desc-height
+    );
+}
+
+@mixin ui-search-input {
+    @include _text(
+        t.$font-sans,
+        t.$fw-regular,
+        t.$search-input-size,
+        t.$search-input-height
+    );
+}
+
+@mixin ui-button-primary {
+    @include _text(
+        t.$font-sans,
+        t.$fw-medium,
+        t.$btn-primary-size,
+        t.$btn-primary-height
+    );
+}
+
+@mixin body-profile-description {
+    @include _text(
+        t.$font-sans,
+        t.$fw-regular,
+        t.$profile-desc-size,
+        t.$profile-desc-height
+    );
+}
+
+@mixin ui-nav-link-active {
+    @include _text(
+        t.$font-sans,
+        t.$fw-medium,
+        t.$nav-link-size,
+        t.$nav-link-height
+    );
+}
+
+@mixin ui-nav-link {
+    @include _text(
+        t.$font-sans,
+        t.$fw-regular,
+        t.$nav-link-size,
+        t.$nav-link-height
+    );
+}
+
+@mixin ui-button-secondary {
+    @include _text(
+        t.$font-sans,
+        t.$fw-medium,
+        t.$btn-secondary-size,
+        t.$btn-secondary-height
+    );
+}
+
+@mixin ui-badge-label {
+    @include _text(t.$font-sans, t.$fw-regular, t.$badge-size, t.$badge-height);
+}
+
+@mixin ui-section-eyebrow {
+    @include _text(
+        t.$font-sans,
+        t.$fw-medium,
+        t.$eyebrow-size,
+        t.$eyebrow-height
+    );
+}
+
+@mixin ui-meta-caption {
+    @include _text(
+        t.$font-sans,
+        t.$fw-regular,
+        t.$meta-caption-size,
+        t.$meta-caption-height
+    );
+}
+
+@mixin ui-brand-micro-label {
+    @include _text(
+        t.$font-sans,
+        t.$fw-regular,
+        t.$brand-micro-size,
+        t.$brand-micro-height
+    );
+}

@@ -1,0 +1,40 @@
+@use '/src//assets/mixins/typography.mixins.scss' as t;
+@use '/src/assets/variables/colors.scss' as c;
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 10px;
+    border-radius: 100px;
+    border: 1px solid transparent;
+
+    @include t.ui-badge-label;
+    white-space: nowrap;
+    user-select: none;
+}
+
+.default {
+    background-color: c.$brand-gold-soft;
+    color: c.$text-accent-gold;
+}
+
+.woody {
+    background-color: c.$note-woody-bg;
+    color: c.$note-woody-text;
+}
+
+.citrus {
+    background-color: c.$note-citrus-bg;
+    color: c.$note-citrus-text;
+}
+
+.fresh {
+    background-color: c.$note-fresh-bg;
+    color: c.$note-fresh-text;
+}
+
+.spicy {
+    background-color: c.$note-spicy-bg;
+    color: c.$note-spicy-text;
+}

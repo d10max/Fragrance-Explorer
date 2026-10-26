@@ -1,0 +1,68 @@
+@use './fonts.scss' as f;
+
+$font-serif: f.$font-serif;
+$font-sans: f.$font-sans;
+
+// font weights
+$fw-regular: 400;
+$fw-medium: 500;
+
+// font styles
+$fs-normal: normal;
+$fs-italic: italic;
+
+// headings and titles (Cormorant Garamond)
+$hero-h1-size: 64px;
+$hero-h1-height: 72px;
+
+$section-h2-size: 44px;
+$section-h2-height: 48px;
+
+$profile-h3-size: 37px;
+$profile-h3-height: 40px;
+
+$card-title-size: 29px;
+$card-title-height: 32px;
+
+$starter-kit-size: 28px;
+$starter-kit-height: 32px;
+
+$rank-number-size: 24px;
+$rank-number-height: 32px;
+
+$slot-title-size: 22px;
+$slot-title-height: 24px;
+
+$vibe-quote-size: 17px;
+$vibe-quote-height: 24px;
+
+// ui and body elements (Inter)
+$hero-desc-size: 14px;
+$hero-desc-height: 24px;
+
+$search-input-size: 14px;
+$search-input-height: 16px;
+
+$btn-primary-size: 13px;
+$btn-primary-height: 16px;
+
+$profile-desc-size: 12px;
+$profile-desc-height: 24px;
+
+$nav-link-size: 20px;
+$nav-link-height: 24px;
+
+$btn-secondary-size: 11px;
+$btn-secondary-height: 16px;
+
+$badge-size: 11px;
+$badge-height: 16px;
+
+$eyebrow-size: 10px;
+$eyebrow-height: 16px;
+
+$meta-caption-size: 10px;
+$meta-caption-height: 16px;
+
+$brand-micro-size: 9px;
+$brand-micro-height: 16px;

@@ -1,0 +1,23 @@
+@use '/src/assets/mixins/typography.mixins.scss' as t;
+@use '/src/assets/variables/colors.scss' as c;
+
+.wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    border-radius: 6px;
+    border: 1px solid c.$brand-gold-primary;
+    background-color: c.$bg-surface;
+    width: 100%;
+    height: 56px;
+}
+
+.input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: c.$text-primary;
+    @include t.ui-search-input;
+}

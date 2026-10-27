@@ -8,4 +8,8 @@ export const ROUTES = {
         FULL: '/catalog',
         PATH: 'catalog',
     },
+    PERFUME_DETAIL: {
+        FULL: (id: string) => `/catalog/${id}`,
+        PATH: 'catalog/:id',
+    },
 };

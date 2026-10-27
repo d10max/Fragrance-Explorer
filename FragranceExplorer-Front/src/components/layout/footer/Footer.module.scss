@@ -1,0 +1,57 @@
+@use '/src/assets/variables/colors.scss' as c;
+@use '/src/assets/mixins/typography.mixins.scss' as t;
+
+.footer {
+    border-top: 1px solid c.$border-subtle;
+    background-color: c.$bg-page;
+    padding: 48px 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+
+.brandGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.logo {
+    @include t.title-card-perfume;
+    color: c.$text-primary;
+    text-decoration: none;
+    font-size: 20px;
+    letter-spacing: 0.02em;
+}
+
+.tagline {
+    @include t.ui-meta-caption;
+    color: c.$text-secondary;
+    font-size: 12px;
+}
+
+.copyright {
+    @include t.ui-meta-caption;
+    color: c.$text-secondary;
+    font-size: 12px;
+}
+
+.navLinks {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.link {
+    @include t.ui-meta-caption;
+    color: c.$text-secondary;
+    text-decoration: none;
+    font-size: 12px;
+    transition: color 0.2s ease;
+
+    &:hover {
+        color: c.$text-primary;
+    }
+}

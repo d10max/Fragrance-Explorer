@@ -29,19 +29,12 @@
 
 .link {
     position: relative;
-    transition: color 0.2s ease;
+    transition: color 0.25s ease;
     color: c.$text-secondary;
+    text-decoration: none;
 
     @include t.ui-nav-link;
 
-    &:hover {
-        color: c.$text-secondary-hover;
-    }
-}
-
-.active {
-    @include t.ui-nav-link-active;
-    color: c.$text-primary;
     &::after {
         content: '';
         position: absolute;
@@ -49,6 +42,38 @@
         left: 0;
         width: 100%;
         height: 2px;
+        background-color: c.$text-secondary-hover;
+        opacity: 0;
+        transform: scaleX(0.7);
+        transform-origin: center;
+        transition: opacity 0.25s ease, transform 0.25s ease, background-color 0.25s ease;
+    }
+
+    &:hover {
+        color: c.$text-primary;
+
+        &::after {
+            opacity: 1;
+            transform: scaleX(1);
+        }
+    }
+}
+
+.active {
+    @include t.ui-nav-link-active;
+    color: c.$text-primary;
+
+    &::after {
+        opacity: 1;
+        transform: scaleX(1);
         background-color: c.$brand-gold-primary;
+    }
+
+    &:hover {
+        color: c.$text-primary;
+
+        &::after {
+            background-color: c.$brand-gold-primary;
+        }
     }
 }

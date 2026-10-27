@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { Layout } from '@/components/layout/layout/Layout';
 import { PerfumeFinderPage } from '@/pages/perfume-finder-page/PerfumeFinderPage';
 import { PerfumeCatalogPage } from '@/pages/perfume-catalog-page/PerfumeCatalogPage';
+import { PerfumeDetailPage } from '@/pages/perfume-detail-page/PerfumeDetailPage';
 import { ROUTES } from './const/routes';
 
 export const App = () => {
@@ -23,6 +24,10 @@ export const App = () => {
                     <Route
                         path={ROUTES.PERFUME_CATALOG.PATH}
                         element={<PerfumeCatalogPage />}
+                    />
+                    <Route
+                        path={ROUTES.PERFUME_DETAIL.PATH}
+                        element={<PerfumeDetailPage />}
                     />
                 </Route>
             </Routes>

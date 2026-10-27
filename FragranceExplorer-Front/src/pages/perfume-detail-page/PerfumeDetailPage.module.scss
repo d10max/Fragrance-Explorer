@@ -1,0 +1,543 @@
+@use '/src/assets/variables/colors.scss' as c;
+@use '/src/assets/mixins/typography.mixins.scss' as t;
+
+.container {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 32px 24px 100px;
+    background-color: c.$bg-page;
+}
+
+.breadcrumbs {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+    font-size: 13px;
+    color: c.$text-secondary;
+}
+
+.backLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: c.$text-secondary;
+    text-decoration: none;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 13px;
+    font-family: inherit;
+    transition: color 0.2s ease;
+
+    &:hover {
+        color: c.$text-primary;
+    }
+}
+
+.crumbDivider {
+    color: c.$border-subtle;
+    user-select: none;
+}
+
+.crumbBrand {
+    text-transform: uppercase;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: c.$text-secondary;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s ease, text-decoration 0.2s ease;
+
+    &:hover {
+        color: c.$brand-gold-primary;
+        text-decoration: underline;
+    }
+}
+
+.crumbCurrent {
+    color: c.$text-primary;
+    font-weight: 500;
+}
+
+.detailCard {
+    background-color: #ffffff;
+    border: 1px solid c.$border-subtle;
+    border-radius: 16px;
+    padding: 44px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.02);
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: 48px;
+
+    @media (max-width: 1024px) {
+        grid-template-columns: 1fr;
+        padding: 28px;
+        gap: 36px;
+    }
+}
+
+.leftColumn {
+    display: flex;
+    flex-direction: column;
+}
+
+.bottleContainer {
+    background-color: c.$bg-bottle-display;
+    border-radius: 12px;
+    padding: 48px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 360px;
+    margin-bottom: 28px;
+}
+
+.dossierBox {
+    background-color: #ffffff;
+    border: 1px solid c.$border-subtle;
+    border-radius: 10px;
+    padding: 24px;
+}
+
+.dossierTitle {
+    @include t.ui-section-eyebrow;
+    display: block;
+    color: c.$brand-gold-primary;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.dossierList {
+    display: flex;
+    flex-direction: column;
+}
+
+.dossierRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 10px 0;
+    border-bottom: 1px solid #f4eee6;
+
+    &:last-child {
+        border-bottom: none;
+    }
+}
+
+.dossierKey {
+    color: c.$text-secondary;
+    font-size: 13px;
+    font-weight: 400;
+}
+
+.dossierValue {
+    color: c.$text-primary;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: right;
+    max-width: 60%;
+}
+
+.rightColumn {
+    display: flex;
+    flex-direction: column;
+}
+
+.brandEyebrow {
+    @include t.ui-section-eyebrow;
+    display: block;
+    color: c.$brand-gold-primary;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.perfumeName {
+    @include t.heading-section-h2;
+    font-size: 52px;
+    line-height: 1.1;
+    color: c.$text-primary;
+    margin-bottom: 16px;
+
+    @media (max-width: 640px) {
+        font-size: 38px;
+    }
+}
+
+.badgesRow {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 28px;
+}
+
+.matchBadge {
+    background-color: c.$badge-match-bg;
+    color: c.$badge-match-text;
+    border-radius: 100px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+}
+
+.familyChip {
+    @include t.ui-badge-label;
+    border-radius: 100px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.chipWoody {
+    background-color: c.$note-woody-bg;
+    color: c.$note-woody-text;
+}
+
+.chipCitrus {
+    background-color: c.$note-citrus-bg;
+    color: c.$note-citrus-text;
+}
+
+.chipFresh {
+    background-color: c.$note-fresh-bg;
+    color: c.$note-fresh-text;
+}
+
+.chipSpicy {
+    background-color: c.$note-spicy-bg;
+    color: c.$note-spicy-text;
+}
+
+.chipAmber {
+    background-color: #f7ede2;
+    color: #9d6b47;
+}
+
+.ratingBadge {
+    background-color: #f7f4ee;
+    color: c.$text-primary;
+    border-radius: 100px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.starIcon {
+    color: c.$brand-gold-primary;
+}
+
+.sectionLabel {
+    @include t.ui-section-eyebrow;
+    display: block;
+    color: c.$brand-gold-primary;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.aboutText {
+    font-size: 15px;
+    line-height: 1.65;
+    color: c.$text-primary;
+    margin-bottom: 24px;
+}
+
+.vibeCard {
+    background-color: #fefdfa;
+    border: 1px solid #ebd9c2;
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin-bottom: 32px;
+}
+
+.vibeLabel {
+    display: block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: c.$brand-gold-primary;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.vibeQuote {
+    @include t.editorial-vibe-quote-italic;
+    font-size: 17px;
+    line-height: 1.5;
+    color: c.$text-primary;
+    margin: 0;
+}
+
+.pyramidSection {
+    margin-bottom: 36px;
+}
+
+.pyramidStack {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.pyramidCard {
+    background-color: #fdfbf7;
+    border: 1px solid c.$border-subtle;
+    border-radius: 8px;
+    padding: 14px 18px;
+}
+
+.pyramidCardHeader {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 12px;
+
+    @media (max-width: 640px) {
+        flex-direction: column;
+        gap: 4px;
+    }
+}
+
+.pyramidStageName {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: c.$text-primary;
+    min-width: 100px;
+}
+
+.pyramidStageTiming {
+    font-size: 12px;
+    color: c.$text-secondary;
+}
+
+.pyramidNotesList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.pyramidNoteChip {
+    font-size: 12px;
+    border-radius: 100px;
+    padding: 5px 14px;
+    font-weight: 500;
+    line-height: 1.3;
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid transparent;
+}
+
+.topNoteChip {
+    background-color: c.$note-citrus-bg;
+    color: c.$note-citrus-text;
+}
+
+.heartNoteChip {
+    background-color: c.$note-fresh-bg;
+    color: c.$note-fresh-text;
+}
+
+.baseNoteChip {
+    background-color: c.$note-woody-bg;
+    color: c.$note-woody-text;
+}
+
+.actionsRow {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.starterKitBtn {
+    @include t.ui-button-primary;
+    background-color: c.$brand-gold-primary;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 14px 28px;
+    cursor: pointer;
+    font-size: 13.5px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background-color: c.$brand-gold-hover;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(197, 155, 39, 0.25);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+.similarBtn {
+    @include t.ui-button-secondary;
+    background-color: c.$brand-gold-soft;
+    color: c.$text-primary;
+    border: none;
+    border-radius: 8px;
+    padding: 14px 26px;
+    cursor: pointer;
+    font-size: 13.5px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background-color: c.$brand-gold-soft-hover;
+    }
+}
+
+.similarSection {
+    margin-top: 64px;
+}
+
+.similarEyebrow {
+    @include t.ui-section-eyebrow;
+    display: block;
+    color: c.$brand-gold-primary;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.similarTitle {
+    @include t.heading-section-h2;
+    font-size: 38px;
+    line-height: 1.2;
+    color: c.$text-primary;
+    margin-bottom: 28px;
+}
+
+.similarGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+
+    @media (max-width: 992px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.similarCard {
+    background-color: #ffffff;
+    border: 1px solid c.$border-subtle;
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+
+    &:hover {
+        border-color: c.$brand-gold-primary;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+    }
+}
+
+.similarBottleWrapper {
+    background-color: c.$bg-bottle-display;
+    border-radius: 8px;
+    padding: 28px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    height: 180px;
+}
+
+.cardBrand {
+    @include t.ui-brand-micro-label;
+    color: c.$text-secondary;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.cardName {
+    @include t.title-card-perfume;
+    color: c.$text-primary;
+    margin-bottom: 4px;
+}
+
+.cardMeta {
+    @include t.ui-meta-caption;
+    color: c.$text-secondary;
+    margin-bottom: 16px;
+}
+
+.notesBlock {
+    margin-bottom: 16px;
+}
+
+.notesChips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.noteItem {
+    @include t.ui-badge-label;
+    background-color: #f4eee4;
+    color: c.$text-primary;
+    border-radius: 100px;
+    padding: 4px 10px;
+    font-size: 11px;
+}
+
+.storyBox {
+    background-color: #fdfbf7;
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin-bottom: 20px;
+    flex-grow: 1;
+}
+
+.storyQuote {
+    @include t.editorial-vibe-quote-italic;
+    color: c.$text-secondary;
+    font-size: 13.5px;
+    line-height: 1.45;
+    margin: 0;
+}
+
+.cardFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 12px;
+    border-top: 1px solid #f4eee6;
+}
+
+.readMoreLink {
+    color: c.$brand-gold-primary;
+    text-decoration: none;
+    font-size: 12.5px;
+    font-weight: 500;
+    transition: color 0.2s;
+
+    &:hover {
+        color: c.$brand-gold-hover;
+        text-decoration: underline;
+    }
+}

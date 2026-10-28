@@ -1,6 +1,6 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { PERFUMES_COLLECTION } from './perfumes.data';
+import { PERFUMES_COLLECTION, CATALOG_FEATURED_IDS } from './perfumes.data';
 import { HOUSES_DATA } from './houses.data';
 import { PerfumeBottle } from './components/PerfumeBottle';
 import { ROUTES } from '@/const/routes';
@@ -37,6 +37,7 @@ export const PerfumeCatalogPage = () => {
     const [isAllHousesOpen, setIsAllHousesOpen] = useState(false);
     const [selectedConcentration, setSelectedConcentration] = useState('All Concentrations');
     const [sortAscending, setSortAscending] = useState(false);
+    const [isAllPerfumesLoaded, setIsAllPerfumesLoaded] = useState(false);
 
     // Sync selectedHouse when URL search parameter changes
     useEffect(() => {
@@ -74,7 +75,18 @@ export const PerfumeCatalogPage = () => {
 
     // Filter perfumes based on selected filters
     const filteredPerfumes = useMemo(() => {
-        return PERFUMES_COLLECTION.filter((perfume) => {
+        const hasActiveFilter =
+            Boolean(searchQuery.trim()) ||
+            selectedFamily !== 'All' ||
+            Boolean(selectedHouse) ||
+            selectedConcentration !== 'All Concentrations' ||
+            isAllPerfumesLoaded;
+
+        const basePool = hasActiveFilter
+            ? PERFUMES_COLLECTION
+            : PERFUMES_COLLECTION.filter((p) => CATALOG_FEATURED_IDS.includes(p.id));
+
+        return basePool.filter((perfume) => {
             // Search by name, brand or notes
             if (searchQuery.trim()) {
                 const query = searchQuery.toLowerCase().trim();
@@ -118,7 +130,7 @@ export const PerfumeCatalogPage = () => {
         }).sort((a, b) => {
             return sortAscending ? a.rating - b.rating : b.rating - a.rating;
         });
-    }, [searchQuery, selectedFamily, selectedHouse, selectedConcentration, sortAscending]);
+    }, [searchQuery, selectedFamily, selectedHouse, selectedConcentration, sortAscending, isAllPerfumesLoaded]);
 
     // Reset all filters
     const handleResetFilters = () => {
@@ -262,6 +274,16 @@ export const PerfumeCatalogPage = () => {
                                     <span className={styles.houseBadge}>
                                         {house.count}
                                     </span>
+                                    <button
+                                        type="button"
+                                        className={styles.exploreHouseBtn}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            navigate(ROUTES.PERFUME_HOUSE.FULL(house.id));
+                                        }}
+                                    >
+                                        Explore House &rarr;
+                                    </button>
                                 </div>
                             );
                         }
@@ -415,11 +437,17 @@ export const PerfumeCatalogPage = () => {
                     )}
                 </div>
 
-                {/* Кнопка завантаження більше ароматів */}
+                {/* Load More button */}
                 {filteredPerfumes.length > 0 && (
                     <div className={styles.loadMoreWrapper}>
-                        <button className={styles.loadMoreBtn}>
-                            Load More Fragrances (Showing {filteredPerfumes.length} of 128)
+                        <button
+                            type="button"
+                            className={styles.loadMoreBtn}
+                            onClick={() => setIsAllPerfumesLoaded((prev) => !prev)}
+                        >
+                            {isAllPerfumesLoaded
+                                ? `Show Featured Fragrances (Showing ${filteredPerfumes.length} of 128)`
+                                : `Load More Fragrances (Showing ${filteredPerfumes.length} of 128)`}
                         </button>
                     </div>
                 )}

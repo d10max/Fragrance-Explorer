@@ -45,7 +45,7 @@ export interface PerfumeItem {
 }
 
 export const PERFUMES_COLLECTION: PerfumeItem[] = [
-    // Ряд 1
+    // row 1
     {
         id: 'bal-dafrique',
         brand: 'BYREDO',
@@ -112,15 +112,15 @@ export const PERFUMES_COLLECTION: PerfumeItem[] = [
         concentration: 'Eau de Parfum',
         year: 2011,
         family: 'Woody',
-        rating: 4.8,
-        keyNotes: ['Sandalwood', 'Cardamom', 'Violet'],
+        rating: 4.9,
+        keyNotes: ['Sandalwood', 'Cardamom', 'Violet', 'Papyrus'],
         storyAndVibe:
             'An open fire, the soft drift of smoke, and sensuality after the light fades.',
         capColor: '#7a7770',
         liquidColor: '#f4f0e7',
         liquidHeight: 28,
         isSelected: false,
-        matchPercentage: 92,
+        matchPercentage: 94,
         reviewsCount: 512,
         families: ['Woody', 'Spicy'],
         about:
@@ -202,7 +202,7 @@ export const PERFUMES_COLLECTION: PerfumeItem[] = [
         similarPerfumeIds: ['bal-dafrique', 'paris-edimbourg', 'philosykos'],
     },
 
-    // Ряд 2
+    // row 2
     {
         id: 'philosykos',
         brand: 'DIPTYQUE',
@@ -307,7 +307,7 @@ export const PERFUMES_COLLECTION: PerfumeItem[] = [
         year: 2015,
         family: 'Spicy',
         rating: 4.9,
-        keyNotes: ['Black Tea', 'Fig', 'Tobacco'],
+        keyNotes: ['Black Tea', 'Fig', 'Bay Leaf', 'Cedar'],
         storyAndVibe:
             'Luminous bergamot meets dark, cured black tea leaves and warm cedar.',
         capColor: '#7a7770',
@@ -348,7 +348,7 @@ export const PERFUMES_COLLECTION: PerfumeItem[] = [
         similarPerfumeIds: ['santal-33', 'bal-dafrique', 'eau-duelle'],
     },
 
-    // Ряд 3
+    // row 3
     {
         id: 'gypsy-water',
         brand: 'BYREDO',
@@ -493,7 +493,393 @@ export const PERFUMES_COLLECTION: PerfumeItem[] = [
         },
         similarPerfumeIds: ['the-noir-29', 'bal-dafrique', 'santal-33'],
     },
+
+    // Additional Le Labo Archive Creations (featured on the Le Labo House Dossier page)
+    {
+        id: 'another-13',
+        brand: 'LE LABO',
+        name: 'Another 13',
+        concentration: 'Eau de Parfum',
+        year: 2010,
+        family: 'Woody',
+        rating: 4.8,
+        keyNotes: ['Ambroxan', 'Jasmine', 'Moss', 'Ambrette'],
+        storyAndVibe:
+            'Hypnotic, skin-close molecular musk created in collaboration with AnOther Magazine.',
+        capColor: '#7a7770',
+        liquidColor: '#f3f1eb',
+        liquidHeight: 34,
+        isSelected: false,
+        matchPercentage: 91,
+        reviewsCount: 465,
+        families: ['Woody', 'Fresh'],
+        about:
+            'Commissioned by AnOther Magazine in 2010, Another 13 is built around ambroxan — a synthetic animal musk — blended with twelve other ingredients including jasmine petals, moss, and ambrette seeds for an addictive, luminous second-skin trail.',
+        vibeQuote:
+            '“Hypnotic, skin-close molecular musk created in collaboration with AnOther Magazine.”',
+        dossier: {
+            houseLocation: 'Le Labo (New York, USA)',
+            perfumer: 'Nathalie Lorson',
+            releaseYear: 2010,
+            concentration: 'Eau de Parfum (EDP)',
+            olfactoryFamily: 'Woody · Molecular Musk · Amber',
+            longevity: '10 – 14 hours',
+            sillage: 'Magnetic, enveloping aura',
+            bestSeasons: 'All seasons',
+        },
+        pyramid: {
+            topNotes: {
+                timing: 'First 15–30 mins · Crisp pear & citrus Dew',
+                notes: ['Pear', 'Apple', 'Citruses'],
+            },
+            heartNotes: {
+                timing: 'Hours 1–4 · Sheer jasmine & ambrette seed',
+                notes: ['Ambrette (Musk Mallow)', 'Amyl Salicylate', 'Jasmine', 'Moss'],
+            },
+            baseNotes: {
+                timing: 'Hours 4–12 · Radiant ambroxan & woody musk',
+                notes: ['Ambroxan', 'Iso E Super', 'Helvetolide', 'Cetalox'],
+            },
+        },
+        similarPerfumeIds: ['santal-33', 'the-noir-29', 'bal-dafrique'],
+    },
+    {
+        id: 'bergamote-22',
+        brand: 'LE LABO',
+        name: 'Bergamote 22',
+        concentration: 'Eau de Parfum',
+        year: 2006,
+        family: 'Citrus',
+        rating: 4.8,
+        keyNotes: ['Bergamot', 'Grapefruit', 'Petitgrain', 'Vetiver'],
+        storyAndVibe:
+            'Dazzling Mediterranean bergamot anchored by crisp petitgrain and warm woods.',
+        capColor: '#7a7770',
+        liquidColor: '#f3ebd4',
+        liquidHeight: 38,
+        isSelected: false,
+        matchPercentage: 89,
+        reviewsCount: 318,
+        families: ['Citrus', 'Woody'],
+        about:
+            'Bergamote 22 combines freshness, sweetness, and sensuality with acrobatic talent. Delicate floral character of petitgrain, the bitterness of grapefruit, and the flamboyant sweetness of amber and musk with a virile touch of vetiver.',
+        vibeQuote:
+            '“Dazzling Mediterranean bergamot anchored by crisp petitgrain and warm woods.”',
+        dossier: {
+            houseLocation: 'Le Labo (New York, USA)',
+            perfumer: 'Daphné Bugey',
+            releaseYear: 2006,
+            concentration: 'Eau de Parfum (EDP)',
+            olfactoryFamily: 'Citrus · Aromatic · Woody',
+            longevity: '7 – 9 hours',
+            sillage: 'Crisp, sun-lit projection',
+            bestSeasons: 'Spring, Summer',
+        },
+        pyramid: {
+            topNotes: {
+                timing: 'First 15–30 mins · Sparkling Calabrian bergamot',
+                notes: ['Bergamot', 'Grapefruit', 'Lemon', 'Nutmeg'],
+            },
+            heartNotes: {
+                timing: 'Hours 1–4 · Green petitgrain & orange blossom',
+                notes: ['Petitgrain', 'Orange Blossom', 'White Florals'],
+            },
+            baseNotes: {
+                timing: 'Hours 4–8 · Earthy vetiver, cedar & musk',
+                notes: ['Vetiver', 'Atlas Cedar', 'Amber', 'Musk'],
+            },
+        },
+        similarPerfumeIds: ['terre-d-hermes', 'bal-dafrique', 'the-matcha-26'],
+    },
+    {
+        id: 'rose-31',
+        brand: 'LE LABO',
+        name: 'Rose 31',
+        concentration: 'Eau de Parfum',
+        year: 2006,
+        family: 'Spicy',
+        rating: 4.8,
+        keyNotes: ['Centifolia Rose', 'Cumin', 'Cedar', 'Olibanum'],
+        storyAndVibe:
+            'Grasse rose transformed into an assertively woody, spiced unisex icon.',
+        capColor: '#7a7770',
+        liquidColor: '#f0dfdc',
+        liquidHeight: 38,
+        isSelected: false,
+        matchPercentage: 87,
+        reviewsCount: 356,
+        families: ['Spicy', 'Woody'],
+        about:
+            'The aim is clear: to transform the famous Grasse Rose, a symbol of voluptuousness and unqualified femininity, into an assertively virile fragrance that can be worn by anyone. Warm, spicy, and wood-drenched.',
+        vibeQuote:
+            '“Grasse rose transformed into an assertively woody, spiced unisex icon.”',
+        dossier: {
+            houseLocation: 'Le Labo (New York, USA)',
+            perfumer: 'Daphné Bugey',
+            releaseYear: 2006,
+            concentration: 'Eau de Parfum (EDP)',
+            olfactoryFamily: 'Spicy · Floral · Woody',
+            longevity: '8 – 10 hours',
+            sillage: 'Warm, magnetic trail',
+            bestSeasons: 'Autumn, Winter, Spring Evenings',
+        },
+        pyramid: {
+            topNotes: {
+                timing: 'First 15–30 mins · Spiced cumin & Centifolia petals',
+                notes: ['Centifolia Rose', 'Cumin'],
+            },
+            heartNotes: {
+                timing: 'Hours 1–4 · Dry cedar & earthy vetiver',
+                notes: ['Rose', 'Vetiver', 'Atlas Cedar'],
+            },
+            baseNotes: {
+                timing: 'Hours 4–10 · Smoky olibanum, oud & labdanum',
+                notes: ['Olibanum', 'Labdanum', 'Guaiac Wood', 'Agarwood (Oud)', 'Musk'],
+            },
+        },
+        similarPerfumeIds: ['the-noir-29', 'santal-33', 'vetiver-46'],
+    },
+    {
+        id: 'vetiver-46',
+        brand: 'LE LABO',
+        name: 'Vetiver 46',
+        concentration: 'Eau de Parfum',
+        year: 2006,
+        family: 'Woody',
+        rating: 4.7,
+        keyNotes: ['Tahitian Vetiver', 'Olibanum', 'Pepper', 'Labdanum'],
+        storyAndVibe:
+            'Deep, smoky incense and dark forest vetiver — brooding, dry, and liturgical.',
+        capColor: '#7a7770',
+        liquidColor: '#e0dcd2',
+        liquidHeight: 40,
+        isSelected: false,
+        matchPercentage: 92,
+        reviewsCount: 224,
+        families: ['Woody', 'Spicy'],
+        about:
+            'The Rolls-Royce of vetivers. Cultivated in Haiti and steeped in Grasse, Vetiver 46 is dark, smoky, and meditative — pairing 46 essences including black pepper, labdanum, cedar, and olibanum incense.',
+        vibeQuote:
+            '“Deep, smoky incense and dark forest vetiver — brooding, dry, and liturgical.”',
+        dossier: {
+            houseLocation: 'Le Labo (New York, USA)',
+            perfumer: 'Mark Buxton',
+            releaseYear: 2006,
+            concentration: 'Eau de Parfum (EDP)',
+            olfactoryFamily: 'Woody · Incense · Resinous',
+            longevity: '10 – 12 hours',
+            sillage: 'Deep, contemplative presence',
+            bestSeasons: 'Autumn, Winter',
+        },
+        pyramid: {
+            topNotes: {
+                timing: 'First 15–30 mins · Crushed black pepper & clove',
+                notes: ['Black Pepper', 'Clove', 'Bergamot'],
+            },
+            heartNotes: {
+                timing: 'Hours 1–4 · Sacred olibanum & labdanum resin',
+                notes: ['Tahitian Vetiver', 'Olibanum', 'Labdanum', 'Cedar'],
+            },
+            baseNotes: {
+                timing: 'Hours 4–11 · Dark guaiac wood & amber',
+                notes: ['Guaiac Wood', 'Amber', 'Vanilla Hint'],
+            },
+        },
+        similarPerfumeIds: ['hwyl', 'santal-33', 'the-noir-29'],
+    },
+    {
+        id: 'the-matcha-26',
+        brand: 'LE LABO',
+        name: 'Thé Matcha 26',
+        concentration: 'Eau de Parfum',
+        year: 2021,
+        family: 'Fresh',
+        rating: 4.8,
+        keyNotes: ['Matcha Tea', 'Creamy Fig', 'Bitter Orange', 'Cedar'],
+        storyAndVibe:
+            'A moment of quiet introspection — ceremonial matcha, soft fig, and grounded woods.',
+        capColor: '#7a7770',
+        liquidColor: '#e4ede2',
+        liquidHeight: 36,
+        isSelected: false,
+        matchPercentage: 88,
+        reviewsCount: 290,
+        families: ['Fresh', 'Woody'],
+        about:
+            'Much like matcha tea is more than just a drink in Japanese culture, Thé Matcha 26 is a moment of introspection. Matcha tea accord is infused with a creamy fig note, grounded by soft vetiver and textural cedar woods, and uplifted by enticing bitter orange.',
+        vibeQuote:
+            '“A moment of quiet introspection — ceremonial matcha, soft fig, and grounded woods.”',
+        dossier: {
+            houseLocation: 'Le Labo (New York, USA)',
+            perfumer: 'Frank Voelkl',
+            releaseYear: 2021,
+            concentration: 'Eau de Parfum (EDP)',
+            olfactoryFamily: 'Fresh · Green Tea · Woody',
+            longevity: '8 – 9 hours',
+            sillage: 'Intimate, serene skin-close aura',
+            bestSeasons: 'Spring, Summer, Early Autumn',
+        },
+        pyramid: {
+            topNotes: {
+                timing: 'First 15–30 mins · Ceremonial matcha & bitter orange',
+                notes: ['Matcha Tea', 'Bitter Orange', 'Green Accord'],
+            },
+            heartNotes: {
+                timing: 'Hours 1–4 · Milky fig & sesame',
+                notes: ['Creamy Fig', 'Sesame', 'Soft Florals'],
+            },
+            baseNotes: {
+                timing: 'Hours 4–9 · Grounded cedarwood & vetiver',
+                notes: ['Cedarwood', 'Vetiver', 'Clean Musk'],
+            },
+        },
+        similarPerfumeIds: ['philosykos', 'the-noir-29', 'baie-19'],
+    },
+    {
+        id: 'baie-19',
+        brand: 'LE LABO',
+        name: 'Baie 19',
+        concentration: 'Eau de Parfum',
+        year: 2019,
+        family: 'Fresh',
+        rating: 4.7,
+        keyNotes: ['Petrichor', 'Juniper Berry', 'Patchouli', 'Ambroxan'],
+        storyAndVibe:
+            'The crisp, mineral scent of dry earth and green leaves after a sudden heavy rain.',
+        capColor: '#7a7770',
+        liquidColor: '#e1eceb',
+        liquidHeight: 38,
+        isSelected: false,
+        matchPercentage: 86,
+        reviewsCount: 210,
+        families: ['Fresh', 'Woody'],
+        about:
+            'Baie 19 captures the luminous, magnetic feeling of petrichor — that unmistakable smell of rain on dry earth after a long drought. Dry juniper berry, green leaves, dew-soaked patchouli, and ambroxan.',
+        vibeQuote:
+            '“The crisp, mineral scent of dry earth and green leaves after a sudden heavy rain.”',
+        dossier: {
+            houseLocation: 'Le Labo (New York, USA)',
+            perfumer: 'Frank Voelkl',
+            releaseYear: 2019,
+            concentration: 'Eau de Parfum (EDP)',
+            olfactoryFamily: 'Fresh · Mineral · Earthy Green',
+            longevity: '8 – 10 hours',
+            sillage: 'Crisp, atmospheric trail',
+            bestSeasons: 'Spring, Autumn, Rainy Days',
+        },
+        pyramid: {
+            topNotes: {
+                timing: 'First 15–30 mins · Ozone & crisp juniper berry',
+                notes: ['Petrichor Accord', 'Juniper Berry', 'Ozone'],
+            },
+            heartNotes: {
+                timing: 'Hours 1–4 · Wet green leaves & mineral dew',
+                notes: ['Green Leaves', 'Dewy Patchouli', 'Mineral Notes'],
+            },
+            baseNotes: {
+                timing: 'Hours 4–10 · Ambroxan & earthy musk',
+                notes: ['Ambroxan', 'Cade Oil', 'Musk'],
+            },
+        },
+        similarPerfumeIds: ['paris-edimbourg', 'another-13', 'the-matcha-26'],
+    },
+    {
+        id: 'lavande-31',
+        brand: 'LE LABO',
+        name: 'Lavande 31',
+        concentration: 'Eau de Parfum',
+        year: 2023,
+        family: 'Fresh',
+        rating: 4.6,
+        keyNotes: ['Lavender', 'Neroli', 'Bergamot', 'Tonka'],
+        storyAndVibe:
+            'Vertical, ultra-clean lavender stripped of nostalgia and lifted by bright neroli.',
+        capColor: '#7a7770',
+        liquidColor: '#e7e5f0',
+        liquidHeight: 36,
+        isSelected: false,
+        matchPercentage: 84,
+        reviewsCount: 168,
+        families: ['Fresh', 'Citrus'],
+        about:
+            'Forget everything you thought you knew about lavender. Bergamot and neroli essential oils reveal an ultra-pure freshness of vertical, distilled lavender buds, anchored by ambery, dirty-musk and tonka notes in true Le Labo style.',
+        vibeQuote:
+            '“Vertical, ultra-clean lavender stripped of nostalgia and lifted by bright neroli.”',
+        dossier: {
+            houseLocation: 'Le Labo (New York, USA)',
+            perfumer: 'Daphné Bugey',
+            releaseYear: 2023,
+            concentration: 'Eau de Parfum (EDP)',
+            olfactoryFamily: 'Fresh · Aromatic · Amber Musk',
+            longevity: '8 – 10 hours',
+            sillage: 'Clean, radiant projection',
+            bestSeasons: 'Spring, Summer, All Year',
+        },
+        pyramid: {
+            topNotes: {
+                timing: 'First 15–30 mins · Sunlit neroli & bergamot',
+                notes: ['Neroli', 'Bergamot', 'Petitgrain'],
+            },
+            heartNotes: {
+                timing: 'Hours 1–4 · Distilled vertical lavender buds',
+                notes: ['Lavender', 'Clean Florals', 'Herbal Accord'],
+            },
+            baseNotes: {
+                timing: 'Hours 4–9 · Warm tonka bean & dirty musk',
+                notes: ['Tonka Bean', 'Amber', 'Musk'],
+            },
+        },
+        similarPerfumeIds: ['bergamote-22', 'another-13', 'paris-edimbourg'],
+    },
 ];
+
+// Featured catalog items (main 9 fragrances for the Encyclopedia landing)
+export const CATALOG_FEATURED_IDS = [
+    'bal-dafrique',
+    'santal-33',
+    'terre-d-hermes',
+    'philosykos',
+    'paris-edimbourg',
+    'the-noir-29',
+    'gypsy-water',
+    'hwyl',
+    'eau-duelle',
+];
+
+// Order for Le Labo house page matching the design mockup
+const LE_LABO_ORDER = [
+    'the-noir-29',
+    'santal-33',
+    'another-13',
+    'bergamote-22',
+    'rose-31',
+    'vetiver-46',
+    'the-matcha-26',
+    'baie-19',
+    'lavande-31',
+];
+
+export const getPerfumesByHouse = (houseName: string, houseId?: string): PerfumeItem[] => {
+    const normalizedName = houseName.trim().toUpperCase();
+    if (houseId === 'le-labo' || normalizedName === 'LE LABO') {
+        return LE_LABO_ORDER.map((id) => PERFUMES_COLLECTION.find((p) => p.id === id)).filter(
+            (p): p is PerfumeItem => Boolean(p)
+        );
+    }
+
+    const directMatches = PERFUMES_COLLECTION.filter(
+        (p) => p.brand.toUpperCase() === normalizedName
+    );
+    if (directMatches.length > 0) {
+        return directMatches;
+    }
+
+    // Fallback curated archive for other houses so every house page has rich cards
+    return PERFUMES_COLLECTION.slice(0, 6).map((p) => ({
+        ...p,
+        brand: houseName.toUpperCase(),
+    }));
+};
 
 export const getPerfumeById = (id?: string): PerfumeItem => {
     if (!id) return PERFUMES_COLLECTION[0];

@@ -1,18 +1,25 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { getPerfumeById, getSimilarPerfumes } from '@/pages/perfume-catalog-page/perfumes.data';
+import { getHouseByIdOrName } from '@/pages/perfume-catalog-page/houses.data';
 import { PerfumeBottle } from '@/pages/perfume-catalog-page/components/PerfumeBottle';
+import { useCompare } from '@/context/CompareContext';
 import { ROUTES } from '@/const/routes';
 import styles from './PerfumeDetailPage.module.scss';
 
 export const PerfumeDetailPage = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
+    const { compareIds, addToCompare } = useCompare();
     const perfume = getPerfumeById(id);
+    const house = getHouseByIdOrName(perfume.brand);
     const similarPerfumes = getSimilarPerfumes(perfume);
+    const [isAddedToStarterKit, setIsAddedToStarterKit] = useState(false);
+    const isInCompare = compareIds.includes(perfume.id);
 
     // Scroll to top of page when switching perfumes
     useEffect(() => {
+        setIsAddedToStarterKit(false);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }, [id]);
 
@@ -39,7 +46,8 @@ export const PerfumeDetailPage = () => {
     };
 
     const handleAddToStarterKit = () => {
-        alert(`Added ${perfume.name} to Starter Kit!`);
+        setIsAddedToStarterKit(true);
+        alert(`Added ${perfume.name} to Starter Kit (1 / 1)!`);
     };
 
     // Default dossier, if some fields are missing
@@ -83,7 +91,7 @@ export const PerfumeDetailPage = () => {
                 </Link>
                 <span className={styles.crumbDivider}>/</span>
                 <Link
-                    to={`${ROUTES.PERFUME_CATALOG.FULL}?house=${encodeURIComponent(perfume.brand)}`}
+                    to={ROUTES.PERFUME_HOUSE.FULL(house.id)}
                     className={styles.crumbBrand}
                 >
                     {perfume.brand}
@@ -259,7 +267,9 @@ export const PerfumeDetailPage = () => {
                             className={styles.starterKitBtn}
                             onClick={handleAddToStarterKit}
                         >
-                            + Add to My Starter Kit (3 / 5)
+                            {isAddedToStarterKit
+                                ? '✓ In My Starter Kit (1 / 1)'
+                                : '+ Add to My Starter Kit (0 / 1)'}
                         </button>
                         <button
                             type="button"
@@ -267,6 +277,17 @@ export const PerfumeDetailPage = () => {
                             onClick={handleScrollToSimilar}
                         >
                             Find Similar Scents &rarr;
+                        </button>
+                        <button
+                            type="button"
+                            className={`${styles.compareBtn} ${
+                                isInCompare ? styles.compareBtnActive : ''
+                            }`}
+                            onClick={() => addToCompare(perfume.id)}
+                        >
+                            {isInCompare
+                                ? '✓ Added to Comparison (1 / 2)'
+                                : '⇄ Compare with another scent'}
                         </button>
                     </div>
                 </div>

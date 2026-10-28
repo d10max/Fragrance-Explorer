@@ -12,4 +12,12 @@ export const ROUTES = {
         FULL: (id: string) => `/catalog/${id}`,
         PATH: 'catalog/:id',
     },
+    PERFUME_HOUSE: {
+        FULL: (houseId: string) => `/houses/${houseId}`,
+        PATH: 'houses/:houseId',
+    },
+    PERFUME_COMPARE: {
+        FULL: '/compare',
+        PATH: 'compare',
+    },
 };

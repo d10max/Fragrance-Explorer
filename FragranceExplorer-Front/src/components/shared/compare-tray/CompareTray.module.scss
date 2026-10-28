@@ -1,0 +1,207 @@
+@use '/src/assets/variables/colors.scss' as c;
+@use '/src/assets/mixins/typography.mixins.scss' as t;
+
+.tray {
+    position: fixed;
+    right: 28px;
+    bottom: 28px;
+    z-index: 1000;
+    width: 320px;
+    background-color: c.$bg-surface;
+    border: 1.5px solid c.$brand-gold-primary;
+    border-radius: 12px;
+    padding: 16px 18px;
+    box-shadow: 0 12px 36px rgba(24, 24, 27, 0.14);
+    animation: slideUp 0.25s ease-out;
+
+    @media (max-width: 640px) {
+        right: 16px;
+        left: 16px;
+        bottom: 16px;
+        width: auto;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.trayHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.trayEyebrow {
+    @include t.ui-section-eyebrow;
+    color: c.$brand-gold-primary;
+    letter-spacing: 0.1em;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.clearBtn {
+    background: none;
+    border: none;
+    color: c.$text-secondary;
+    font-size: 13px;
+    cursor: pointer;
+    padding: 2px 4px;
+    transition: color 0.2s ease;
+
+    &:hover {
+        color: c.$text-primary;
+    }
+}
+
+.slotsList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.slotFilled {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background-color: #faf8f5;
+    border: 1px solid c.$border-subtle;
+    border-radius: 8px;
+    padding: 8px 10px;
+}
+
+.miniBottle {
+    width: 38px;
+    height: 48px;
+    background-color: c.$bg-bottle-display;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.slotInfo {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+}
+
+.slotBrand {
+    @include t.ui-section-eyebrow;
+    color: c.$text-secondary;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    margin-bottom: 2px;
+}
+
+.slotName {
+    @include t.title-card-perfume;
+    font-size: 16px;
+    line-height: 1.2;
+    color: c.$text-primary;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.removeSlotBtn {
+    background: none;
+    border: none;
+    color: c.$text-secondary;
+    font-size: 11px;
+    cursor: pointer;
+    padding: 4px;
+    transition: color 0.2s ease;
+
+    &:hover {
+        color: c.$text-primary;
+    }
+}
+
+.slotEmpty {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 1px dashed c.$border-subtle;
+    background-color: #fdfcfa;
+    border-radius: 8px;
+    padding: 10px 12px;
+}
+
+.slotEmptyIcon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: c.$brand-gold-soft;
+    color: c.$text-accent-gold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 500;
+    flex-shrink: 0;
+}
+
+.slotEmptyTextGroup {
+    display: flex;
+    flex-direction: column;
+}
+
+.slotEmptyTitle {
+    color: c.$text-primary;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+
+.slotEmptyHint {
+    color: c.$text-secondary;
+    font-size: 11px;
+}
+
+.compareNowBtn {
+    @include t.ui-button-primary;
+    margin-top: 12px;
+    width: 100%;
+    background-color: c.$brand-gold-primary;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 16px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+        background-color: c.$brand-gold-hover;
+    }
+}
+
+.browseCatalogBtn {
+    @include t.ui-badge-label;
+    margin-top: 12px;
+    width: 100%;
+    background-color: c.$brand-gold-soft;
+    color: c.$text-accent-gold;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+        background-color: c.$brand-gold-soft-hover;
+    }
+}
+

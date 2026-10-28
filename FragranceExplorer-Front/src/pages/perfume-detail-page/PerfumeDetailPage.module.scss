@@ -405,6 +405,30 @@
     }
 }
 
+.compareBtn {
+    @include t.ui-button-secondary;
+    background-color: c.$bg-surface;
+    color: c.$text-primary;
+    border: 1.5px solid c.$brand-gold-primary;
+    border-radius: 8px;
+    padding: 13px 22px;
+    cursor: pointer;
+    font-size: 13.5px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background-color: c.$brand-gold-soft;
+        border-color: c.$brand-gold-hover;
+    }
+}
+
+.compareBtnActive {
+    background-color: c.$badge-match-bg;
+    border-color: c.$badge-match-text;
+    color: c.$badge-match-text;
+}
+
 .similarSection {
     margin-top: 64px;
 }

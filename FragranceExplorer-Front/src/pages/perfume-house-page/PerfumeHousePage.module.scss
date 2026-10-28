@@ -1,0 +1,667 @@
+@use '/src/assets/variables/colors.scss' as c;
+@use '/src/assets/mixins/typography.mixins.scss' as t;
+
+.container {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 32px 24px 100px;
+    background-color: c.$bg-page;
+}
+
+// Breadcrumbs
+.breadcrumbs {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+    font-size: 13px;
+    color: c.$text-secondary;
+}
+
+.backLink,
+.crumbSection {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: c.$text-secondary;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 13px;
+    transition: color 0.2s ease;
+
+    &:hover {
+        color: c.$text-primary;
+    }
+}
+
+.crumbDivider {
+    color: c.$border-subtle;
+    user-select: none;
+}
+
+.crumbCurrent {
+    color: c.$text-primary;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+// House Dossier Card
+.dossierCard {
+    background-color: c.$bg-surface;
+    border: 1px solid c.$border-subtle;
+    border-radius: 12px;
+    padding: 36px 40px;
+    display: grid;
+    grid-template-columns: 205px 1fr 340px;
+    gap: 40px;
+    align-items: center;
+    margin-bottom: 56px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.015);
+
+    @media (max-width: 1080px) {
+        grid-template-columns: 180px 1fr;
+    }
+
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+        padding: 24px;
+        gap: 24px;
+    }
+}
+
+.monogramBox {
+    background-color: c.$bg-bottle-display;
+    border: 1px solid c.$border-subtle;
+    border-radius: 8px;
+    height: 215px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    text-align: center;
+}
+
+.monogramText {
+    @include t.heading-hero-h1;
+    font-size: 62px;
+    line-height: 1;
+    color: c.$text-primary;
+    margin-bottom: 16px;
+    letter-spacing: 0.02em;
+}
+
+.monogramOrigin {
+    @include t.ui-section-eyebrow;
+    font-size: 10px;
+    color: c.$text-accent-gold;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.monogramEst {
+    @include t.ui-meta-caption;
+    font-size: 11px;
+    color: c.$text-secondary;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.houseInfo {
+    display: flex;
+    flex-direction: column;
+}
+
+.dossierEyebrow {
+    @include t.ui-section-eyebrow;
+    color: c.$brand-gold-primary;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    font-size: 11px;
+}
+
+.houseTitle {
+    @include t.heading-hero-h1;
+    font-size: 48px;
+    line-height: 1.1;
+    color: c.$text-primary;
+    margin-bottom: 16px;
+}
+
+.badgesRow {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.archivePill {
+    @include t.ui-badge-label;
+    background-color: c.$brand-gold-soft;
+    color: c.$text-accent-gold;
+    border-radius: 100px;
+    padding: 5px 14px;
+    font-weight: 500;
+}
+
+.dnaPill {
+    @include t.ui-badge-label;
+    background-color: c.$note-woody-bg;
+    color: c.$note-woody-text;
+    border-radius: 100px;
+    padding: 5px 14px;
+    font-weight: 500;
+}
+
+.ratingPill {
+    @include t.ui-badge-label;
+    background-color: c.$badge-match-bg;
+    color: c.$badge-match-text;
+    border-radius: 100px;
+    padding: 5px 14px;
+    font-weight: 500;
+}
+
+.houseDescription {
+    color: c.$text-secondary;
+    font-size: 14px;
+    line-height: 1.65;
+    margin: 0;
+}
+
+// Right DNA Box
+.dnaCard {
+    background-color: #faf8f5;
+    border: 1px solid c.$border-subtle;
+    border-radius: 8px;
+    padding: 24px;
+
+    @media (max-width: 1080px) {
+        grid-column: 1 / -1;
+    }
+}
+
+.dnaCardTitle {
+    @include t.ui-section-eyebrow;
+    display: block;
+    color: c.$text-accent-gold;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    font-size: 10px;
+}
+
+.dnaList {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.dnaRow {
+    display: grid;
+    grid-template-columns: 68px 1fr auto;
+    align-items: center;
+    gap: 12px;
+}
+
+.dnaFamilyChip {
+    @include t.ui-badge-label;
+    border-radius: 100px;
+    padding: 4px 10px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.dnaNotes {
+    color: c.$text-secondary;
+    font-size: 12px;
+    line-height: 1.3;
+}
+
+.dnaPercentage {
+    color: c.$text-primary;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+// Complete House Archive
+.archiveSection {
+    margin-bottom: 72px;
+}
+
+.archiveEyebrow {
+    @include t.ui-section-eyebrow;
+    display: block;
+    color: c.$brand-gold-primary;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.archiveHeaderRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.archiveTitle {
+    @include t.heading-section-h2;
+    font-size: 42px;
+    line-height: 1.15;
+    color: c.$text-primary;
+    margin: 0;
+}
+
+.searchWrapper {
+    flex: 1;
+    min-width: 260px;
+    max-width: 340px;
+}
+
+.houseSearchInput {
+    @include t.ui-search-input;
+    width: 100%;
+    background-color: c.$bg-surface;
+    border: 1px solid c.$border-subtle;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 13px;
+    color: c.$text-primary;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+    &::placeholder {
+        color: c.$text-secondary;
+    }
+
+    &:focus {
+        border-color: c.$brand-gold-primary;
+        box-shadow: 0 0 0 1px c.$brand-gold-primary;
+    }
+}
+
+.familyFilters {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.filterChip {
+    @include t.ui-badge-label;
+    border: none;
+    border-radius: 100px;
+    padding: 7px 14px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: opacity 0.2s ease, transform 0.1s ease;
+
+    &:hover {
+        opacity: 0.85;
+    }
+
+    &:active {
+        transform: scale(0.98);
+    }
+}
+
+.filterChipActive {
+    background-color: c.$text-primary;
+    color: #ffffff;
+}
+
+.filterChipDefault {
+    background-color: c.$note-woody-bg;
+    color: c.$text-primary;
+}
+
+.chipWoody {
+    background-color: c.$note-woody-bg;
+    color: c.$note-woody-text;
+}
+
+.chipCitrus {
+    background-color: c.$note-citrus-bg;
+    color: c.$note-citrus-text;
+}
+
+.chipFresh {
+    background-color: c.$note-fresh-bg;
+    color: c.$note-fresh-text;
+}
+
+.chipSpicy {
+    background-color: c.$note-spicy-bg;
+    color: c.$note-spicy-text;
+}
+
+// Perfumes Grid
+.perfumesGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+
+    @media (max-width: 1024px) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (max-width: 680px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.perfumeCard {
+    background-color: c.$bg-surface;
+    border: 1px solid c.$border-subtle;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+        border-color: c.$brand-gold-primary;
+        box-shadow: 0 0 0 1px c.$brand-gold-primary;
+    }
+}
+
+.cardTop {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.cardFamilyChip {
+    @include t.ui-badge-label;
+    border-radius: 100px;
+    padding: 4px 12px;
+    font-weight: 500;
+}
+
+.matchRatingBadge {
+    background-color: c.$badge-match-bg;
+    color: c.$badge-match-text;
+    border-radius: 100px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.bottleDisplay {
+    background-color: c.$bg-bottle-display;
+    border-radius: 6px;
+    height: 190px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.cardBrand {
+    @include t.ui-section-eyebrow;
+    color: c.$text-secondary;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.cardName {
+    @include t.title-card-perfume;
+    color: c.$text-primary;
+    margin-bottom: 4px;
+}
+
+.cardMeta {
+    @include t.ui-meta-caption;
+    color: c.$text-secondary;
+    margin-bottom: 18px;
+}
+
+.notesBlock {
+    margin-bottom: 18px;
+}
+
+.notesLabel {
+    @include t.ui-section-eyebrow;
+    color: c.$text-secondary;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.notesChips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.noteItem {
+    @include t.ui-badge-label;
+    background-color: #f6eedd;
+    color: c.$text-accent-gold;
+    border-radius: 100px;
+    padding: 4px 10px;
+}
+
+.storyBox {
+    background-color: #faf8f4;
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin-bottom: 18px;
+    flex-grow: 1;
+}
+
+.storyLabel {
+    @include t.ui-section-eyebrow;
+    color: c.$text-secondary;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.storyQuote {
+    @include t.editorial-vibe-quote-italic;
+    color: c.$text-secondary;
+    font-size: 13px;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.cardFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    margin-top: auto;
+}
+
+.readMoreLink {
+    @include t.ui-meta-caption;
+    color: c.$text-accent-gold;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+
+    &:hover {
+        color: c.$brand-gold-hover;
+    }
+}
+
+.starterKitBtn {
+    @include t.ui-badge-label;
+    background-color: c.$brand-gold-soft;
+    color: c.$text-accent-gold;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+        background-color: c.$brand-gold-soft-hover;
+    }
+}
+
+// Show All Button
+.showAllWrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 44px;
+}
+
+.showAllBtn {
+    @include t.ui-button-primary;
+    background-color: c.$bg-surface;
+    color: c.$text-primary;
+    border: 1.5px solid c.$brand-gold-primary;
+    border-radius: 8px;
+    padding: 13px 34px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+
+    &:hover {
+        background-color: c.$brand-gold-soft;
+        border-color: c.$brand-gold-hover;
+    }
+}
+
+// Empty State
+.emptyState {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 64px 24px;
+    background-color: c.$bg-surface;
+    border: 1px dashed c.$border-subtle;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.emptyTitle {
+    @include t.heading-section-h2;
+    font-size: 26px;
+    color: c.$text-primary;
+    margin-bottom: 8px;
+}
+
+.emptySubtitle {
+    color: c.$text-secondary;
+    font-size: 14px;
+    margin-bottom: 24px;
+    max-width: 440px;
+}
+
+.resetBtn {
+    @include t.ui-button-primary;
+    background-color: c.$brand-gold-primary;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 24px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+        background-color: c.$brand-gold-hover;
+    }
+}
+
+// Continue Exploring: Other houses with similar DNA
+.otherHousesSection {
+    padding-top: 16px;
+}
+
+.otherEyebrow {
+    @include t.ui-section-eyebrow;
+    display: block;
+    color: c.$brand-gold-primary;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.otherTitle {
+    @include t.heading-section-h2;
+    font-size: 38px;
+    color: c.$text-primary;
+    margin-bottom: 24px;
+}
+
+.otherHousesGrid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+
+    @media (max-width: 1080px) {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    @media (max-width: 640px) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.otherHouseCard {
+    background-color: c.$bg-surface;
+    border: 1px solid c.$border-subtle;
+    border-radius: 8px;
+    padding: 20px 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    min-height: 136px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+
+    &:hover {
+        border-color: c.$brand-gold-primary;
+        box-shadow: 0 0 0 1px c.$brand-gold-primary;
+        transform: translateY(-2px);
+    }
+}
+
+.otherHouseName {
+    @include t.title-card-perfume;
+    font-size: 20px;
+    line-height: 1.25;
+    color: c.$text-primary;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 6px;
+}
+
+.otherHouseMeta {
+    @include t.ui-meta-caption;
+    color: c.$text-secondary;
+    margin-bottom: 14px;
+}
+
+.otherHouseBadge {
+    @include t.ui-badge-label;
+    background-color: #f3f0ea;
+    color: c.$text-secondary;
+    border-radius: 100px;
+    padding: 4px 10px;
+    margin-top: auto;
+}
+

@@ -1,0 +1,688 @@
+@use '/src/assets/variables/colors.scss' as c;
+@use '/src/assets/mixins/typography.mixins.scss' as t;
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 36px 24px 100px;
+    background-color: c.$bg-page;
+}
+
+// Header
+.headerRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 28px;
+}
+
+.headerTitles {
+    display: flex;
+    flex-direction: column;
+}
+
+.eyebrow {
+    @include t.ui-section-eyebrow;
+    color: c.$brand-gold-primary;
+    letter-spacing: 0.1em;
+    font-size: 11px;
+    margin-bottom: 6px;
+}
+
+.pageTitle {
+    @include t.heading-hero-h1;
+    font-size: 44px;
+    line-height: 1.1;
+    color: c.$text-primary;
+    margin: 0;
+}
+
+.closeBtn {
+    @include t.ui-badge-label;
+    background-color: c.$bg-surface;
+    color: c.$text-secondary;
+    border: 1px solid c.$border-subtle;
+    border-radius: 6px;
+    padding: 9px 18px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease;
+
+    &:hover {
+        border-color: c.$brand-gold-primary;
+        color: c.$text-primary;
+    }
+}
+
+// Row 1: Top Comparison Grid
+.topComparisonGrid {
+    display: grid;
+    grid-template-columns: 1fr 164px 1fr;
+    gap: 24px;
+    align-items: center;
+    margin-bottom: 28px;
+
+    @media (max-width: 960px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.scentCardA,
+.scentCardB {
+    background-color: c.$bg-surface;
+    border-radius: 10px;
+    padding: 22px;
+    display: flex;
+    gap: 22px;
+    align-items: center;
+}
+
+.scentCardA {
+    border: 1.5px solid c.$brand-gold-primary;
+}
+
+.scentCardB {
+    border: 1.5px solid c.$badge-match-text;
+}
+
+.bottleBox {
+    width: 114px;
+    height: 158px;
+    background-color: c.$bg-bottle-display;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.scentCardInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.scentCardTopBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.refBadgeA {
+    @include t.ui-section-eyebrow;
+    background-color: c.$brand-gold-soft;
+    color: c.$text-accent-gold;
+    border-radius: 100px;
+    padding: 4px 12px;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.refBadgeB {
+    @include t.ui-section-eyebrow;
+    background-color: c.$badge-match-bg;
+    color: c.$badge-match-text;
+    border-radius: 100px;
+    padding: 4px 12px;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.dotA {
+    color: c.$text-accent-gold;
+    font-size: 9px;
+}
+
+.dotB {
+    color: c.$badge-match-text;
+    font-size: 9px;
+}
+
+.changeScentWrapper {
+    position: relative;
+}
+
+.changeScentBtnA,
+.changeScentBtnB {
+    background: none;
+    border: none;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 2px 4px;
+    transition: opacity 0.2s ease;
+
+    &:hover {
+        opacity: 0.75;
+    }
+}
+
+.changeScentBtnA {
+    color: c.$text-accent-gold;
+}
+
+.changeScentBtnB {
+    color: c.$badge-match-text;
+}
+
+.scentDropdown {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 6px);
+    z-index: 50;
+    width: 240px;
+    max-height: 260px;
+    overflow-y: auto;
+    background-color: c.$bg-surface;
+    border: 1px solid c.$border-subtle;
+    border-radius: 8px;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.1);
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.dropdownOption {
+    background: none;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 10px;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+
+    &:hover {
+        background-color: c.$brand-gold-soft;
+    }
+}
+
+.dropdownOptionActive {
+    background-color: #f3efe6;
+    font-weight: 600;
+}
+
+.optName {
+    font-size: 13px;
+    color: c.$text-primary;
+}
+
+.optBrand {
+    font-size: 10px;
+    color: c.$text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.scentBrand {
+    @include t.ui-section-eyebrow;
+    color: c.$text-secondary;
+    letter-spacing: 0.1em;
+    font-size: 10px;
+    margin-bottom: 4px;
+}
+
+.scentName {
+    @include t.heading-section-h2;
+    font-size: 32px;
+    line-height: 1.15;
+    color: c.$text-primary;
+    margin: 0 0 4px;
+}
+
+.scentMeta {
+    @include t.ui-meta-caption;
+    color: c.$text-secondary;
+    margin: 0 0 14px;
+}
+
+.scentFamilies {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.familyPill {
+    @include t.ui-badge-label;
+    border-radius: 100px;
+    padding: 5px 14px;
+    font-weight: 500;
+}
+
+// Center Similarity Column
+.similarityColumn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.similarityCircle {
+    width: 118px;
+    height: 118px;
+    border-radius: 50%;
+    background-color: c.$badge-match-bg;
+    border: 1.5px solid c.$badge-match-text;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.similarityValue {
+    @include t.heading-section-h2;
+    font-size: 36px;
+    line-height: 1;
+    color: c.$badge-match-text;
+    margin-bottom: 4px;
+}
+
+.similarityLabel {
+    @include t.ui-section-eyebrow;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: c.$badge-match-text;
+}
+
+.overlapPrimary {
+    color: c.$text-primary;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 3px;
+}
+
+.overlapSecondary {
+    color: c.$text-secondary;
+    font-size: 12px;
+}
+
+// Row 2: Overlap Card
+.overlapCard {
+    background-color: c.$bg-surface;
+    border: 1px solid c.$border-subtle;
+    border-radius: 10px;
+    padding: 36px;
+    display: grid;
+    grid-template-columns: 1.05fr 260px 1.25fr;
+    gap: 36px;
+    align-items: center;
+    margin-bottom: 28px;
+
+    @media (max-width: 1024px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.sectionEyebrow {
+    @include t.ui-section-eyebrow;
+    display: block;
+    color: c.$text-accent-gold;
+    letter-spacing: 0.08em;
+    font-size: 10px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.overlapTitle {
+    @include t.heading-section-h2;
+    font-size: 36px;
+    line-height: 1.15;
+    color: c.$text-primary;
+    margin: 0 0 16px;
+}
+
+.overlapDescription {
+    color: c.$text-secondary;
+    font-size: 13.5px;
+    line-height: 1.65;
+    margin: 0 0 22px;
+}
+
+.legendRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.legendPillA {
+    @include t.ui-badge-label;
+    background-color: c.$brand-gold-soft;
+    color: c.$text-accent-gold;
+    border-radius: 100px;
+    padding: 5px 14px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.legendPillB {
+    @include t.ui-badge-label;
+    background-color: c.$badge-match-bg;
+    color: c.$badge-match-text;
+    border-radius: 100px;
+    padding: 5px 14px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+// Radar SVG
+.radarCol {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.radarSvg {
+    width: 100%;
+    max-width: 260px;
+    height: auto;
+    overflow: visible;
+}
+
+.radarLabelCitrus {
+    font-size: 11px;
+    font-weight: 500;
+    fill: c.$text-accent-gold;
+}
+
+.radarLabelWoody {
+    font-size: 11px;
+    font-weight: 500;
+    fill: c.$note-woody-text;
+}
+
+.radarLabelSpicy {
+    font-size: 11px;
+    font-weight: 500;
+    fill: c.$note-spicy-text;
+}
+
+.radarLabelFresh {
+    font-size: 11px;
+    font-weight: 500;
+    fill: c.$badge-match-text;
+}
+
+// Accord Intensity Breakdown
+.accordsCol {
+    display: flex;
+    flex-direction: column;
+}
+
+.accordsList {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.accordGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.accordLabelRow {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.accordName {
+    color: c.$text-primary;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.accordStats {
+    color: c.$text-secondary;
+    font-size: 11.5px;
+}
+
+.barTrack {
+    width: 100%;
+    height: 7px;
+    background-color: #f3f0ea;
+    border-radius: 100px;
+    overflow: hidden;
+}
+
+.barFillA {
+    height: 100%;
+    background-color: c.$brand-gold-primary;
+    border-radius: 100px;
+    transition: width 0.3s ease;
+}
+
+.barFillB {
+    height: 100%;
+    background-color: c.$badge-match-text;
+    border-radius: 100px;
+    transition: width 0.3s ease;
+}
+
+// Row 3: 3-Column Notes Comparison
+.notesComparisonGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 28px;
+
+    @media (max-width: 900px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.notesColCard,
+.notesColCardShared {
+    background-color: c.$bg-surface;
+    border-radius: 10px;
+    padding: 24px;
+}
+
+.notesColCard {
+    border: 1px solid c.$border-subtle;
+}
+
+.notesColCardShared {
+    border: 1.5px solid c.$brand-gold-primary;
+}
+
+.notesColEyebrow {
+    @include t.ui-section-eyebrow;
+    display: block;
+    color: c.$text-secondary;
+    letter-spacing: 0.08em;
+    font-size: 10px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.notesColEyebrowGold {
+    @include t.ui-section-eyebrow;
+    display: block;
+    color: c.$text-accent-gold;
+    letter-spacing: 0.08em;
+    font-size: 10px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.notesColSub {
+    color: c.$text-secondary;
+    font-size: 12.5px;
+    margin: 0 0 18px;
+}
+
+.notesChipsWrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.noteChip {
+    @include t.ui-badge-label;
+    border-radius: 100px;
+    padding: 6px 14px;
+    font-weight: 500;
+}
+
+.chipShared {
+    background-color: c.$brand-gold-soft;
+    color: c.$text-accent-gold;
+}
+
+.chipWoody {
+    background-color: c.$note-woody-bg;
+    color: c.$note-woody-text;
+}
+
+.chipCitrus {
+    background-color: c.$note-citrus-bg;
+    color: c.$note-citrus-text;
+}
+
+.chipFresh {
+    background-color: c.$note-fresh-bg;
+    color: c.$note-fresh-text;
+}
+
+.chipSpicy {
+    background-color: c.$note-spicy-bg;
+    color: c.$note-spicy-text;
+}
+
+// Row 4: Head-to-Head Performance & Atmosphere
+.performanceCard {
+    background-color: c.$bg-surface;
+    border: 1px solid c.$border-subtle;
+    border-radius: 10px;
+    padding: 32px 36px;
+    margin-bottom: 32px;
+}
+
+.perfTable {
+    display: flex;
+    flex-direction: column;
+    margin-top: 8px;
+    margin-bottom: 24px;
+}
+
+.perfRow {
+    display: grid;
+    grid-template-columns: 1fr 220px 1fr;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #f2eee6;
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    @media (max-width: 720px) {
+        grid-template-columns: 1fr;
+        gap: 6px;
+        text-align: center;
+    }
+}
+
+.perfValLeft {
+    color: c.$text-primary;
+    font-size: 13.5px;
+    font-weight: 500;
+}
+
+.perfCenterLabel {
+    @include t.ui-section-eyebrow;
+    color: c.$text-accent-gold;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+}
+
+.perfValRight {
+    color: c.$text-primary;
+    font-size: 13.5px;
+    font-weight: 500;
+}
+
+.quotesGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.quoteBox {
+    background-color: #faf8f4;
+    border-radius: 8px;
+    padding: 18px 22px;
+}
+
+.quoteText {
+    @include t.editorial-vibe-quote-italic;
+    color: c.$text-secondary;
+    font-size: 15px;
+    line-height: 1.55;
+    margin: 0;
+}
+
+// Bottom Row: Action Buttons
+.bottomActionsRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.openDossierBtnA {
+    @include t.ui-button-primary;
+    background-color: c.$brand-gold-soft;
+    color: c.$text-accent-gold;
+    border: none;
+    border-radius: 6px;
+    padding: 14px 28px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+        background-color: c.$brand-gold-soft-hover;
+    }
+}
+
+.openDossierBtnB {
+    @include t.ui-button-primary;
+    background-color: c.$brand-gold-primary;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 14px 28px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+        background-color: c.$brand-gold-hover;
+    }
+}
+

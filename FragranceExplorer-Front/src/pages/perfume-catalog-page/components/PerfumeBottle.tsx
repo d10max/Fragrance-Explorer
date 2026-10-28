@@ -24,13 +24,13 @@ export const PerfumeBottle = ({
             xmlns="http://www.w3.org/2000/svg"
             className={className}
         >
-            {/* Кришка */}
+            {/* cover */}
             <rect x="31" y="8" width="24" height="20" rx="1.5" fill={capColor} />
-            
-            {/* Дозатор/Шийка */}
+
+            {/* cover part */}
             <rect x="39" y="28" width="8" height="6" fill="#c59b27" />
 
-            {/* Корпус флакона */}
+            {/* body of bottle */}
             <rect
                 x="15"
                 y="34"
@@ -42,7 +42,7 @@ export const PerfumeBottle = ({
                 strokeWidth="1.5"
             />
 
-            {/* Рівень рідини */}
+            {/* level of liquid */}
             {liquidColor && (
                 <rect
                     x="17"
@@ -55,7 +55,7 @@ export const PerfumeBottle = ({
                 />
             )}
 
-            {/* Етикетка */}
+            {/* label */}
             <rect
                 x="21"
                 y="46"

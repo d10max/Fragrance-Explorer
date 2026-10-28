@@ -3,6 +3,8 @@ import { Layout } from '@/components/layout/layout/Layout';
 import { PerfumeFinderPage } from '@/pages/perfume-finder-page/PerfumeFinderPage';
 import { PerfumeCatalogPage } from '@/pages/perfume-catalog-page/PerfumeCatalogPage';
 import { PerfumeDetailPage } from '@/pages/perfume-detail-page/PerfumeDetailPage';
+import { PerfumeHousePage } from '@/pages/perfume-house-page/PerfumeHousePage';
+import { PerfumeComparePage } from '@/pages/perfume-compare-page/PerfumeComparePage';
 import { ROUTES } from './const/routes';
 
 export const App = () => {
@@ -28,6 +30,14 @@ export const App = () => {
                     <Route
                         path={ROUTES.PERFUME_DETAIL.PATH}
                         element={<PerfumeDetailPage />}
+                    />
+                    <Route
+                        path={ROUTES.PERFUME_HOUSE.PATH}
+                        element={<PerfumeHousePage />}
+                    />
+                    <Route
+                        path={ROUTES.PERFUME_COMPARE.PATH}
+                        element={<PerfumeComparePage />}
                     />
                 </Route>
             </Routes>

@@ -1,4 +1,8 @@
+import { useState } from 'react';
+
 interface PerfumeBottleProps {
+    imageUrl?: string;
+    alt?: string;
     capColor?: string;
     liquidColor?: string;
     liquidHeight?: number;
@@ -8,6 +12,8 @@ interface PerfumeBottleProps {
 }
 
 export const PerfumeBottle = ({
+    imageUrl,
+    alt = 'Perfume bottle',
     capColor = '#18181b',
     liquidColor = '#ebd788',
     liquidHeight = 44,
@@ -15,6 +21,30 @@ export const PerfumeBottle = ({
     height = 126,
     className,
 }: PerfumeBottleProps) => {
+    const [hasError, setHasError] = useState(false);
+
+    if (imageUrl && !hasError) {
+        return (
+            <img
+                src={imageUrl}
+                alt={alt}
+                width={width}
+                height={height}
+                className={className}
+                onError={() => setHasError(true)}
+                style={{
+                    maxWidth: '100%',
+                    maxHeight: '100%',
+                    width: typeof width === 'number' ? `${width}px` : width,
+                    height: typeof height === 'number' ? `${height}px` : height,
+                    objectFit: 'contain',
+                    filter: 'drop-shadow(0 4px 12px rgba(0, 0, 0, 0.08))',
+                }}
+                loading="lazy"
+            />
+        );
+    }
+
     return (
         <svg
             width={width}

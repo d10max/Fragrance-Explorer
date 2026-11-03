@@ -24,6 +24,7 @@ export interface PerfumeItem {
     rating: number;
     keyNotes: string[];
     storyAndVibe: string;
+    imageUrl?: string;
     capColor?: string;
     liquidColor?: string;
     liquidHeight?: number;
@@ -57,6 +58,7 @@ export const PERFUMES_COLLECTION: PerfumeItem[] = [
         keyNotes: ['Bergamot', 'Vetiver', 'Moroccan Cedar'],
         storyAndVibe:
             'Warm, romantic vetiver inspired by late-1920s Paris and African avant-garde.',
+        imageUrl: 'https://fimgs.net/mdimg/perfume/375x500.6458.jpg',
         capColor: '#18181b',
         liquidColor: '#eedb88',
         liquidHeight: 38,

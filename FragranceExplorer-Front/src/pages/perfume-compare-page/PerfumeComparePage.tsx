@@ -282,6 +282,8 @@ export const PerfumeComparePage = () => {
                 <div className={styles.scentCardA}>
                     <div className={styles.bottleBox}>
                         <PerfumeBottle
+                            imageUrl={scentA.imageUrl}
+                            alt={scentA.name}
                             capColor={scentA.capColor}
                             liquidColor={scentA.liquidColor}
                             liquidHeight={scentA.liquidHeight}
@@ -378,6 +380,8 @@ export const PerfumeComparePage = () => {
                 <div className={styles.scentCardB}>
                     <div className={styles.bottleBox}>
                         <PerfumeBottle
+                            imageUrl={scentB.imageUrl}
+                            alt={scentB.name}
                             capColor={scentB.capColor}
                             liquidColor={scentB.liquidColor}
                             liquidHeight={scentB.liquidHeight}

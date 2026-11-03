@@ -39,6 +39,8 @@ export const CompareTray = () => {
                 <div className={styles.slotFilled}>
                     <div className={styles.miniBottle}>
                         <PerfumeBottle
+                            imageUrl={firstPerfume.imageUrl}
+                            alt={firstPerfume.name}
                             capColor={firstPerfume.capColor}
                             liquidColor={firstPerfume.liquidColor}
                             liquidHeight={firstPerfume.liquidHeight}
@@ -65,6 +67,8 @@ export const CompareTray = () => {
                     <div className={styles.slotFilled}>
                         <div className={styles.miniBottle}>
                             <PerfumeBottle
+                                imageUrl={secondPerfume.imageUrl}
+                                alt={secondPerfume.name}
                                 capColor={secondPerfume.capColor}
                                 liquidColor={secondPerfume.liquidColor}
                                 liquidHeight={secondPerfume.liquidHeight}

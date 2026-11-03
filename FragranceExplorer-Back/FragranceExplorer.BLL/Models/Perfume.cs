@@ -12,17 +12,41 @@ public class Perfume
 
     public List<PerfumeAccord> Accords => _accords;
 
-    public int Id { get; private set; }
+    public int Id { get; private set; } 
 
-    public string Name { get; private set; }
+    public string Name { get; private set; } 
 
-    public string Brand { get; private set; }
+    public string Brand { get; private set; } 
 
-    public GenderCategory Gender { get; private set; } = GenderCategory.Unisex;
+    public GenderCategory Gender { get; private set; } = GenderCategory.Unisex; 
 
-    public string? ImageUrl { get; private set; }
+    public string? ImageUrl { get; private set; } 
 
-    public double Rating { get; private set; }
+    public double Rating { get; private set; } 
+
+    public int? Year {get; private set;}
+
+    public string? Slug {get; private set;}
+
+    public string? Description {get; private set;}
+
+    public int? People {get; private set;}
+
+    public List<string> Perfumers {get; private set; } = [];
+
+    public double? Longevity {get; private set;}
+
+    public double? Sillage { get; private set; }
+
+    public List<int> SimilarPerfumeIds {get; private set;} = [];
+
+    public string? BestSeasons {get; private set;}
+
+    public string? VibeQuote {get; private set;}
+
+    public string? Family {get; private set;}
+
+    public string? Concentration { get; private set; }
 
     public Perfume(
         int id,
@@ -30,7 +54,20 @@ public class Perfume
         string brand,
         GenderCategory gender,
         double rating,
-        string? imageUrl = null)
+        string? imageUrl = null,
+        int? year = null,
+        string? slug = null,
+        string? description = null,
+        int? people = null,
+        double? longevity = null,
+        double? sillage = null,
+        string? bestSeasons = null,
+        string? vibeQuote = null,
+        string? family = null,
+        string? concentration = null,
+        IEnumerable<string>? perfumers = null, 
+        IEnumerable<int>? similarPerfumeIds = null     
+        )
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(id);
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
@@ -50,12 +87,25 @@ public class Perfume
                 ErrorMessagesConstants.PerfumeRatingIsOutOfRange());
         }
 
+        if (perfumers != null) Perfumers.AddRange(perfumers);
+        if (similarPerfumeIds != null) SimilarPerfumeIds.AddRange(similarPerfumeIds);
+
         Id = id;
         Name = name;
         Brand = brand;
         Gender = gender;
         ImageUrl = imageUrl;
         Rating = rating;
+        Year = year;
+        Slug = slug;
+        Description = description;
+        People = people;
+        Longevity = longevity;
+        Sillage = sillage;
+        BestSeasons = bestSeasons;
+        VibeQuote = vibeQuote;
+        Family = family;
+        Concentration  = concentration;
     }
 
     public void AddNote(PerfumeNote note)
@@ -123,4 +173,9 @@ public class Perfume
     {
         return _notes.Any(n => n.NoteLayer == NoteLayer.Flat);
     }
+
+    public IEnumerable<string> KeyNotes => _notes
+    .OrderByDescending(n => n.Intensity)
+    .Take(3)
+    .Select(n => n.Name);
 }

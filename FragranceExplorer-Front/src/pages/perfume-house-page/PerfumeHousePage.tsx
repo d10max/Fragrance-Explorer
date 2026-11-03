@@ -241,6 +241,8 @@ export const PerfumeHousePage = () => {
 
                                     <div className={styles.bottleDisplay}>
                                         <PerfumeBottle
+                                            imageUrl={perfume.imageUrl}
+                                            alt={perfume.name}
                                             capColor={perfume.capColor}
                                             liquidColor={perfume.liquidColor}
                                             liquidHeight={perfume.liquidHeight}

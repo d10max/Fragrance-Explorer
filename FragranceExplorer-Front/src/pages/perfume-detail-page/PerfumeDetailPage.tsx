@@ -105,6 +105,8 @@ export const PerfumeDetailPage = () => {
                 <div className={styles.leftColumn}>
                     <div className={styles.bottleContainer}>
                         <PerfumeBottle
+                            imageUrl={perfume.imageUrl}
+                            alt={perfume.name}
                             capColor={perfume.capColor}
                             liquidColor={perfume.liquidColor}
                             liquidHeight={perfume.liquidHeight}
@@ -309,6 +311,8 @@ export const PerfumeDetailPage = () => {
                         >
                             <div className={styles.similarBottleWrapper}>
                                 <PerfumeBottle
+                                    imageUrl={simPerfume.imageUrl}
+                                    alt={simPerfume.name}
                                     capColor={simPerfume.capColor}
                                     liquidColor={simPerfume.liquidColor}
                                     liquidHeight={simPerfume.liquidHeight}

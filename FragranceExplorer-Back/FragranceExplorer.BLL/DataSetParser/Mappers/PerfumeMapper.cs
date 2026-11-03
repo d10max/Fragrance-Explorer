@@ -33,8 +33,20 @@ public class PerfumeMapper : IPerfumeMapper
         var rating = ResolveRating(dto.Rating?.Average);
         var name = NormalizeText(dto.Name, "Unknown Perfume");
         var brand = NormalizeText(dto.Brand, "Unknown Brand");
+        var year = dto.Year;
+        var slug = NormalizeText(dto.Slug, "unknown-slug");
+        var description = NormalizeText(dto.Description, "No description available");
+        var people = dto.People;
+        var perfumers = dto.Perfumers?.Select(p => NormalizeText(p.Name, "Unknown Perfumer")).ToList() ?? [];
+        var longevity = dto.Longevity?.Average;
+        var sillage = dto.Sillage?.Average;
+        var similarPerfumeIds = dto.Similar?.RemindsMeOf?.Select(s => s.Id).ToList() ?? [];
+        var bestSeasons = ResolveBestSeasons(dto.Seasons);
+        var vibeQuote = NormalizeText(dto.AiSummary?.Pros?.FirstOrDefault()?.Text, "A captivating fragrance");
+        var family = ResolveFamily(dto.Accords);
+        var concentration = ResolveConcentration(name, description);
 
-        var perfume = new Perfume(dto.Id, name, brand, gender, rating, imageUrl);
+        var perfume = new Perfume(dto.Id, name, brand, gender, rating, imageUrl, year, slug, description, people, longevity, sillage, bestSeasons, vibeQuote, family, concentration, perfumers, similarPerfumeIds);
 
         foreach (var accord in _accordMapper.MapMany(dto.Accords))
         {
@@ -79,5 +91,44 @@ public class PerfumeMapper : IPerfumeMapper
         }
 
         return Math.Clamp(rawRating.Value, ScentConstants.MinPerfumeRating, ScentConstants.MaxPerfumeRating);
+    }
+
+    private static string ResolveBestSeasons(RawSeasonsDto? seasons)
+    {
+        if (seasons is null) return "All seasons";
+
+        var votes = new (string Name, int Count)[]
+        {
+            ("Winter", seasons.Winter),
+            ("Spring", seasons.Spring),
+            ("Summer", seasons.Summer),
+            ("Autumn", seasons.Autumn)
+        };
+
+        var top = votes.OrderByDescending(v => v.Count).FirstOrDefault();
+        return top.Count > 0 ? top.Name : "All seasons";
+    }
+
+    private static string ResolveFamily(List<RawAccordDto>? accords)
+    {
+        if (accords == null || accords.Count == 0) return "Woody";
+
+        var topAccord = accords.OrderByDescending(a => a.Strength).FirstOrDefault()?.Name?.ToLowerInvariant() ?? "";
+
+        if (topAccord.Contains("citrus")) return "Citrus";
+        if (topAccord.Contains("spicy")) return "Spicy";
+        if (topAccord.Contains("fresh") || topAccord.Contains("green") || topAccord.Contains("aromatic")) return "Fresh";
+        if (topAccord.Contains("amber") || topAccord.Contains("floral") || topAccord.Contains("sweet") || topAccord.Contains("vanilla")) return "Amber";
+
+        return "Woody";
+    }
+
+    private static string ResolveConcentration(string name, string? description)
+    {
+        var text = $"{name} {description}".ToLowerInvariant();
+        if (text.Contains("extrait")) return "Extrait de Parfum";
+        if (text.Contains("eau de toilette") || text.Contains("edt")) return "Eau de Toilette";
+        if (text.Contains("cologne")) return "Eau de Cologne";
+        return "Eau de Parfum";
     }
 }

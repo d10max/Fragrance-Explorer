@@ -1,9 +1,9 @@
 ﻿using FragranceExplorer.BLL.Constants;
-using FragranceExplorer.BLL.Enums;
 using FragranceExplorer.BLL.Models;
 using FragranceExplorer.BLL.Repositories;
 using FragranceExplorer.BLL.Services;
 using FragranceExplorer.BLL.Strategies;
+using FragranceExplorer.DAL.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FragranceExplorer_Back.Controllers;

@@ -1,5 +1,5 @@
 ﻿using FragranceExplorer.BLL.Constants;
-using FragranceExplorer.BLL.Enums;
+using FragranceExplorer.DAL.Enums;
 
 namespace FragranceExplorer.BLL.Models;
 

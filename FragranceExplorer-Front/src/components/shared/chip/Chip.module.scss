@@ -1,4 +1,4 @@
-@use '/src//assets/mixins/typography.mixins.scss' as t;
+@use '/src/assets/mixins/typography.mixins.scss' as t;
 @use '/src/assets/variables/colors.scss' as c;
 
 .chip {
@@ -37,4 +37,14 @@
 .spicy {
     background-color: c.$note-spicy-bg;
     color: c.$note-spicy-text;
+}
+
+.gold {
+    background-color: c.$brand-gold-primary;
+    color: c.$text-primary;
+}
+
+.green {
+    background-color: c.$badge-match-bg;
+    color: c.$badge-match-text;
 }

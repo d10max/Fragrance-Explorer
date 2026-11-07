@@ -1,0 +1,52 @@
+@use 'assets/mixins/typography.mixins.scss' as t;
+@use 'assets/variables/colors.scss' as c;
+
+.item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid c.$border-subtle;
+
+    &:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+}
+
+.itemInfo {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.image {
+    width: 40px;
+    height: 48px;
+    min-width: 40px;
+    object-fit: contain;
+    background-color: c.$bg-bottle-display;
+    display: block;
+}
+
+.textInfo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+}
+
+.name {
+    @include t.ui-search-input;
+    color: c.$text-primary;
+}
+
+.brand {
+    @include t.ui-brand-micro-label;
+    color: c.$text-secondary;
+    text-transform: uppercase;
+}
+
+.addButton {
+    padding: 8px 16px;
+}

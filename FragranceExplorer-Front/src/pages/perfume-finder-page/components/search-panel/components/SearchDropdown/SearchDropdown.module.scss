@@ -1,0 +1,42 @@
+@use 'assets/mixins/typography.mixins.scss' as t;
+@use 'assets/variables/colors.scss' as c;
+
+.dropdown {
+    width: 100%;
+    background-color: c.$bg-surface;
+    border: 1px solid c.$border-subtle;
+    border-radius: 6px;
+    padding: 16px 24px;
+    box-sizing: border-box;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 12px;
+    border-bottom: 1px solid c.$border-subtle;
+}
+
+.title {
+    @include t.ui-section-eyebrow;
+    color: c.$text-secondary;
+    text-transform: uppercase;
+}
+
+.resultsCount {
+    @include t.ui-meta-caption;
+    color: c.$text-secondary;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+}
+
+.emptyState {
+    padding: 24px 0;
+    text-align: center;
+    color: c.$text-secondary;
+    @include t.ui-meta-caption;
+}

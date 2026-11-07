@@ -1,0 +1,58 @@
+@use '/src/assets/mixins/typography.mixins.scss' as t;
+@use '/src/assets/variables/colors.scss' as c;
+
+.section {
+    width: 100%;
+    margin: 0 auto 64px auto;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 32px;
+    padding-left: 16px;
+}
+
+.titleBlock {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-width: 580px;
+}
+
+.tag {
+    @include t.ui-section-eyebrow;
+    color: c.$text-accent-gold;
+    text-transform: uppercase;
+}
+
+.title {
+    @include t.heading-section-h2;
+    color: c.$text-primary;
+    margin: 0;
+}
+
+.subtitle {
+    @include t.body-profile-description;
+    color: c.$text-secondary;
+    margin: 0;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.emptySection {
+    width: 100%;
+    max-width: 960px;
+    margin: 0 auto 64px auto;
+    padding: 56px 24px;
+    background-color: c.$bg-surface;
+    border: 1px dashed c.$border-subtle;
+    border-radius: 4px;
+    text-align: center;
+    box-sizing: border-box;
+}

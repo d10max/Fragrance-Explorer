@@ -1,0 +1,88 @@
+@use '/src/assets/mixins/typography.mixins.scss' as t;
+@use '/src/assets/variables/colors.scss' as c;
+
+.card {
+    display: flex;
+    flex-direction: column;
+    background-color: c.$bg-surface;
+    border: 1px solid c.$border-subtle;
+    border-radius: 4px;
+    padding: 24px;
+    height: 100%;
+    box-sizing: border-box;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    }
+}
+
+.topBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.rank {
+    @include t.editorial-rank-number;
+    color: c.$text-accent-gold;
+}
+
+.mediaBox {
+    width: 100%;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 16px;
+    box-sizing: border-box;
+}
+
+.image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.mainInfo {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+}
+
+.brand {
+    @include t.ui-brand-micro-label;
+    color: c.$text-secondary;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.name {
+    @include t.title-card-perfume;
+    color: c.$text-primary;
+}
+
+.vibeBox {
+    margin-top: auto;
+    background-color: c.$bg-page;
+    padding: 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.vibeLabel {
+    @include t.ui-brand-micro-label;
+    color: c.$text-accent-gold;
+    text-transform: uppercase;
+}
+
+.vibeText {
+    @include t.editorial-vibe-quote-italic;
+    color: c.$text-secondary;
+    margin: 0;
+}

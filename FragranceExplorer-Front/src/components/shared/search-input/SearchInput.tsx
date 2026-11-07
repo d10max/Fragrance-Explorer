@@ -1,7 +1,7 @@
 import { CloseIcon } from '@/assets/icons/CloseIcon';
 import { SearchIcon } from '@/assets/icons/SearchIcon';
 import { Button } from '@/components/shared/button/Button';
-import styles from '@/components/shared/searchInput/SearchInput.module.scss';
+import styles from './SearchInput.module.scss';
 
 export type SearchInputProps = {
     value: string;
@@ -29,7 +29,6 @@ export const SearchInput = ({
     };
 
     const handleClear = () => {
-        onChange('');
         onClear?.();
     };
 
@@ -55,11 +54,7 @@ export const SearchInput = ({
                 placeholder={placeholder}
             />
             {showClearButton && (
-                <Button
-                    isIcon={true}
-                    onClick={handleClear}
-                    disabled={value.length === 0}
-                >
+                <Button isIcon={true} onClick={handleClear}>
                     <CloseIcon />
                 </Button>
             )}

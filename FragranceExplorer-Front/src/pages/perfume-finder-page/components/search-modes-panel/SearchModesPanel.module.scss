@@ -1,0 +1,111 @@
+@use '/src/assets/mixins/typography.mixins.scss' as t;
+@use '/src/assets/variables/colors.scss' as c;
+
+.wrapper {
+    width: 100%;
+    max-width: 1280px;
+    margin: 16px auto 64px auto;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 20px;
+}
+
+.title {
+    @include t.title-starter-kit;
+    color: c.$text-primary;
+    margin: 0;
+}
+
+.hint {
+    @include t.ui-meta-caption;
+    color: c.$text-secondary;
+    margin: 0;
+}
+
+.modesGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.modeCard {
+    background-color: c.$bg-surface;
+    border: 1px solid c.$brand-gold-soft;
+    border-radius: 4px;
+    padding: 16px 20px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    height: auto;
+    line-height: normal;
+
+    &:hover {
+        border-color: c.$brand-gold-hover;
+    }
+
+    &.active {
+        border: 1.5px solid c.$brand-gold-primary;
+    }
+}
+
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.radio {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1.5px solid c.$border-subtle;
+    display: inline-block;
+    position: relative;
+    transition: border-color 0.2s ease;
+}
+
+.radioChecked {
+    border-color: c.$brand-gold-hover;
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 6px;
+        height: 6px;
+        background-color: c.$brand-gold-hover;
+        border-radius: 50%;
+    }
+}
+
+.modeTitle {
+    @include t.editorial-rank-number;
+    color: c.$text-primary;
+    margin: 0 0 8px 0;
+}
+
+.modeDescription {
+    @include t.ui-meta-caption;
+    color: c.$text-secondary;
+    margin: 0;
+}
+
+.findButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    padding: 16px 32px;
+    cursor: pointer;
+}

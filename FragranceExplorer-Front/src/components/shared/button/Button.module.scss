@@ -11,6 +11,13 @@
     transition:
         background-color 0.2s,
         color 0.2s;
+
+    &:disabled {
+        background-color: c.$border-subtle;
+        color: c.$text-secondary-hover;
+        cursor: not-allowed;
+        box-shadow: none;
+    }
 }
 
 .primary {

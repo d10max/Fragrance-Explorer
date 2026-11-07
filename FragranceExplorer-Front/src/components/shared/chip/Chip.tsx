@@ -1,6 +1,8 @@
-import styles from '@/components/shared/noteChip/NoteChip.module.scss';
+import styles from './Chip.module.scss';
 
 export type NoteChipVariant =
+    | 'green'
+    | 'gold'
     | 'default'
     | 'woody'
     | 'fresh'
@@ -13,7 +15,7 @@ interface NoteChipProps {
     className?: string;
 }
 
-export const NoteChip = ({
+export const Chip = ({
     label,
     variant = 'default',
     className = '',

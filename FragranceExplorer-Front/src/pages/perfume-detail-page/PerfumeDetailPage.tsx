@@ -4,6 +4,7 @@ import { getPerfumeById, getSimilarPerfumes } from '@/pages/perfume-catalog-page
 import { getHouseByIdOrName } from '@/pages/perfume-catalog-page/houses.data';
 import { PerfumeBottle } from '@/pages/perfume-catalog-page/components/PerfumeBottle';
 import { useCompare } from '@/context/CompareContext';
+import { useProfile } from '@/context/ProfileContext';
 import { ROUTES } from '@/const/routes';
 import styles from './PerfumeDetailPage.module.scss';
 
@@ -11,11 +12,13 @@ export const PerfumeDetailPage = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const { compareIds, addToCompare } = useCompare();
+    const { isFavorite, toggleFavorite, requireAuth } = useProfile();
     const perfume = getPerfumeById(id);
     const house = getHouseByIdOrName(perfume.brand);
     const similarPerfumes = getSimilarPerfumes(perfume);
     const [isAddedToStarterKit, setIsAddedToStarterKit] = useState(false);
     const isInCompare = compareIds.includes(perfume.id);
+    const isFav = isFavorite(perfume.id);
 
     // Scroll to top of page when switching perfumes
     useEffect(() => {
@@ -279,6 +282,16 @@ export const PerfumeDetailPage = () => {
                             onClick={handleScrollToSimilar}
                         >
                             Find Similar Scents &rarr;
+                        </button>
+                        <button
+                            type="button"
+                            className={`${styles.compareBtn} ${
+                                isFav ? styles.compareBtnActive : ''
+                            }`}
+                            onClick={() => requireAuth(() => toggleFavorite(perfume.id))}
+                            title={isFav ? 'Remove from Wardrobe' : 'Save to Personal Wardrobe'}
+                        >
+                            {isFav ? '★ Saved in My Wardrobe' : '☆ Save to My Wardrobe'}
                         </button>
                         <button
                             type="button"

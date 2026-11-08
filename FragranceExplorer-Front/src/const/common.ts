@@ -3,6 +3,7 @@ export const COMMON_TEXT = {
     TABS: {
         PERFUME_FINDER: 'Finder',
         PERFUME_CATALOG: 'Perfume Encyclopedia',
+        PROFILE: 'Profile',
     },
     PLACEHOLDERS: {
         SEARCH_INPUT:

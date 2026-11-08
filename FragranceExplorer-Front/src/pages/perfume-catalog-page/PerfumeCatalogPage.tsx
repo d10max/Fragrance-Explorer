@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { PERFUMES_COLLECTION, CATALOG_FEATURED_IDS } from './perfumes.data';
 import { HOUSES_DATA } from './houses.data';
 import { PerfumeBottle } from './components/PerfumeBottle';
+import { useProfile } from '@/context/ProfileContext';
 import { ROUTES } from '@/const/routes';
 import styles from './PerfumeCatalogPage.module.scss';
 
@@ -27,6 +28,7 @@ export const PerfumeCatalogPage = () => {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const collectionRef = useRef<HTMLElement>(null);
+    const { isFavorite, toggleFavorite, requireAuth } = useProfile();
 
     const houseFromUrl = searchParams.get('house') || searchParams.get('brand');
 
@@ -367,9 +369,32 @@ export const PerfumeCatalogPage = () => {
                                         >
                                             {perfume.family}
                                         </span>
-                                        <span className={styles.ratingBadge}>
-                                            {perfume.rating} ★
-                                        </span>
+                                        <div className={styles.topRightActions}>
+                                            <span className={styles.ratingBadge}>
+                                                {perfume.rating} ★
+                                            </span>
+                                            <button
+                                                type="button"
+                                                className={`${styles.wardrobeStarBtn} ${
+                                                    isFavorite(perfume.id)
+                                                        ? styles.wardrobeStarActive
+                                                        : ''
+                                                }`}
+                                                title={
+                                                    isFavorite(perfume.id)
+                                                        ? 'Saved in Wardrobe'
+                                                        : 'Save to My Wardrobe'
+                                                }
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    requireAuth(() =>
+                                                        toggleFavorite(perfume.id)
+                                                    );
+                                                }}
+                                            >
+                                                {isFavorite(perfume.id) ? '★' : '☆'}
+                                            </button>
+                                        </div>
                                     </div>
 
                                     {/* hestory of perfume bottle */}

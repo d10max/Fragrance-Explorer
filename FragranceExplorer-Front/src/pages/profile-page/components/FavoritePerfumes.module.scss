@@ -1,0 +1,402 @@
+@use '/src/assets/variables/colors.scss' as c;
+@use '/src/assets/mixins/typography.mixins.scss' as t;
+
+.favoritesSection {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.topBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.filterGroup {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.familyChips {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.filterChip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 9999px;
+    background-color: c.$bg-surface;
+    border: 1px solid c.$border-subtle;
+    color: c.$text-secondary;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+        border-color: c.$brand-gold-primary;
+        color: c.$text-primary;
+    }
+}
+
+.filterChipActive {
+    background-color: c.$brand-gold-soft;
+    border-color: c.$brand-gold-primary;
+    color: c.$text-primary;
+    font-weight: 600;
+
+    .chipCount {
+        background-color: c.$brand-gold-primary;
+        color: #ffffff;
+    }
+}
+
+.chipCount {
+    background-color: c.$bg-page;
+    border-radius: 9999px;
+    padding: 1px 7px;
+    font-size: 11px;
+    color: c.$text-secondary;
+    transition: all 0.2s ease;
+}
+
+.searchBox {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-width: 280px;
+
+    @media (max-width: 600px) {
+        width: 100%;
+    }
+}
+
+.searchInput {
+    @include t.ui-search-input;
+    width: 100%;
+    padding: 9px 36px 9px 16px;
+    background-color: c.$bg-surface;
+    border: 1px solid c.$border-subtle;
+    border-radius: 8px;
+    color: c.$text-primary;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s ease;
+
+    &:focus {
+        border-color: c.$brand-gold-primary;
+        box-shadow: 0 0 0 2px rgba(197, 155, 39, 0.15);
+    }
+
+    &::placeholder {
+        color: c.$text-secondary;
+    }
+}
+
+.clearBtn {
+    position: absolute;
+    right: 12px;
+    background: transparent;
+    border: none;
+    font-size: 18px;
+    color: c.$text-secondary;
+    cursor: pointer;
+
+    &:hover {
+        color: c.$text-primary;
+    }
+}
+
+// Perfumes Grid
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+.card {
+    background-color: c.$bg-surface;
+    border: 1px solid c.$border-subtle;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+
+    &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.05);
+        border-color: rgba(197, 155, 39, 0.4);
+    }
+}
+
+.cardTop {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.topActions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.familyBadge {
+    @include t.ui-badge-label;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.chipWoody {
+    background-color: c.$note-woody-bg;
+    color: c.$note-woody-text;
+}
+
+.chipCitrus {
+    background-color: c.$note-citrus-bg;
+    color: c.$note-citrus-text;
+}
+
+.chipFresh {
+    background-color: c.$note-fresh-bg;
+    color: c.$note-fresh-text;
+}
+
+.chipSpicy {
+    background-color: c.$note-spicy-bg;
+    color: c.$note-spicy-text;
+}
+
+.ratingBadge {
+    font-size: 12px;
+    font-weight: 600;
+    color: c.$brand-gold-primary;
+    background-color: c.$bg-page;
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid c.$border-subtle;
+}
+
+.removeBtn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #e06c75;
+    padding: 4px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background-color: #fee2e2;
+        transform: scale(1.1);
+    }
+}
+
+.bottleBox {
+    background-color: c.$bg-bottle-display;
+    border-radius: 8px;
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    overflow: hidden;
+}
+
+.cardBrand {
+    @include t.ui-brand-micro-label;
+    color: c.$text-secondary;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-size: 11px;
+    margin-bottom: 4px;
+}
+
+.cardName {
+    @include t.title-card-perfume;
+    font-size: 18px;
+    color: c.$text-primary;
+    margin-bottom: 4px;
+}
+
+.cardMeta {
+    @include t.ui-meta-caption;
+    color: c.$text-secondary;
+    font-size: 12px;
+    margin-bottom: 14px;
+}
+
+.notesBlock {
+    margin-bottom: 14px;
+}
+
+.notesLabel {
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    color: c.$text-secondary;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.notesChips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.noteChip {
+    font-size: 11px;
+    color: c.$text-primary;
+    background-color: c.$bg-page;
+    border: 1px solid c.$border-subtle;
+    border-radius: 4px;
+    padding: 3px 8px;
+}
+
+.storyBox {
+    background-color: c.$bg-page;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 16px;
+    flex: 1;
+}
+
+.storyQuote {
+    @include t.editorial-vibe-quote-italic;
+    font-size: 12px;
+    color: c.$text-secondary;
+    line-height: 1.45;
+    margin: 0;
+}
+
+.cardFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid c.$border-subtle;
+    gap: 12px;
+}
+
+.detailLink {
+    font-size: 12px;
+    color: c.$text-accent-gold;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color 0.2s ease;
+
+    &:hover {
+        color: c.$brand-gold-primary;
+        text-decoration: underline;
+    }
+}
+
+.compareBtn {
+    @include t.ui-button-secondary;
+    padding: 6px 12px;
+    font-size: 11px;
+    border-radius: 6px;
+    background-color: c.$bg-surface;
+    border: 1px solid c.$border-subtle;
+    color: c.$text-primary;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+        border-color: c.$brand-gold-primary;
+        background-color: c.$brand-gold-soft;
+    }
+}
+
+.compareBtnActive {
+    background-color: c.$brand-gold-primary;
+    color: #ffffff;
+    border-color: c.$brand-gold-primary;
+}
+
+// Empty State
+.emptyState {
+    background-color: c.$bg-surface;
+    border: 1px dashed c.$border-subtle;
+    border-radius: 12px;
+    padding: 60px 24px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.emptyIcon {
+    font-size: 32px;
+    color: c.$brand-gold-primary;
+    margin-bottom: 8px;
+}
+
+.emptyTitle {
+    @include t.heading-section-h2;
+    font-size: 24px;
+    color: c.$text-primary;
+}
+
+.emptyText {
+    @include t.body-profile-description;
+    color: c.$text-secondary;
+    max-width: 480px;
+    margin-bottom: 12px;
+}
+
+.exploreBtn {
+    @include t.ui-button-primary;
+    background-color: c.$brand-gold-primary;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 24px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background-color: c.$brand-gold-hover;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(197, 155, 39, 0.25);
+    }
+}
+
+.resetBtn {
+    @include t.ui-button-secondary;
+    background-color: transparent;
+    border: 1px solid c.$border-subtle;
+    border-radius: 6px;
+    padding: 8px 18px;
+    font-size: 13px;
+    color: c.$text-secondary;
+    cursor: pointer;
+
+    &:hover {
+        border-color: c.$brand-gold-primary;
+        color: c.$text-primary;
+    }
+}

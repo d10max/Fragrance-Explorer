@@ -12,11 +12,26 @@
     position: sticky;
     top: 0;
     z-index: 100;
+
+    @media (max-width: 1024px) {
+        padding: 0 32px;
+        min-height: 84px;
+    }
+
+    @media (max-width: 768px) {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        padding: 14px 20px;
+        min-height: auto;
+        gap: 12px;
+    }
 }
 
 .logo {
     justify-self: start;
     color: c.$text-primary;
+    text-decoration: none;
     @include t.title-card-perfume;
 }
 
@@ -25,6 +40,15 @@
     display: flex;
     align-items: center;
     gap: 32px;
+
+    @media (max-width: 768px) {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        gap: 20px;
+        padding-top: 8px;
+        border-top: 1px solid rgba(229, 224, 215, 0.4);
+    }
 }
 
 .link {
@@ -47,6 +71,10 @@
         transform: scaleX(0.7);
         transform-origin: center;
         transition: opacity 0.25s ease, transform 0.25s ease, background-color 0.25s ease;
+
+        @media (max-width: 768px) {
+            bottom: -10px;
+        }
     }
 
     &:hover {
@@ -76,4 +104,119 @@
             background-color: c.$brand-gold-primary;
         }
     }
+}
+
+.actions {
+    justify-self: end;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    @media (max-width: 768px) {
+        order: 2;
+    }
+}
+
+.profileButton {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 14px 5px 6px;
+    background-color: c.$bg-surface;
+    border: 1px solid c.$border-subtle;
+    border-radius: 9999px;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+
+    &:hover {
+        border-color: c.$brand-gold-primary;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 14px rgba(197, 155, 39, 0.16);
+    }
+}
+
+.profileButtonActive {
+    border-color: c.$brand-gold-primary;
+    background-color: c.$brand-gold-soft;
+    box-shadow: 0 0 0 1px c.$brand-gold-primary;
+
+    .profileRoleLabel {
+        color: c.$text-accent-gold;
+        font-weight: 600;
+    }
+}
+
+.avatarPill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.avatarBubble {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #18181b 0%, #2f424b 100%);
+    border: 1.5px solid c.$brand-gold-primary;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+}
+
+.profileTextGroup {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+
+    @media (max-width: 520px) {
+        display: none;
+    }
+}
+
+.profileUserName {
+    font-size: 13px;
+    font-weight: 500;
+    color: c.$text-primary;
+    line-height: 1.2;
+}
+
+.profileRoleLabel {
+    font-size: 10px;
+    font-weight: 500;
+    color: c.$text-secondary;
+    letter-spacing: 0.03em;
+    line-height: 1.2;
+}
+
+.guestJoinButton {
+    @include t.ui-button-primary;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: c.$bg-surface;
+    border: 1px solid c.$brand-gold-primary;
+    color: c.$brand-gold-hover;
+    border-radius: 9999px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(197, 155, 39, 0.08);
+
+    &:hover {
+        background-color: c.$brand-gold-primary;
+        color: #ffffff;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(197, 155, 39, 0.22);
+    }
+}
+
+.guestIcon {
+    stroke: currentColor;
+    flex-shrink: 0;
 }

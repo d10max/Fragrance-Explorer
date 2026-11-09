@@ -435,6 +435,36 @@
     gap: 3px;
 }
 
+.topRightActions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.wardrobeStarBtn {
+    background: transparent;
+    border: 1px solid c.$border-subtle;
+    border-radius: 6px;
+    padding: 2px 7px;
+    font-size: 13px;
+    color: c.$text-secondary;
+    cursor: pointer;
+    line-height: 1.2;
+    transition: all 0.2s ease;
+
+    &:hover {
+        border-color: c.$brand-gold-primary;
+        color: c.$brand-gold-primary;
+        background-color: c.$brand-gold-soft;
+    }
+}
+
+.wardrobeStarActive {
+    background-color: c.$brand-gold-soft;
+    border-color: c.$brand-gold-primary;
+    color: c.$brand-gold-primary;
+}
+
 .bottleDisplay {
     background-color: c.$bg-bottle-display;
     border-radius: 6px;

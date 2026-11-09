@@ -20,4 +20,8 @@ export const ROUTES = {
         FULL: '/compare',
         PATH: 'compare',
     },
+    PROFILE: {
+        FULL: '/profile',
+        PATH: 'profile',
+    },
 };

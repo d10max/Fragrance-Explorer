@@ -1,0 +1,446 @@
+@use '/src/assets/variables/colors.scss' as c;
+@use '/src/assets/mixins/typography.mixins.scss' as t;
+
+.chartsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+// Persona Banner
+.personaBanner {
+    background-color: c.$bg-surface;
+    border: 1px solid c.$border-subtle;
+    border-radius: 12px;
+    padding: 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 32px;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background-color: c.$brand-gold-primary;
+    }
+
+    @media (max-width: 900px) {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 24px;
+    }
+}
+
+.personaContent {
+    flex: 1;
+}
+
+.personaBadge {
+    @include t.ui-section-eyebrow;
+    display: inline-block;
+    color: c.$brand-gold-primary;
+    letter-spacing: 0.12em;
+    font-size: 11px;
+    margin-bottom: 8px;
+}
+
+.personaTitle {
+    @include t.heading-section-h2;
+    color: c.$text-primary;
+    margin-bottom: 12px;
+    font-size: 28px;
+}
+
+.personaDesc {
+    @include t.body-profile-description;
+    color: c.$text-secondary;
+    max-width: 600px;
+    line-height: 1.6;
+}
+
+.personaTags {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 240px;
+
+    @media (max-width: 900px) {
+        width: 100%;
+    }
+}
+
+.personaPill {
+    background-color: c.$bg-page;
+    border: 1px solid c.$border-subtle;
+    border-radius: 8px;
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.pillLabel {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: c.$text-secondary;
+    letter-spacing: 0.05em;
+}
+
+.pillVal {
+    font-size: 12px;
+    font-weight: 600;
+    color: c.$text-primary;
+    text-align: right;
+}
+
+// Diagrams Grid
+.diagramsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+
+    @media (max-width: 1024px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.diagramCard {
+    background-color: c.$bg-surface;
+    border: 1px solid c.$border-subtle;
+    border-radius: 12px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+}
+
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    gap: 12px;
+}
+
+.eyebrow {
+    @include t.ui-section-eyebrow;
+    display: block;
+    color: c.$brand-gold-primary;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+}
+
+.cardTitle {
+    @include t.title-card-perfume;
+    font-size: 22px;
+    color: c.$text-primary;
+}
+
+.metaHint {
+    font-size: 11px;
+    color: c.$text-secondary;
+    font-style: italic;
+    white-space: nowrap;
+}
+
+// Donut Chart Layout
+.donutLayout {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: 24px;
+    flex: 1;
+
+    @media (max-width: 580px) {
+        flex-direction: column;
+    }
+}
+
+.donutSvgWrapper {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.donutSvg {
+    overflow: visible;
+}
+
+.donutArc {
+    cursor: pointer;
+    transition: stroke-width 0.2s ease, opacity 0.2s ease;
+}
+
+.donutCenterPct {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 32px;
+    font-weight: 600;
+    fill: c.$text-primary;
+}
+
+.donutCenterLabel {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    fill: c.$brand-gold-primary;
+}
+
+.donutCenterSub {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    fill: c.$text-secondary;
+}
+
+.familyLegend {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+}
+
+.legendItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover,
+    &.legendItemActive {
+        background-color: c.$bg-page;
+        border-color: c.$border-subtle;
+        transform: translateX(3px);
+    }
+}
+
+.legendColorLine {
+    width: 4px;
+    height: 36px;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.legendDetails {
+    flex: 1;
+}
+
+.legendTop {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2px;
+}
+
+.legendName {
+    font-size: 14px;
+    font-weight: 600;
+    color: c.$text-primary;
+}
+
+.legendPct {
+    font-size: 13px;
+    font-weight: 600;
+    color: c.$text-accent-gold;
+}
+
+.legendDesc {
+    font-size: 11px;
+    color: c.$text-secondary;
+    line-height: 1.35;
+}
+
+// Radar Chart Layout
+.radarLayout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    flex: 1;
+}
+
+.radarSvg {
+    max-width: 100%;
+    height: auto;
+    overflow: visible;
+}
+
+.radarPolygon {
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 2px 6px rgba(197, 155, 39, 0.15));
+}
+
+.radarPoint {
+    cursor: pointer;
+    transition: r 0.2s ease, fill 0.2s ease, stroke-width 0.2s ease;
+}
+
+.radarLabel {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    fill: c.$text-secondary;
+    transition: fill 0.2s ease, font-weight 0.2s ease;
+    user-select: none;
+}
+
+.radarLabelHovered {
+    fill: c.$text-primary;
+    font-weight: 600;
+}
+
+.radarSummary {
+    width: 100%;
+}
+
+.radarInsight {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background-color: c.$brand-gold-soft;
+    border: 1px solid rgba(197, 155, 39, 0.25);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: c.$text-primary;
+}
+
+.insightIcon {
+    color: c.$brand-gold-primary;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.highlightText {
+    color: c.$brand-gold-hover;
+    font-weight: 600;
+}
+
+// Top Notes Section
+.notesSection {
+    background-color: c.$bg-surface;
+    border: 1px solid c.$border-subtle;
+    border-radius: 12px;
+    padding: 28px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+}
+
+.notesGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px 28px;
+
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.noteRow {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+
+    &:hover,
+    &.noteRowHover {
+        background-color: c.$bg-page;
+        border-color: c.$border-subtle;
+    }
+}
+
+.noteRank {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 20px;
+    color: c.$text-secondary;
+    min-width: 28px;
+}
+
+.noteMain {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.noteMeta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.noteTitleGroup {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.noteName {
+    font-size: 14px;
+    font-weight: 600;
+    color: c.$text-primary;
+}
+
+.noteCategory {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background-color: c.$bg-page;
+    border: 1px solid c.$border-subtle;
+    border-radius: 4px;
+    padding: 2px 6px;
+    color: c.$text-secondary;
+}
+
+.noteStats {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.noteCount {
+    font-size: 11px;
+    color: c.$text-secondary;
+
+    @media (max-width: 480px) {
+        display: none;
+    }
+}
+
+.notePercentage {
+    font-size: 12px;
+    font-weight: 600;
+    color: c.$brand-gold-primary;
+}
+
+.progressTrack {
+    width: 100%;
+    height: 6px;
+    background-color: #eeebe4;
+    border-radius: 9999px;
+    overflow: hidden;
+}
+
+.progressBar {
+    height: 100%;
+    background: linear-gradient(90deg, c.$brand-gold-primary 0%, c.$brand-gold-hover 100%);
+    border-radius: 9999px;
+    transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}

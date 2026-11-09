@@ -1,0 +1,249 @@
+@use '/src/assets/variables/colors.scss' as c;
+@use '/src/assets/mixins/typography.mixins.scss' as t;
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(24, 24, 27, 0.48);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal {
+    background-color: c.$bg-surface;
+    border: 1px solid c.$border-subtle;
+    border-radius: 14px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.16);
+    animation: authSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+}
+
+@keyframes authSlide {
+    from {
+        opacity: 0;
+        transform: translateY(16px) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modalHeader {
+    padding: 24px 28px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.eyebrow {
+    @include t.ui-section-eyebrow;
+    display: block;
+    color: c.$brand-gold-primary;
+    font-size: 10px;
+    margin-bottom: 4px;
+    letter-spacing: 0.12em;
+}
+
+.title {
+    @include t.heading-section-h2;
+    font-size: 22px;
+    color: c.$text-primary;
+    margin: 0;
+}
+
+.closeBtn {
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    color: c.$text-secondary;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 4px;
+
+    &:hover {
+        color: c.$text-primary;
+    }
+}
+
+.tabBar {
+    display: flex;
+    padding: 0 28px;
+    border-bottom: 1px solid c.$border-subtle;
+    gap: 16px;
+}
+
+.tabBtn {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 10px 4px;
+    font-size: 13px;
+    font-weight: 500;
+    color: c.$text-secondary;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+        color: c.$text-primary;
+    }
+}
+
+.tabBtnActive {
+    color: c.$text-primary;
+    font-weight: 600;
+    border-bottom-color: c.$brand-gold-primary;
+}
+
+.errorAlert {
+    margin: 16px 28px 0;
+    padding: 10px 14px;
+    background-color: #fee2e2;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 6px;
+    color: #991b1b;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.form {
+    padding: 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.fieldGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.labelRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.label {
+    font-size: 12px;
+    font-weight: 600;
+    color: c.$text-primary;
+}
+
+.togglePwdBtn {
+    background: transparent;
+    border: none;
+    font-size: 11px;
+    font-weight: 500;
+    color: c.$brand-gold-hover;
+    cursor: pointer;
+    padding: 0;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+.input,
+.select {
+    width: 100%;
+    padding: 10px 14px;
+    background-color: c.$bg-page;
+    border: 1px solid c.$border-subtle;
+    border-radius: 6px;
+    font-size: 13px;
+    color: c.$text-primary;
+    outline: none;
+    transition: all 0.2s ease;
+    font-family: inherit;
+
+    &:focus {
+        border-color: c.$brand-gold-primary;
+        background-color: #ffffff;
+        box-shadow: 0 0 0 2px rgba(197, 155, 39, 0.15);
+    }
+}
+
+.submitBtn {
+    @include t.ui-button-primary;
+    margin-top: 8px;
+    background-color: c.$brand-gold-primary;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background-color: c.$brand-gold-hover;
+        box-shadow: 0 4px 14px rgba(197, 155, 39, 0.25);
+    }
+}
+
+.demoBar {
+    padding: 16px 28px;
+    background-color: c.$brand-gold-soft;
+    border-top: 1px solid rgba(197, 155, 39, 0.25);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+
+    @media (max-width: 480px) {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+.demoInfo {
+    flex: 1;
+}
+
+.demoLabel {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: c.$text-accent-gold;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.demoHint {
+    font-size: 11px;
+    color: c.$text-secondary;
+    margin: 0;
+    line-height: 1.35;
+}
+
+.demoBtn {
+    @include t.ui-button-secondary;
+    padding: 7px 14px;
+    font-size: 11px;
+    border-radius: 6px;
+    background-color: c.$bg-surface;
+    border: 1px solid rgba(197, 155, 39, 0.4);
+    color: c.$brand-gold-hover;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background-color: c.$brand-gold-primary;
+        color: #ffffff;
+        border-color: c.$brand-gold-primary;
+    }
+}

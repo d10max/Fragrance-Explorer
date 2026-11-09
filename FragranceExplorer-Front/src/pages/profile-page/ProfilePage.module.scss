@@ -1,0 +1,731 @@
+@use '/src/assets/variables/colors.scss' as c;
+@use '/src/assets/mixins/typography.mixins.scss' as t;
+
+.container {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 48px 24px 100px;
+    background-color: c.$bg-page;
+}
+
+// Profile Header
+.profileHeader {
+    background-color: c.$bg-surface;
+    border: 1px solid c.$border-subtle;
+    border-radius: 16px;
+    padding: 36px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 32px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 24px;
+    }
+}
+
+.headerMain {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+
+    @media (max-width: 640px) {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+}
+
+.avatarWrapper {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.avatarCircle {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #18181b 0%, #2f424b 100%);
+    border: 2px solid c.$brand-gold-primary;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 32px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    box-shadow: 0 8px 24px rgba(197, 155, 39, 0.18);
+}
+
+.memberStatusDot {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: #22c55e;
+    border: 2.5px solid #ffffff;
+}
+
+.profileInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.nameRow {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.userName {
+    @include t.heading-hero-h1;
+    font-size: 36px;
+    color: c.$text-primary;
+    margin: 0;
+    line-height: 1.1;
+}
+
+.levelBadge {
+    @include t.ui-badge-label;
+    background-color: c.$brand-gold-soft;
+    color: c.$text-accent-gold;
+    border: 1px solid rgba(197, 155, 39, 0.35);
+    padding: 3px 10px;
+    border-radius: 9999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.userEmail {
+    @include t.ui-meta-caption;
+    color: c.$text-secondary;
+    font-size: 13px;
+    margin: 0;
+}
+
+.userBio {
+    @include t.body-profile-description;
+    color: c.$text-secondary;
+    max-width: 620px;
+    margin-top: 4px;
+    line-height: 1.5;
+}
+
+.headerActions {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.editBtn {
+    @include t.ui-button-secondary;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background-color: c.$bg-page;
+    border: 1px solid c.$border-subtle;
+    border-radius: 8px;
+    color: c.$text-primary;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+        border-color: c.$brand-gold-primary;
+        background-color: c.$brand-gold-soft;
+        transform: translateY(-1px);
+    }
+}
+
+.logoutBtn {
+    @include t.ui-button-secondary;
+    padding: 10px 16px;
+    background-color: transparent;
+    border: 1px solid c.$border-subtle;
+    border-radius: 8px;
+    color: c.$text-secondary;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+        border-color: #e06c75;
+        color: #e06c75;
+        background-color: #fee2e2;
+    }
+}
+
+// Stats Row
+.statsRow {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+
+    @media (max-width: 900px) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (max-width: 520px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.statCard {
+    background-color: c.$bg-surface;
+    border: 1px solid c.$border-subtle;
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    &:hover {
+        border-color: c.$brand-gold-primary;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.03);
+    }
+}
+
+.statEyebrow {
+    @include t.ui-section-eyebrow;
+    font-size: 10px;
+    color: c.$text-secondary;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+}
+
+.statValue {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 28px;
+    font-weight: 600;
+    color: c.$text-primary;
+    margin-bottom: 6px;
+    line-height: 1.1;
+}
+
+.statValueSmall {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: c.$text-primary;
+    margin-bottom: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.statUnit {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: c.$text-accent-gold;
+}
+
+.statSub {
+    font-size: 11px;
+    color: c.$text-secondary;
+}
+
+// Tab Navigation
+.tabNavigation {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid c.$border-subtle;
+    margin-bottom: 32px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+}
+
+.navTab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: c.$text-secondary;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+
+    &:hover {
+        color: c.$text-primary;
+    }
+}
+
+.navTabActive {
+    color: c.$text-primary;
+    font-weight: 600;
+    border-bottom-color: c.$brand-gold-primary;
+
+    .tabSvg {
+        stroke: c.$brand-gold-primary;
+        opacity: 1;
+    }
+}
+
+.tabSvg {
+    stroke: c.$text-secondary;
+    opacity: 0.8;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.tabBody {
+    margin-bottom: 48px;
+}
+
+// History Section
+.historySection {
+    background-color: c.$bg-surface;
+    border: 1px solid c.$border-subtle;
+    border-radius: 12px;
+    padding: 32px;
+}
+
+.historyHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+}
+
+.eyebrow {
+    @include t.ui-section-eyebrow;
+    display: block;
+    color: c.$brand-gold-primary;
+    font-size: 11px;
+    margin-bottom: 4px;
+}
+
+.historyTitle {
+    @include t.title-card-perfume;
+    font-size: 24px;
+    color: c.$text-primary;
+    margin: 0;
+}
+
+.clearHistoryBtn {
+    background: transparent;
+    border: 1px solid c.$border-subtle;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 12px;
+    color: c.$text-secondary;
+    cursor: pointer;
+
+    &:hover {
+        border-color: #e06c75;
+        color: #e06c75;
+    }
+}
+
+.emptyHistory {
+    text-align: center;
+    padding: 48px 16px;
+    color: c.$text-secondary;
+}
+
+.historyList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.historyItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background-color: c.$bg-page;
+    border: 1px solid c.$border-subtle;
+    border-radius: 8px;
+    gap: 16px;
+
+    @media (max-width: 600px) {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+.historyLeft {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.historyMode {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    background-color: c.$brand-gold-soft;
+    color: c.$text-accent-gold;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.historyQuery {
+    font-size: 14px;
+    font-weight: 600;
+    color: c.$text-primary;
+    margin: 0 0 4px;
+}
+
+.historyMeta {
+    font-size: 12px;
+    color: c.$text-secondary;
+}
+
+.relaunchBtn {
+    @include t.ui-button-secondary;
+    padding: 7px 14px;
+    font-size: 12px;
+    background-color: c.$bg-surface;
+    border: 1px solid c.$border-subtle;
+    border-radius: 6px;
+    color: c.$text-primary;
+    cursor: pointer;
+    white-space: nowrap;
+
+    &:hover {
+        border-color: c.$brand-gold-primary;
+        color: c.$brand-gold-hover;
+    }
+}
+
+// Curated Recommendation Footnote
+.curatedRecommendation {
+    background-color: c.$brand-gold-soft;
+    border: 1px solid rgba(197, 155, 39, 0.35);
+    border-radius: 12px;
+    padding: 32px 36px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 28px;
+
+    @media (max-width: 800px) {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+.curatedContent {
+    flex: 1;
+}
+
+.curatedTitle {
+    @include t.heading-section-h2;
+    font-size: 24px;
+    color: c.$text-primary;
+    margin: 0 0 8px;
+}
+
+.curatedDesc {
+    @include t.body-profile-description;
+    color: c.$text-secondary;
+    margin: 0;
+    max-width: 680px;
+    line-height: 1.5;
+}
+
+.curatedBtn {
+    @include t.ui-button-primary;
+    background-color: c.$brand-gold-primary;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 24px;
+    font-size: 13px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background-color: c.$brand-gold-hover;
+        box-shadow: 0 4px 14px rgba(197, 155, 39, 0.25);
+    }
+}
+
+.exploreBtn {
+    @include t.ui-button-primary;
+    background-color: c.$brand-gold-primary;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-size: 13px;
+    margin-top: 12px;
+    cursor: pointer;
+}
+
+// Guest Mode Styles
+.guestHero {
+    background-color: c.$bg-surface;
+    border: 1px solid c.$border-subtle;
+    border-radius: 16px;
+    padding: 48px 40px;
+    text-align: center;
+    max-width: 860px;
+    margin: 0 auto 36px;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.02);
+}
+
+.guestTitle {
+    @include t.heading-hero-h1;
+    font-size: 38px;
+    color: c.$text-primary;
+    margin: 12px 0 16px;
+}
+
+.guestSubtitle {
+    @include t.body-hero-description;
+    color: c.$text-secondary;
+    max-width: 620px;
+    margin: 0 auto 32px;
+    line-height: 1.6;
+}
+
+.guestActions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.guestPrimaryBtn {
+    @include t.ui-button-primary;
+    background-color: c.$brand-gold-primary;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 28px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+
+    &:hover {
+        background-color: c.$brand-gold-hover;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 16px rgba(197, 155, 39, 0.28);
+    }
+}
+
+.guestSecondaryBtn {
+    @include t.ui-button-secondary;
+    background-color: c.$bg-page;
+    border: 1px solid c.$border-subtle;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 13px;
+    color: c.$text-primary;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+        border-color: c.$brand-gold-primary;
+        color: c.$brand-gold-hover;
+    }
+}
+
+.guestFeaturesGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 40px;
+
+    @media (max-width: 840px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.guestFeatureCard {
+    background-color: c.$bg-surface;
+    border: 1px solid c.$border-subtle;
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.02);
+}
+
+.featureIcon {
+    font-size: 18px;
+    color: c.$brand-gold-primary;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background-color: c.$brand-gold-soft;
+}
+
+.featureTitle {
+    @include t.title-card-perfume;
+    font-size: 18px;
+    color: c.$text-primary;
+    margin: 0;
+}
+
+.featureDesc {
+    @include t.ui-meta-caption;
+    color: c.$text-secondary;
+    line-height: 1.5;
+    margin: 0;
+}
+
+// Teaser with blur
+.guestTeaserWrapper {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid c.$border-subtle;
+}
+
+.teaserOverlay {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    background: rgba(250, 248, 245, 0.85);
+    backdrop-filter: blur(6px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    text-align: center;
+}
+
+.teaserBadge {
+    @include t.ui-section-eyebrow;
+    color: c.$brand-gold-primary;
+    letter-spacing: 0.12em;
+    font-size: 11px;
+    margin-bottom: 8px;
+}
+
+.teaserTitle {
+    @include t.heading-section-h2;
+    font-size: 26px;
+    color: c.$text-primary;
+    margin: 0 0 8px;
+}
+
+.teaserText {
+    @include t.body-profile-description;
+    color: c.$text-secondary;
+    max-width: 480px;
+    margin: 0 0 20px;
+}
+
+.teaserBtn {
+    @include t.ui-button-primary;
+    background-color: c.$brand-gold-primary;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 26px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background-color: c.$brand-gold-hover;
+        box-shadow: 0 4px 12px rgba(197, 155, 39, 0.25);
+    }
+}
+
+.teaserBlur {
+    pointer-events: none;
+    user-select: none;
+    filter: blur(3px) grayscale(15%);
+    opacity: 0.65;
+}
+
+// Empty state for Analytics when 0 perfumes are saved
+.emptyAnalytics {
+    background-color: c.$bg-surface;
+    border: 1px dashed c.$border-subtle;
+    border-radius: 14px;
+    padding: 64px 32px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.015);
+}
+
+.emptyAnalyticsIcon {
+    font-size: 32px;
+    color: c.$brand-gold-primary;
+    margin-bottom: 6px;
+}
+
+.emptyAnalyticsTitle {
+    @include t.heading-section-h2;
+    font-size: 26px;
+    color: c.$text-primary;
+    margin: 0;
+}
+
+.emptyAnalyticsDesc {
+    @include t.body-profile-description;
+    color: c.$text-secondary;
+    max-width: 540px;
+    line-height: 1.6;
+    margin: 0 0 16px;
+}
+
+.emptyAnalyticsActions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.demoSampleBtn {
+    @include t.ui-button-secondary;
+    background-color: transparent;
+    border: 1px solid c.$border-subtle;
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-size: 13px;
+    color: c.$text-secondary;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+        border-color: c.$brand-gold-primary;
+        color: c.$text-primary;
+        background-color: c.$brand-gold-soft;
+    }
+}

@@ -5,6 +5,7 @@ import { PerfumeCatalogPage } from '@/pages/perfume-catalog-page/PerfumeCatalogP
 import { PerfumeDetailPage } from '@/pages/perfume-detail-page/PerfumeDetailPage';
 import { PerfumeHousePage } from '@/pages/perfume-house-page/PerfumeHousePage';
 import { PerfumeComparePage } from '@/pages/perfume-compare-page/PerfumeComparePage';
+import { ProfilePage } from '@/pages/profile-page/ProfilePage';
 import { ROUTES } from './const/routes';
 
 export const App = () => {
@@ -38,6 +39,10 @@ export const App = () => {
                     <Route
                         path={ROUTES.PERFUME_COMPARE.PATH}
                         element={<PerfumeComparePage />}
+                    />
+                    <Route
+                        path={ROUTES.PROFILE.PATH}
+                        element={<ProfilePage />}
                     />
                 </Route>
             </Routes>

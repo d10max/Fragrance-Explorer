@@ -60,8 +60,14 @@ interface ProfileContextType {
     user: UserProfile | null;
     isAuthenticated: boolean;
     updateUser: (updates: Partial<UserProfile>) => void;
-    register: (data: { name: string; email: string; level?: string; bio?: string }) => void;
-    login: (email: string) => boolean;
+    register: (data: {
+        name: string;
+        email: string;
+        password?: string;
+        level?: string;
+        bio?: string;
+    }) => void;
+    login: (email: string, password?: string) => boolean;
     logout: () => void;
     loadDemoProfile: () => void;
     favoriteIds: string[];
@@ -238,6 +244,7 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
     const register = (data: {
         name: string;
         email: string;
+        password?: string;
         level?: string;
         bio?: string;
     }) => {
@@ -260,13 +267,16 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
             level: data.level || 'Fragrance Enthusiast',
         };
 
-        // Save into local registry
+        // Save into local registry with password
         try {
             const registryRaw = localStorage.getItem(REGISTERED_USERS_KEY);
-            const registry: Record<string, UserProfile> = registryRaw
+            const registry: Record<string, { profile: UserProfile; password?: string }> = registryRaw
                 ? JSON.parse(registryRaw)
                 : {};
-            registry[newUser.email] = newUser;
+            registry[newUser.email] = {
+                profile: newUser,
+                password: data.password || '',
+            };
             localStorage.setItem(REGISTERED_USERS_KEY, JSON.stringify(registry));
         } catch {}
 
@@ -284,7 +294,7 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
         closeAuthModal();
     };
 
-    const login = (email: string): boolean => {
+    const login = (email: string, password?: string): boolean => {
         const normalized = email.trim().toLowerCase();
         if (normalized === DEMO_USER.email) {
             loadDemoProfile();
@@ -295,21 +305,23 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
         try {
             const registryRaw = localStorage.getItem(REGISTERED_USERS_KEY);
             if (registryRaw) {
-                const registry: Record<string, UserProfile> = JSON.parse(registryRaw);
-                if (registry[normalized]) {
-                    setUser(registry[normalized]);
+                const registry: Record<string, any> = JSON.parse(registryRaw);
+                const entry = registry[normalized];
+                if (entry) {
+                    const profile: UserProfile = entry.profile || entry;
+                    const savedPassword = entry.password;
+                    // If password was stored, check it
+                    if (savedPassword && password && savedPassword !== password) {
+                        return false;
+                    }
+                    setUser(profile);
                     closeAuthModal();
                     return true;
                 }
             }
         } catch {}
 
-        // Fallback: create account for convenience if first time
-        register({
-            name: email.split('@')[0].replace(/[._-]/g, ' '),
-            email: normalized,
-        });
-        return true;
+        return false;
     };
 
     const logout = () => {

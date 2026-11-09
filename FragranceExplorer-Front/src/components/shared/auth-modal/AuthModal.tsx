@@ -9,19 +9,51 @@ export const AuthModal = () => {
     const [mode, setMode] = useState<'register' | 'login'>('register');
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [level, setLevel] = useState('Fragrance Enthusiast');
     const [bio, setBio] = useState('');
+    const [error, setError] = useState('');
 
     if (!isAuthModalOpen) return null;
 
+    const handleSwitchMode = (newMode: 'register' | 'login') => {
+        setMode(newMode);
+        setError('');
+        setPassword('');
+        setConfirmPassword('');
+    };
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        setError('');
+
         if (mode === 'register') {
-            if (!name.trim() || !email.trim()) return;
-            register({ name, email, level, bio });
+            if (!name.trim() || !email.trim()) {
+                setError('Please provide your name and email address.');
+                return;
+            }
+            if (password.length < 6) {
+                setError('Password must be at least 6 characters long.');
+                return;
+            }
+            if (password !== confirmPassword) {
+                setError('Passwords do not match.');
+                return;
+            }
+
+            register({ name, email, password, level, bio });
         } else {
-            if (!email.trim()) return;
-            login(email);
+            if (!email.trim() || !password) {
+                setError('Please provide your email and password.');
+                return;
+            }
+
+            const success = login(email, password);
+            if (!success) {
+                setError('Invalid email or password. Please verify your credentials.');
+            }
         }
     };
 
@@ -56,7 +88,7 @@ export const AuthModal = () => {
                         className={`${styles.tabBtn} ${
                             mode === 'register' ? styles.tabBtnActive : ''
                         }`}
-                        onClick={() => setMode('register')}
+                        onClick={() => handleSwitchMode('register')}
                     >
                         Create New Profile
                     </button>
@@ -65,11 +97,14 @@ export const AuthModal = () => {
                         className={`${styles.tabBtn} ${
                             mode === 'login' ? styles.tabBtnActive : ''
                         }`}
-                        onClick={() => setMode('login')}
+                        onClick={() => handleSwitchMode('login')}
                     >
                         Sign In
                     </button>
                 </div>
+
+                {/* Error Banner */}
+                {error && <div className={styles.errorAlert}>{error}</div>}
 
                 <form onSubmit={handleSubmit} className={styles.form}>
                     {mode === 'register' ? (
@@ -96,6 +131,43 @@ export const AuthModal = () => {
                                     required
                                     className={styles.input}
                                     placeholder="name@university.edu"
+                                />
+                            </div>
+
+                            {/* Password Field */}
+                            <div className={styles.fieldGroup}>
+                                <div className={styles.labelRow}>
+                                    <label className={styles.label}>Create Password</label>
+                                    <button
+                                        type="button"
+                                        className={styles.togglePwdBtn}
+                                        onClick={() => setShowPassword((prev) => !prev)}
+                                    >
+                                        {showPassword ? 'Hide' : 'Show'}
+                                    </button>
+                                </div>
+                                <input
+                                    type={showPassword ? 'text' : 'password'}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                    minLength={6}
+                                    className={styles.input}
+                                    placeholder="At least 6 characters"
+                                />
+                            </div>
+
+                            {/* Confirm Password Field */}
+                            <div className={styles.fieldGroup}>
+                                <label className={styles.label}>Confirm Password</label>
+                                <input
+                                    type={showPassword ? 'text' : 'password'}
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    required
+                                    minLength={6}
+                                    className={styles.input}
+                                    placeholder="Repeat your password"
                                 />
                             </div>
 
@@ -155,6 +227,27 @@ export const AuthModal = () => {
                                     className={styles.input}
                                     placeholder="Enter your registered email"
                                     autoFocus
+                                />
+                            </div>
+
+                            <div className={styles.fieldGroup}>
+                                <div className={styles.labelRow}>
+                                    <label className={styles.label}>Password</label>
+                                    <button
+                                        type="button"
+                                        className={styles.togglePwdBtn}
+                                        onClick={() => setShowPassword((prev) => !prev)}
+                                    >
+                                        {showPassword ? 'Hide' : 'Show'}
+                                    </button>
+                                </div>
+                                <input
+                                    type={showPassword ? 'text' : 'password'}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                    className={styles.input}
+                                    placeholder="Enter your password"
                                 />
                             </div>
 

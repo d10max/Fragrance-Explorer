@@ -104,6 +104,17 @@
     border-bottom-color: c.$brand-gold-primary;
 }
 
+.errorAlert {
+    margin: 16px 28px 0;
+    padding: 10px 14px;
+    background-color: #fee2e2;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 6px;
+    color: #991b1b;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
 .form {
     padding: 24px 28px;
     display: flex;
@@ -117,10 +128,30 @@
     gap: 6px;
 }
 
+.labelRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .label {
     font-size: 12px;
     font-weight: 600;
     color: c.$text-primary;
+}
+
+.togglePwdBtn {
+    background: transparent;
+    border: none;
+    font-size: 11px;
+    font-weight: 500;
+    color: c.$brand-gold-hover;
+    cursor: pointer;
+    padding: 0;
+
+    &:hover {
+        text-decoration: underline;
+    }
 }
 
 .input,

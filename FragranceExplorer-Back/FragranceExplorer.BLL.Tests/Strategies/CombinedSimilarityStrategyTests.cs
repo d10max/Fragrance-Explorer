@@ -1,5 +1,5 @@
 using FragranceExplorer.BLL.Constants;
-using FragranceExplorer.BLL.Enums;
+using FragranceExplorer.DAL.Enums;
 using FragranceExplorer.BLL.Strategies;
 using FragranceExplorer.BLL.Models;
 using FluentAssertions;

@@ -1,6 +1,6 @@
-﻿using FragranceExplorer.BLL.Constants;
-using FragranceExplorer.BLL.DataSetParser.Common;
-using FragranceExplorer.BLL.DataSetParser.Interfaces;
+using FragranceExplorer.BLL.Constants;
+using FragranceExplorer.BLL.Parser.Common;
+using FragranceExplorer.BLL.Parser.Perfumes.Interfaces;
 using FragranceExplorer.BLL.Models;
 using System.Collections.Generic;
 
@@ -24,7 +24,7 @@ public class InMemoryPerfumeRepository : IPerfumeRepository
 
         while (currentDir != null)
         {
-            var candidate = Path.Combine(currentDir.FullName, "FragranceExplorer.BLL", "DataSetParser", "perfumes_actual.jsonl");
+            var candidate = Path.Combine(currentDir.FullName, "FragranceExplorer.BLL", "Parser", "perfumes_actual.jsonl");
             if (File.Exists(candidate))
             {
                 datasetPath = candidate;

@@ -1,4 +1,4 @@
-using FragranceExplorer.BLL.Enums;
+using FragranceExplorer.DAL.Enums;
 using FragranceExplorer.BLL.Models;
 using FragranceExplorer.BLL.Strategies;
 using FluentAssertions;

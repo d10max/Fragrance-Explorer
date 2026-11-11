@@ -1,6 +1,8 @@
-using FragranceExplorer.BLL.DataSetParser.Common;
-using FragranceExplorer.BLL.DataSetParser.Interfaces;
-using FragranceExplorer.BLL.DataSetParser.Services;
+using FragranceExplorer.BLL.Parser.Common;
+using FragranceExplorer.BLL.Parser.Houses.Interfaces;
+using FragranceExplorer.BLL.Parser.Houses.Services;
+using FragranceExplorer.BLL.Parser.Perfumes.Interfaces;
+using FragranceExplorer.BLL.Parser.Perfumes.Services;
 using FragranceExplorer.BLL.Repositories;
 using FragranceExplorer.BLL.Services;
 using FragranceExplorer.BLL.Strategies;
@@ -17,6 +19,12 @@ public class Program
             return;
         }
 
+        if (args.Contains("--test-house-parser"))
+        {
+            await RunHouseParserDemoAsync();
+            return;
+        }
+
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddControllers();
@@ -24,6 +32,7 @@ public class Program
         builder.Services.AddSwaggerGen();
 
         builder.Services.AddSingleton<IPerfumeDataSetParser, PerfumeDataSetParser>();
+        builder.Services.AddSingleton<IHouseDataSetParser, HouseDataSetParser>();
 
         builder.Services.AddSingleton<InMemoryPerfumeRepository>();
         builder.Services.AddSingleton<IPerfumeRepository>(sp => sp.GetRequiredService<InMemoryPerfumeRepository>());
@@ -45,11 +54,11 @@ public class Program
         {
             var repository = scope.ServiceProvider.GetRequiredService<InMemoryPerfumeRepository>();
 
-            Console.WriteLine("Починаємо завантаження датасету в пам'ять.");
+            Console.WriteLine("Starting dataset load into memory.");
 
             await repository.InitializeAsync();
 
-            Console.WriteLine("Датасет успішно завантажено.");
+            Console.WriteLine("Dataset loaded successfully.");
         }
 
         if (app.Environment.IsDevelopment())
@@ -70,16 +79,16 @@ public class Program
     private static async Task RunParserDemoAsync()
     {
         Console.WriteLine("=================================================");
-        Console.WriteLine("        ЗАПУСК ДЕМОНСТРАЦІЇ DATASET PARSER       ");
+        Console.WriteLine("        STARTING DATASET PARSER DEMO             ");
         Console.WriteLine("=================================================");
 
-        // Знаходимо perfumes_actual.jsonl
+        // finding perfumes_actual.jsonl
         var currentDir = new DirectoryInfo(Directory.GetCurrentDirectory());
         string? datasetPath = null;
 
         while (currentDir != null)
         {
-            var candidate = Path.Combine(currentDir.FullName, "FragranceExplorer.BLL", "DataSetParser", "perfumes_actual.jsonl");
+            var candidate = Path.Combine(currentDir.FullName, "FragranceExplorer.BLL", "Parser", "perfumes_actual.jsonl");
             if (File.Exists(candidate))
             {
                 datasetPath = candidate;
@@ -90,20 +99,20 @@ public class Program
 
         if (datasetPath == null || !File.Exists(datasetPath))
         {
-            Console.WriteLine("[ПОМИЛКА] Файл датасету 'perfumes_actual.jsonl' не знайдено!");
+            Console.WriteLine("[ERROR] Dataset file 'perfumes_actual.jsonl' was not found!");
             return;
         }
 
-        Console.WriteLine($"[INFO] Датасет знайдено: {datasetPath}");
-        Console.WriteLine($"[INFO] Розмір файлу: {new FileInfo(datasetPath).Length / (1024 * 1024)} MB");
-        Console.WriteLine("[INFO] Повний парсинг датасету через IAsyncEnumerable...\n");
+        Console.WriteLine($"[INFO] Dataset found: {datasetPath}");
+        Console.WriteLine($"[INFO] File size: {new FileInfo(datasetPath).Length / (1024 * 1024)} MB");
+        Console.WriteLine("[INFO] Full dataset parsing via IAsyncEnumerable...\n");
 
-        // Використовуємо поліморфний інтерфейс IPerfumeDataSetParser
+        // use a polymorphic interface IPerfumeDataSetParser
         IPerfumeDataSetParser parser = new PerfumeDataSetParser();
         var options = new ParserOptions
         {
             PathToDataset = datasetPath,
-            MaxPerfumesToParse = null // Зчитуємо всі парфуми без обмежень
+            MaxPerfumesToParse = null // read all perfumes without restrictions
         };
 
         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
@@ -113,34 +122,103 @@ public class Program
         {
             count++;
 
-            // Детально виводимо лише перші 3 парфуми для перевірки структури даних
+            // display only the first 3 perfumes in detail to check the data structure
             if (count <= 3)
             {
-                Console.WriteLine($"--- Зразок парфуму #{count} ---");
+                Console.WriteLine($"--- Perfume Sample #{count} ---");
                 Console.WriteLine($"ID:          {perfume.Id}");
-                Console.WriteLine($"Назва:       {perfume.Name}");
-                Console.WriteLine($"Бренд:       {perfume.Brand}");
-                Console.WriteLine($"Категорія:   {perfume.Gender}");
-                Console.WriteLine($"Рейтинг:     {perfume.Rating:F2} / 5.00");
-                Console.WriteLine($"Зображення:  {perfume.ImageUrl ?? "немає"}");
+                Console.WriteLine($"Name:        {perfume.Name}");
+                Console.WriteLine($"Brand:       {perfume.Brand}");
+                Console.WriteLine($"Gender:      {perfume.Gender}");
+                Console.WriteLine($"Rating:      {perfume.Rating:F2} / 5.00");
+                Console.WriteLine($"Image URL:   {perfume.ImageUrl ?? "none"}");
 
                 var accordVector = perfume.ToAccordsVector();
                 var accordDetails = accordVector.Significances.Select(kv => $"{kv.Key} ({kv.Value:F2})");
-                Console.WriteLine($"Акорди:      {string.Join(", ", accordDetails)}");
+                Console.WriteLine($"Accords:     {string.Join(", ", accordDetails)}");
 
                 var noteVector = perfume.ToNotesVector();
                 var noteDetails = noteVector.Significances.Select(kv => $"{kv.Key} ({kv.Value:F2})");
-                Console.WriteLine($"Ноти:      {string.Join(", ", noteDetails)}");
+                Console.WriteLine($"Notes:       {string.Join(", ", noteDetails)}");
                 Console.WriteLine();
             }
-            // Періодичний статус прогресу для великого датасету
-            Console.WriteLine($"[ПРОГРЕС] Оброблено {count:N0} парфумів... ({stopwatch.ElapsedMilliseconds} мс)");
+            // periodic progress status for a large dataset
+            Console.WriteLine($"[PROGRESS] Processed {count:N0} perfumes... ({stopwatch.ElapsedMilliseconds} ms)");
 
         }
 
         stopwatch.Stop();
         Console.WriteLine("=================================================");
-        Console.WriteLine($"[УСПІХ] Успішно розпарсено {count:N0} парфумів за {stopwatch.Elapsed.TotalSeconds:F2} с!");
+        Console.WriteLine($"[SUCCESS] Successfully parsed {count:N0} perfumes in {stopwatch.Elapsed.TotalSeconds:F2} s!");
+        Console.WriteLine("=================================================");
+        Console.WriteLine(parser.GetStatisticsReport());
+    }
+
+    private static async Task RunHouseParserDemoAsync()
+    {
+        Console.WriteLine("=================================================");
+        Console.WriteLine("      STARTING HOUSE DATASET PARSER DEMO         ");
+        Console.WriteLine("=================================================");
+
+        var currentDir = new DirectoryInfo(Directory.GetCurrentDirectory());
+        string? datasetPath = null;
+
+        while (currentDir != null)
+        {
+            var candidate = Path.Combine(currentDir.FullName, "FragranceExplorer.BLL", "Parser", "house_catalog.jsonl");
+            if (File.Exists(candidate))
+            {
+                datasetPath = candidate;
+                break;
+            }
+            currentDir = currentDir.Parent;
+        }
+
+        if (datasetPath == null || !File.Exists(datasetPath))
+        {
+            Console.WriteLine("[ERROR] Dataset file 'house_catalog.jsonl' was not found!");
+            return;
+        }
+
+        Console.WriteLine($"[INFO] Dataset found: {datasetPath}");
+        Console.WriteLine($"[INFO] File size: {new FileInfo(datasetPath).Length / (1024.0 * 1024.0):F2} MB");
+        Console.WriteLine("[INFO] Full dataset parsing via IAsyncEnumerable...\n");
+
+        IHouseDataSetParser parser = new HouseDataSetParser();
+        var options = new ParserOptions
+        {
+            PathToDataset = datasetPath,
+            MaxPerfumesToParse = null
+        };
+
+        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        int count = 0;
+
+        await foreach (var house in parser.ParseAsync(options))
+        {
+            count++;
+
+            if (count <= 3)
+            {
+                Console.WriteLine($"--- House Sample #{count} ---");
+                Console.WriteLine($"ID:          {house.Id}");
+                Console.WriteLine($"Name:        {house.Name} ({house.DisplayName})");
+                Console.WriteLine($"Initials:    {house.Initials}");
+                Console.WriteLine($"Location:    {house.Location}");
+                Console.WriteLine($"Archive:     {house.ArchiveCount} ({house.Count})");
+                Console.WriteLine($"Rating:      {house.Rating:F2} / 5.00 ({house.ReviewsLabel})");
+                Console.WriteLine($"DNA Badge:   {house.DnaBadge}");
+
+                var dnaDetails = house.OlfactoryDna.Select(d => $"{d.Family}: {d.Percentage}% ({d.Notes})");
+                Console.WriteLine($"DNA:         {string.Join(" | ", dnaDetails)}");
+                Console.WriteLine($"Similar IDs: {string.Join(", ", house.SimilarHouseIds)}");
+                Console.WriteLine();
+            }
+        }
+
+        stopwatch.Stop();
+        Console.WriteLine("=================================================");
+        Console.WriteLine($"[SUCCESS] Successfully parsed {count:N0} houses in {stopwatch.Elapsed.TotalSeconds:F2} s!");
         Console.WriteLine("=================================================");
         Console.WriteLine(parser.GetStatisticsReport());
     }

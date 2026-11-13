@@ -17,16 +17,20 @@ public class PerfumesController : ControllerBase
     private readonly NoteJaccardSimilarityStrategy _noteStrategy;
     private readonly AccordCosineSimilarityStrategy _accordStrategy;
 
+    private readonly IPerfumeSearchService _searchService;
+
     public PerfumesController(
         IPerfumeRepository repository,
         RecommendationEngine engine,
         NoteJaccardSimilarityStrategy noteStrategy,
-        AccordCosineSimilarityStrategy accordStrategy)
+        AccordCosineSimilarityStrategy accordStrategy,
+        IPerfumeSearchService searchService)
     {
         _repository = repository;
         _engine = engine;
         _noteStrategy = noteStrategy;
         _accordStrategy = accordStrategy;
+        _searchService = searchService;
     }
 
     [HttpGet]
@@ -99,5 +103,17 @@ public class PerfumesController : ControllerBase
     private (Perfume? p1, Perfume? p2) GetTwoPerfumes(int id1, int id2)
     {
         return (_repository.GetById(id1), _repository.GetById(id2));
+    }
+
+    [HttpGet("search")]
+    public IActionResult SearchPerfumes([FromQuery] string? query, [FromQuery] int maxResults = ScentConstants.DefaultSearchResult)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return BadRequest(ErrorMessagesConstants.SearchQueryCannotBeEmpty);
+        }
+
+        var results = _searchService.Search(query, maxResults);
+        return Ok(results);
     }
 }

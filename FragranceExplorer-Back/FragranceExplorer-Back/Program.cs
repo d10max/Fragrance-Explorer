@@ -48,6 +48,8 @@ public class Program
             return new RecommendationEngine(accordStrategy, noteStrategy);
         });
 
+        builder.Services.AddSingleton<IPerfumeSearchService, PerfumeSearchService>();
+
         var app = builder.Build();
 
         using (var scope = app.Services.CreateScope())

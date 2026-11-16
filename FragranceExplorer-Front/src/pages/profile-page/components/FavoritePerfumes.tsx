@@ -1,20 +1,28 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Bookmark, Plus, Sparkles, X } from 'lucide-react';
 import { useProfile } from '@/context/ProfileContext';
 import { useCompare } from '@/context/CompareContext';
+import { PERFUMES_COLLECTION } from '@/pages/perfume-catalog-page/perfumes.data';
 import { PerfumeBottle } from '@/pages/perfume-catalog-page/components/PerfumeBottle';
 import { ROUTES } from '@/const/routes';
 import styles from './FavoritePerfumes.module.scss';
 
 export const FavoritePerfumes = () => {
     const navigate = useNavigate();
-    const { favoritePerfumes, removeFavorite } = useProfile();
+    const { favoritePerfumes, favoriteIds, addFavorite, removeFavorite } = useProfile();
     const { compareIds, addToCompare } = useCompare();
 
     const [selectedFamily, setSelectedFamily] = useState<string>('All');
     const [searchQuery, setSearchQuery] = useState<string>('');
+    const [quickAddId, setQuickAddId] = useState<string>('');
 
     const families = ['All', 'Woody', 'Citrus', 'Fresh', 'Spicy'];
+
+    const availableToQuickAdd = useMemo(
+        () => PERFUMES_COLLECTION.filter((p) => !favoriteIds.includes(p.id)),
+        [favoriteIds]
+    );
 
     const filteredPerfumes = useMemo(() => {
         return favoritePerfumes.filter((perfume) => {
@@ -46,6 +54,12 @@ export const FavoritePerfumes = () => {
         }
     };
 
+    const handleQuickAdd = () => {
+        if (!quickAddId) return;
+        addFavorite(quickAddId);
+        setQuickAddId('');
+    };
+
     return (
         <section className={styles.favoritesSection}>
             {/* Header with filters and counter */}
@@ -74,30 +88,65 @@ export const FavoritePerfumes = () => {
                     </div>
                 </div>
 
-                <div className={styles.searchBox}>
-                    <input
-                        type="text"
-                        placeholder="Search saved perfumes, brands, notes..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className={styles.searchInput}
-                    />
-                    {searchQuery && (
-                        <button
-                            type="button"
-                            className={styles.clearBtn}
-                            onClick={() => setSearchQuery('')}
-                        >
-                            &times;
-                        </button>
+                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
+                    {availableToQuickAdd.length > 0 && (
+                        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                            <select
+                                value={quickAddId}
+                                onChange={(e) => setQuickAddId(e.target.value)}
+                                aria-label="Select a fragrance to add to wardrobe"
+                                className={styles.searchInput}
+                                style={{ minWidth: '210px', cursor: 'pointer' }}
+                            >
+                                <option value="">+ Quick add fragrance...</option>
+                                {availableToQuickAdd.map((p) => (
+                                    <option key={p.id} value={p.id}>
+                                        {p.brand} — {p.name} ({p.family})
+                                    </option>
+                                ))}
+                            </select>
+                            {quickAddId && (
+                                <button
+                                    type="button"
+                                    onClick={handleQuickAdd}
+                                    className={styles.exploreBtn}
+                                    style={{ padding: '8px 14px', fontSize: '12px' }}
+                                >
+                                    <Plus size={13} style={{ marginRight: 4, verticalAlign: 'middle' }} />
+                                    Add
+                                </button>
+                            )}
+                        </div>
                     )}
+
+                    <div className={styles.searchBox}>
+                        <input
+                            type="text"
+                            placeholder="Search saved perfumes, brands, notes..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className={styles.searchInput}
+                        />
+                        {searchQuery && (
+                            <button
+                                type="button"
+                                className={styles.clearBtn}
+                                onClick={() => setSearchQuery('')}
+                                aria-label="Clear search query"
+                            >
+                                <X size={14} />
+                            </button>
+                        )}
+                    </div>
                 </div>
             </div>
 
             {/* Empty state */}
             {filteredPerfumes.length === 0 ? (
                 <div className={styles.emptyState}>
-                    <div className={styles.emptyIcon}>✦</div>
+                    <div className={styles.emptyIcon}>
+                        <Sparkles size={22} />
+                    </div>
                     <h4 className={styles.emptyTitle}>
                         {favoritePerfumes.length === 0
                             ? 'Your Olfactory Wardrobe is Empty'
@@ -105,7 +154,7 @@ export const FavoritePerfumes = () => {
                     </h4>
                     <p className={styles.emptyText}>
                         {favoritePerfumes.length === 0
-                            ? 'Discover fragrances in our encyclopedia and save them to your personal wardrobe to view personalized taste insights.'
+                            ? 'Discover fragrances in our encyclopedia or use the Quick Add selector above to build your personal wardrobe and view personalized taste insights.'
                             : 'Try selecting a different fragrance family or clearing your search query.'}
                     </p>
                     {favoritePerfumes.length === 0 ? (
@@ -139,7 +188,15 @@ export const FavoritePerfumes = () => {
                             <div
                                 key={perfume.id}
                                 className={styles.card}
+                                role="button"
+                                tabIndex={0}
                                 onClick={() => navigate(ROUTES.PERFUME_DETAIL.FULL(perfume.id))}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                        e.preventDefault();
+                                        navigate(ROUTES.PERFUME_DETAIL.FULL(perfume.id));
+                                    }
+                                }}
                             >
                                 {/* Card Header with Family and Rating */}
                                 <div className={styles.cardTop}>
@@ -157,20 +214,14 @@ export const FavoritePerfumes = () => {
                                         <button
                                             type="button"
                                             className={styles.removeBtn}
-                                            title="Remove from favorites"
+                                            title="Remove from wardrobe"
+                                            aria-label={`Remove ${perfume.name} from wardrobe`}
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 removeFavorite(perfume.id);
                                             }}
                                         >
-                                            <svg
-                                                width="14"
-                                                height="14"
-                                                viewBox="0 0 24 24"
-                                                fill="currentColor"
-                                            >
-                                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                                            </svg>
+                                            <Bookmark size={14} fill="currentColor" />
                                         </button>
                                     </div>
                                 </div>

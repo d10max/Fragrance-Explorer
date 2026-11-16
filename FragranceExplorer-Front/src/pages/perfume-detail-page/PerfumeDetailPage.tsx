@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { Bookmark } from 'lucide-react';
 import { getPerfumeById, getSimilarPerfumes } from '@/pages/perfume-catalog-page/perfumes.data';
 import { getHouseByIdOrName } from '@/pages/perfume-catalog-page/houses.data';
 import { PerfumeBottle } from '@/pages/perfume-catalog-page/components/PerfumeBottle';
@@ -12,7 +13,7 @@ export const PerfumeDetailPage = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const { compareIds, addToCompare } = useCompare();
-    const { isFavorite, toggleFavorite, requireAuth } = useProfile();
+    const { isFavorite, toggleFavorite, requireAuth, addHistoryEntry } = useProfile();
     const perfume = getPerfumeById(id);
     const house = getHouseByIdOrName(perfume.brand);
     const similarPerfumes = getSimilarPerfumes(perfume);
@@ -279,7 +280,14 @@ export const PerfumeDetailPage = () => {
                         <button
                             type="button"
                             className={styles.similarBtn}
-                            onClick={handleScrollToSimilar}
+                            onClick={() => {
+                                addHistoryEntry({
+                                    query: `Similar scents to ${perfume.name} (${perfume.brand})`,
+                                    mode: 'similar',
+                                    resultCount: similarPerfumes.length,
+                                });
+                                handleScrollToSimilar();
+                            }}
                         >
                             Find Similar Scents &rarr;
                         </button>
@@ -291,7 +299,12 @@ export const PerfumeDetailPage = () => {
                             onClick={() => requireAuth(() => toggleFavorite(perfume.id))}
                             title={isFav ? 'Remove from Wardrobe' : 'Save to Personal Wardrobe'}
                         >
-                            {isFav ? '★ Saved in My Wardrobe' : '☆ Save to My Wardrobe'}
+                            <Bookmark
+                                size={14}
+                                fill={isFav ? 'currentColor' : 'none'}
+                                style={{ marginRight: 6, verticalAlign: 'text-bottom' }}
+                            />
+                            {isFav ? 'Saved in My Wardrobe' : 'Save to My Wardrobe'}
                         </button>
                         <button
                             type="button"

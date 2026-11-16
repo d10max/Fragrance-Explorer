@@ -37,4 +37,6 @@ public static class ErrorMessagesConstants
     public const string InvalidSearchProfile = "Invalid search profile. Allowed values are Default, ExactClone, SimilarVibe.";
 
     public const string PerfumeNotFoundMessage = "Perfume was not found.";
+
+    public const string SearchQueryCannotBeEmpty = "Search query cannot be empty.";
 }

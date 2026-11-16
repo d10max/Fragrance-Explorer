@@ -1,5 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {
+    BarChart3,
+    Bookmark,
+    Clock,
+    PenLine,
+    LogOut,
+    Sparkles,
+    Compass,
+} from 'lucide-react';
 import { useProfile } from '@/context/ProfileContext';
 import { getPerfumeById } from '@/pages/perfume-catalog-page/perfumes.data';
 import { ScentTasteChart } from './components/ScentTasteChart';
@@ -22,7 +31,9 @@ export const ProfilePage = () => {
         analytics,
     } = useProfile();
 
-    const [activeTab, setActiveTab] = useState<'analytics' | 'favorites' | 'history'>('analytics');
+    const [activeTab, setActiveTab] = useState<'analytics' | 'favorites' | 'history'>(
+        'analytics'
+    );
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
     // If guest (not logged in)
@@ -34,9 +45,7 @@ export const ProfilePage = () => {
                     <span className={styles.eyebrow}>
                         PRIVATE SCENT CABINET &middot; GUEST SESSION
                     </span>
-                    <h1 className={styles.guestTitle}>
-                        Unlock Your Olfactory Identity
-                    </h1>
+                    <h1 className={styles.guestTitle}>Unlock Your Olfactory Identity</h1>
                     <p className={styles.guestSubtitle}>
                         You are currently browsing as a guest. Create your private connoisseur
                         profile to build your personal perfume wardrobe, generate interactive
@@ -64,40 +73,35 @@ export const ProfilePage = () => {
                 {/* Guest Feature Highlights */}
                 <div className={styles.guestFeaturesGrid}>
                     <div className={styles.guestFeatureCard}>
-                        <div className={styles.featureIcon}>✦</div>
+                        <div className={styles.featureIcon}>
+                            <Bookmark size={18} />
+                        </div>
                         <h3 className={styles.featureTitle}>Curated Wardrobe</h3>
                         <p className={styles.featureDesc}>
-                            Save your beloved niche flacons, catalog your collection, and organize by accords.
+                            Save your beloved niche flacons, catalog your collection, and
+                            organize by accords.
                         </p>
                     </div>
 
                     <div className={styles.guestFeatureCard}>
                         <div className={styles.featureIcon}>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <line x1="18" y1="20" x2="18" y2="10" />
-                                <line x1="12" y1="20" x2="12" y2="4" />
-                                <line x1="6" y1="20" x2="6" y2="14" />
-                            </svg>
+                            <BarChart3 size={18} />
                         </div>
                         <h3 className={styles.featureTitle}>Visual Taste Radar</h3>
                         <p className={styles.featureDesc}>
-                            Interactive family ratios and 6-axis radar diagrams calculated from your preferences.
+                            Interactive family ratios and 6-axis radar diagrams calculated from
+                            your preferences.
                         </p>
                     </div>
 
                     <div className={styles.guestFeatureCard}>
                         <div className={styles.featureIcon}>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <circle cx="12" cy="12" r="10" />
-                                <path d="m4.93 4.93 4.24 4.24" />
-                                <path d="m14.83 14.83 4.24 4.24" />
-                                <path d="m14.83 9.17 4.24-4.24" />
-                                <path d="m4.93 19.07 4.24-4.24" />
-                            </svg>
+                            <Compass size={18} />
                         </div>
                         <h3 className={styles.featureTitle}>Note Affinity Index</h3>
                         <p className={styles.featureDesc}>
-                            Discover your highest-affinity notes — from dry cedar and vetiver to sparkling citrus.
+                            Discover your highest-affinity notes — from dry cedar and vetiver to
+                            sparkling citrus.
                         </p>
                     </div>
                 </div>
@@ -108,7 +112,8 @@ export const ProfilePage = () => {
                         <span className={styles.teaserBadge}>CONNOISSEUR PREVIEW</span>
                         <h3 className={styles.teaserTitle}>Your Personal Analytics Await</h3>
                         <p className={styles.teaserText}>
-                            Register your account in seconds or click &ldquo;Explore as Demo&rdquo; to test with full pre-loaded data.
+                            Register your account in seconds or click &ldquo;Explore as
+                            Demo&rdquo; to test with full pre-loaded data.
                         </p>
                         <button
                             type="button"
@@ -139,7 +144,10 @@ export const ProfilePage = () => {
                         <div className={styles.avatarCircle}>
                             <span>{user.initials || 'EV'}</span>
                         </div>
-                        <span className={styles.memberStatusDot} title="Connoisseur Active" />
+                        <span
+                            className={styles.memberStatusDot}
+                            title="Connoisseur Active"
+                        />
                     </div>
 
                     <div className={styles.profileInfo}>
@@ -160,17 +168,7 @@ export const ProfilePage = () => {
                         className={styles.editBtn}
                         onClick={() => setIsEditModalOpen(true)}
                     >
-                        <svg
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                        >
-                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                        </svg>
+                        <PenLine size={14} />
                         Edit Profile
                     </button>
 
@@ -180,6 +178,10 @@ export const ProfilePage = () => {
                         onClick={logout}
                         title="Sign Out to Guest Mode"
                     >
+                        <LogOut
+                            size={14}
+                            style={{ marginRight: 5, verticalAlign: 'text-bottom' }}
+                        />
                         Sign Out
                     </button>
                 </div>
@@ -187,7 +189,18 @@ export const ProfilePage = () => {
 
             {/* 4 Summary Stat Cards */}
             <section className={styles.statsRow}>
-                <div className={styles.statCard} onClick={() => setActiveTab('favorites')}>
+                <div
+                    className={styles.statCard}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => setActiveTab('favorites')}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            setActiveTab('favorites');
+                        }
+                    }}
+                >
                     <span className={styles.statEyebrow}>SAVED WARDROBE</span>
                     <div className={styles.statValue}>
                         {favoritePerfumes.length}{' '}
@@ -196,7 +209,18 @@ export const ProfilePage = () => {
                     <span className={styles.statSub}>Curated personal shelf &rarr;</span>
                 </div>
 
-                <div className={styles.statCard} onClick={() => setActiveTab('analytics')}>
+                <div
+                    className={styles.statCard}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => setActiveTab('analytics')}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            setActiveTab('analytics');
+                        }
+                    }}
+                >
                     <span className={styles.statEyebrow}>DOMINANT PROFILE</span>
                     <div className={styles.statValue}>
                         {analytics.hasData ? (
@@ -205,7 +229,8 @@ export const ProfilePage = () => {
                                 <span className={styles.statUnit}>
                                     {analytics.families.find(
                                         (f) => f.name === analytics.dominantFamily
-                                    )?.percentage || 0}%
+                                    )?.percentage || 0}
+                                    %
                                 </span>
                             </>
                         ) : (
@@ -219,11 +244,22 @@ export const ProfilePage = () => {
                     </span>
                 </div>
 
-                <div className={styles.statCard} onClick={() => setActiveTab('analytics')}>
+                <div
+                    className={styles.statCard}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => setActiveTab('analytics')}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            setActiveTab('analytics');
+                        }
+                    }}
+                >
                     <span className={styles.statEyebrow}>TOP KEY NOTE</span>
                     <div className={styles.statValue}>
                         {analytics.hasData ? (
-                            analytics.topNotes[0]?.name || '&mdash;'
+                            analytics.topNotes[0]?.name || '—'
                         ) : (
                             <span style={{ color: '#77736c' }}>&mdash;</span>
                         )}
@@ -237,11 +273,25 @@ export const ProfilePage = () => {
 
                 <div
                     className={styles.statCard}
+                    role="button"
+                    tabIndex={0}
                     onClick={() => {
                         if (signaturePerfume) {
                             navigate(ROUTES.PERFUME_DETAIL.FULL(signaturePerfume.id));
                         } else {
                             setIsEditModalOpen(true);
+                        }
+                    }}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            if (signaturePerfume) {
+                                navigate(
+                                    ROUTES.PERFUME_DETAIL.FULL(signaturePerfume.id)
+                                );
+                            } else {
+                                setIsEditModalOpen(true);
+                            }
                         }
                     }}
                 >
@@ -272,21 +322,7 @@ export const ProfilePage = () => {
                     }`}
                     onClick={() => setActiveTab('analytics')}
                 >
-                    <svg
-                        width="15"
-                        height="15"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className={styles.tabSvg}
-                    >
-                        <line x1="18" y1="20" x2="18" y2="10" />
-                        <line x1="12" y1="20" x2="12" y2="4" />
-                        <line x1="6" y1="20" x2="6" y2="14" />
-                    </svg>
+                    <BarChart3 size={15} className={styles.tabSvg} />
                     Taste Analytics &amp; Diagrams
                 </button>
 
@@ -297,19 +333,7 @@ export const ProfilePage = () => {
                     }`}
                     onClick={() => setActiveTab('favorites')}
                 >
-                    <svg
-                        width="15"
-                        height="15"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className={styles.tabSvg}
-                    >
-                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
-                    </svg>
+                    <Bookmark size={15} className={styles.tabSvg} />
                     Saved Fragrances ({favoritePerfumes.length})
                 </button>
 
@@ -320,32 +344,21 @@ export const ProfilePage = () => {
                     }`}
                     onClick={() => setActiveTab('history')}
                 >
-                    <svg
-                        width="15"
-                        height="15"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className={styles.tabSvg}
-                    >
-                        <circle cx="12" cy="12" r="10" />
-                        <polyline points="12 6 12 12 16 14" />
-                    </svg>
-                    Discovery &amp; Search Log
+                    <Clock size={15} className={styles.tabSvg} />
+                    Discovery &amp; Search Log ({history.length})
                 </button>
             </div>
 
             {/* Tab Contents */}
             <div className={styles.tabBody}>
-                {activeTab === 'analytics' && (
-                    analytics.hasData ? (
+                {activeTab === 'analytics' &&
+                    (analytics.hasData ? (
                         <ScentTasteChart />
                     ) : (
                         <div className={styles.emptyAnalytics}>
-                            <div className={styles.emptyAnalyticsIcon}>✦</div>
+                            <div className={styles.emptyAnalyticsIcon}>
+                                <Sparkles size={24} />
+                            </div>
                             <span className={styles.eyebrow}>
                                 CALIBRATING YOUR TASTE PROFILE
                             </span>
@@ -354,10 +367,11 @@ export const ProfilePage = () => {
                             </h3>
                             <p className={styles.emptyAnalyticsDesc}>
                                 You haven&apos;t saved any perfumes to your wardrobe yet.
-                                Explore the Encyclopedia, find scents you wear or love, and
-                                click &ldquo;☆ Save to My Wardrobe&rdquo;. Your live Scent Wheel,
-                                6-axis Radar Spectrum, and favorite notes will be calculated
-                                right here in real time.
+                                Explore the Encyclopedia, open any fragrance dossier, and
+                                click &ldquo;Save to My Wardrobe&rdquo; (or quick-add from
+                                the Saved Fragrances tab). Your live Scent Wheel, 6-axis
+                                Radar Spectrum, and favorite notes will be calculated right
+                                here in real time.
                             </p>
                             <div className={styles.emptyAnalyticsActions}>
                                 <button
@@ -376,8 +390,7 @@ export const ProfilePage = () => {
                                 </button>
                             </div>
                         </div>
-                    )
-                )}
+                    ))}
 
                 {activeTab === 'favorites' && <FavoritePerfumes />}
 
@@ -425,7 +438,8 @@ export const ProfilePage = () => {
                                                     {item.query}
                                                 </h4>
                                                 <span className={styles.historyMeta}>
-                                                    {item.date} &middot; {item.resultCount} recommendations
+                                                    {item.date} &middot;{' '}
+                                                    {item.resultCount} results
                                                 </span>
                                             </div>
                                         </div>
@@ -433,7 +447,9 @@ export const ProfilePage = () => {
                                         <button
                                             type="button"
                                             className={styles.relaunchBtn}
-                                            onClick={() => navigate(ROUTES.PERFUME_FINDER.FULL)}
+                                            onClick={() =>
+                                                navigate(ROUTES.PERFUME_FINDER.FULL)
+                                            }
                                         >
                                             Explore Similar &rarr;
                                         </button>
@@ -454,13 +470,16 @@ export const ProfilePage = () => {
                     </h3>
                     <p className={styles.curatedDesc}>
                         With your affinity for earthy vetiver and sparkling bergamot,
-                        Frédéric Malle’s masterwork aligns with your signature olfactory harmony.
+                        Frédéric Malle’s masterwork aligns with your signature olfactory
+                        harmony.
                     </p>
                 </div>
                 <button
                     type="button"
                     className={styles.curatedBtn}
-                    onClick={() => navigate(ROUTES.PERFUME_DETAIL.FULL('vetiver-extraordinaire'))}
+                    onClick={() =>
+                        navigate(ROUTES.PERFUME_DETAIL.FULL('vetiver-extraordinaire'))
+                    }
                 >
                     Explore Recommendation &rarr;
                 </button>

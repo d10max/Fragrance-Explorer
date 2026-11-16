@@ -1,4 +1,4 @@
-﻿using FragranceExplorer.DAL.Enums;
+using FragranceExplorer.DAL.Enums;
 
 namespace FragranceExplorer.BLL.Constants;
 
@@ -25,6 +25,12 @@ public static class ScentConstants
     public readonly static (double, double) DefaultWeights = (0.65, 0.35);
     public readonly static (double, double) ExactCloneWeights = (0.40, 0.60);
     public readonly static (double, double) SimilarVibeWeights = (0.85, 0.15);
+
+    public const double MinFuzzySearchScore = 65.0;
+    public const double MaxFuzzySearchScore = 100.0;
+    public const double PrefixMatchBoost = 10.0;
+    public const int DefaultSearchResult = 10;
+    public const int MaxSearchResultLimit = 50;
 
     public static double GetNoteLayerWeight(NoteLayer noteLayer)
     {

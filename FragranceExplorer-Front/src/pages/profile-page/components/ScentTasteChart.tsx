@@ -1,110 +1,99 @@
 import { useState } from 'react';
-import { useProfile, type FamilyStat } from '@/context/ProfileContext';
+import {
+    PieChart,
+    Pie,
+    Cell,
+    RadarChart,
+    PolarGrid,
+    PolarAngleAxis,
+    PolarRadiusAxis,
+    Radar,
+    Tooltip,
+    ResponsiveContainer,
+} from 'recharts';
+import { Sparkles } from 'lucide-react';
+import { useProfile, type FamilyStat, type RadarDimension } from '@/context/ProfileContext';
 import styles from './ScentTasteChart.module.scss';
 
-// Trigonometric helpers for rock-solid SVG arc geometry
-const polarToCartesian = (
-    cx: number,
-    cy: number,
-    r: number,
-    angleInDegrees: number
-) => {
-    const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
-    return {
-        x: cx + r * Math.cos(angleInRadians),
-        y: cy + r * Math.sin(angleInRadians),
-    };
-};
+const TEASER_FAMILIES: FamilyStat[] = [
+    {
+        name: 'Woody',
+        count: 3,
+        percentage: 50,
+        color: '#c59b27',
+        bgBadge: '#eee9e2',
+        textBadge: '#8b7963',
+        description: 'Cedarwood, Sandalwood, Vetiver & Dry Woods',
+    },
+    {
+        name: 'Citrus',
+        count: 1,
+        percentage: 17,
+        color: '#d4a32e',
+        bgBadge: '#f5eed9',
+        textBadge: '#b89737',
+        description: 'Bergamot, Bitter Orange, Neroli & Zest',
+    },
+    {
+        name: 'Fresh',
+        count: 1,
+        percentage: 17,
+        color: '#77958a',
+        bgBadge: '#eaf0ec',
+        textBadge: '#77958a',
+        description: 'Cardamom, Green Fig, Aquatic & Herbal Notes',
+    },
+    {
+        name: 'Spicy',
+        count: 1,
+        percentage: 16,
+        color: '#b67c67',
+        bgBadge: '#f5e7e1',
+        textBadge: '#b67c67',
+        description: 'Pink Pepper, Tonka Bean, Saffron & Warm Amber',
+    },
+];
 
-const describeArc = (
-    cx: number,
-    cy: number,
-    r: number,
-    startAngle: number,
-    endAngle: number
-) => {
-    const span = endAngle - startAngle;
-    if (span >= 359.99) {
-        return `M ${cx} ${cy - r} A ${r} ${r} 0 1 1 ${cx - 0.01} ${cy - r} Z`;
-    }
-    const start = polarToCartesian(cx, cy, r, endAngle);
-    const end = polarToCartesian(cx, cy, r, startAngle);
-    const largeArcFlag = span > 180 ? 1 : 0;
-    return `M ${start.x} ${start.y} A ${r} ${r} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`;
-};
+const TEASER_RADAR: RadarDimension[] = [
+    { label: 'Woody & Earthy', value: 85, maxValue: 100 },
+    { label: 'Citrus & Bright', value: 68, maxValue: 100 },
+    { label: 'Fresh Green', value: 62, maxValue: 100 },
+    { label: 'Resinous Amber', value: 58, maxValue: 100 },
+    { label: 'Spicy Warmth', value: 48, maxValue: 100 },
+    { label: 'Soft Floral', value: 32, maxValue: 100 },
+];
 
 export const ScentTasteChart = () => {
     const { analytics } = useProfile();
-    const { families, topNotes, radarData, vibePersona, vibeDescription } = analytics;
+    const { hasData, families, topNotes, radarData, vibePersona, vibeDescription } =
+        analytics;
+
+    const displayFamilies = hasData ? families : TEASER_FAMILIES;
+    const displayRadar = hasData ? radarData : TEASER_RADAR;
 
     const [activeFamily, setActiveFamily] = useState<FamilyStat | null>(null);
     const [hoveredNote, setHoveredNote] = useState<string | null>(null);
-    const [hoveredRadarIdx, setHoveredRadarIdx] = useState<number | null>(null);
+    const [activeRadarLabel, setActiveRadarLabel] = useState<string | null>(null);
 
-    // SVG Donut calculation with explicit arc paths (zero transform displacement)
-    const donutCenter = 125;
-    const donutRadius = 78;
-    const strokeWidth = 26;
+    const activeFamiliesData = displayFamilies.filter((f) => f.percentage > 0);
+    const highlightedFamily =
+        activeFamily ||
+        displayFamilies.find((f) => f.percentage > 0) ||
+        displayFamilies[0];
 
-    let currentAngle = 0;
-    const activeFamilies = families.filter((f) => f.percentage > 0);
-    const arcSegments = activeFamilies.map((family) => {
-        const angleSpan = (family.percentage / 100) * 360;
-        const startAngle = currentAngle;
-        const endAngle = currentAngle + angleSpan;
-        currentAngle = endAngle;
+    const topNotePair =
+        topNotes.length >= 2
+            ? `${topNotes[0].name} & ${topNotes[1].name}`
+            : topNotes[0]?.name || 'Moroccan Cedar & Vetiver';
 
-        const pathD = describeArc(
-            donutCenter,
-            donutCenter,
-            donutRadius,
-            startAngle,
-            endAngle
-        );
+    const radarChartData = displayRadar.map((dim) => ({
+        ...dim,
+        axisLabel: `${dim.label} (${dim.value}%)`,
+    }));
 
-        return {
-            family,
-            pathD,
-            startAngle,
-            endAngle,
-        };
-    });
-
-    // Radar chart calculations (Center at 160, 160; Max radius = 105)
-    const radarCenter = 160;
-    const radarRadius = 105;
-    const radarCount = radarData.length;
-
-    const getRadarCoordinates = (index: number, valPercent: number) => {
-        // -90 deg starts at top
-        const angle = (Math.PI * 2 / radarCount) * index - Math.PI / 2;
-        const r = (valPercent / 100) * radarRadius;
-        const x = radarCenter + r * Math.cos(angle);
-        const y = radarCenter + r * Math.sin(angle);
-        return { x, y, angle };
-    };
-
-    // Grid polygons
-    const gridLevels = [0.25, 0.5, 0.75, 1.0];
-    const gridPolygons = gridLevels.map((lvl) => {
-        return radarData
-            .map((_, i) => {
-                const { x, y } = getRadarCoordinates(i, lvl * 100);
-                return `${x},${y}`;
-            })
-            .join(' ');
-    });
-
-    // Data polygon
-    const dataPolygonPoints = radarData
-        .map((dim, i) => {
-            const { x, y } = getRadarCoordinates(i, dim.value);
-            return `${x},${y}`;
-        })
-        .join(' ');
-
-    const highlightedFamily = activeFamily || families.find((f) => f.percentage > 0) || families[0];
-    const activeRadarDim = hoveredRadarIdx !== null ? radarData[hoveredRadarIdx] : null;
+    const activeRadarDim = activeRadarLabel
+        ? displayRadar.find((d) => d.label === activeRadarLabel) || null
+        : null;
 
     return (
         <section className={styles.chartsContainer}>
@@ -118,7 +107,7 @@ export const ScentTasteChart = () => {
                 <div className={styles.personaTags}>
                     <div className={styles.personaPill}>
                         <span className={styles.pillLabel}>Dominant Signature</span>
-                        <span className={styles.pillVal}>Moroccan Cedar &amp; Vetiver</span>
+                        <span className={styles.pillVal}>{topNotePair}</span>
                     </div>
                     <div className={styles.personaPill}>
                         <span className={styles.pillLabel}>Atmosphere &amp; Mood</span>
@@ -131,93 +120,83 @@ export const ScentTasteChart = () => {
                 </div>
             </div>
 
-            {/* Grid of the 2 primary visual diagrams */}
+            {/* Grid of the 2 primary visual diagrams (powered by Recharts) */}
             <div className={styles.diagramsGrid}>
-                {/* 1. Fragrance Families Donut Chart */}
+                {/* 1. Fragrance Families Donut Chart (Recharts PieChart) */}
                 <div className={styles.diagramCard}>
                     <div className={styles.cardHeader}>
                         <div>
                             <span className={styles.eyebrow}>SCENT WHEEL RATIO</span>
-                            <h4 className={styles.cardTitle}>Olfactory Families Distribution</h4>
+                            <h4 className={styles.cardTitle}>
+                                Olfactory Families Distribution
+                            </h4>
                         </div>
-                        <span className={styles.metaHint}>Hover over slices or families</span>
+                        <span className={styles.metaHint}>
+                            Hover over slices or families
+                        </span>
                     </div>
 
                     <div className={styles.donutLayout}>
-                        {/* Interactive SVG Donut */}
                         <div className={styles.donutSvgWrapper}>
-                            <svg
-                                width="250"
-                                height="250"
-                                viewBox="0 0 250 250"
-                                className={styles.donutSvg}
-                            >
-                                {/* Base neutral track */}
-                                <circle
-                                    cx={donutCenter}
-                                    cy={donutCenter}
-                                    r={donutRadius}
-                                    fill="none"
-                                    stroke="#eeebe4"
-                                    strokeWidth={strokeWidth}
-                                />
+                            <PieChart width={240} height={240}>
+                                <Pie
+                                    data={activeFamiliesData}
+                                    dataKey="percentage"
+                                    nameKey="name"
+                                    cx="50%"
+                                    cy="50%"
+                                    innerRadius={64}
+                                    outerRadius={92}
+                                    paddingAngle={activeFamiliesData.length > 1 ? 2 : 0}
+                                    startAngle={90}
+                                    endAngle={-270}
+                                    stroke="none"
+                                    onMouseEnter={(_, index) => {
+                                        const hovered = activeFamiliesData[index];
+                                        if (hovered) setActiveFamily(hovered);
+                                    }}
+                                    onMouseLeave={() => setActiveFamily(null)}
+                                >
+                                    {activeFamiliesData.map((entry) => {
+                                        const isCurrent =
+                                            activeFamily?.name === entry.name;
+                                        return (
+                                            <Cell
+                                                key={entry.name}
+                                                fill={entry.color}
+                                                opacity={
+                                                    activeFamily && !isCurrent
+                                                        ? 0.38
+                                                        : 1
+                                                }
+                                                style={{
+                                                    cursor: 'pointer',
+                                                    transition: 'opacity 0.2s ease',
+                                                    outline: 'none',
+                                                }}
+                                            />
+                                        );
+                                    })}
+                                </Pie>
+                            </PieChart>
 
-                                {/* Exact Trigonometric Arc Paths */}
-                                {arcSegments.map(({ family, pathD }) => {
-                                    const isHovered = activeFamily?.name === family.name;
-                                    return (
-                                        <path
-                                            key={family.name}
-                                            d={pathD}
-                                            fill="none"
-                                            stroke={family.color}
-                                            strokeWidth={isHovered ? strokeWidth + 6 : strokeWidth}
-                                            strokeLinecap="butt"
-                                            className={styles.donutArc}
-                                            onMouseEnter={() => setActiveFamily(family)}
-                                            onMouseLeave={() => setActiveFamily(null)}
-                                            style={{
-                                                cursor: 'pointer',
-                                                transition: 'stroke-width 0.2s ease, opacity 0.2s ease',
-                                                opacity: activeFamily && !isHovered ? 0.4 : 1,
-                                            }}
-                                        />
-                                    );
-                                })}
-
-                                {/* Center content */}
-                                <g className={styles.donutCenter}>
-                                    <text
-                                        x={donutCenter}
-                                        y={donutCenter - 10}
-                                        textAnchor="middle"
-                                        className={styles.donutCenterPct}
-                                    >
-                                        {highlightedFamily.percentage}%
-                                    </text>
-                                    <text
-                                        x={donutCenter}
-                                        y={donutCenter + 12}
-                                        textAnchor="middle"
-                                        className={styles.donutCenterLabel}
-                                    >
-                                        {highlightedFamily.name}
-                                    </text>
-                                    <text
-                                        x={donutCenter}
-                                        y={donutCenter + 30}
-                                        textAnchor="middle"
-                                        className={styles.donutCenterSub}
-                                    >
-                                        {highlightedFamily.count} saved scents
-                                    </text>
-                                </g>
-                            </svg>
+                            {/* Centered HTML overlay inside Donut hole */}
+                            <div className={styles.donutCenterOverlay}>
+                                <span className={styles.donutCenterPct}>
+                                    {highlightedFamily.percentage}%
+                                </span>
+                                <span className={styles.donutCenterLabel}>
+                                    {highlightedFamily.name}
+                                </span>
+                                <span className={styles.donutCenterSub}>
+                                    {highlightedFamily.count} saved scents
+                                </span>
+                            </div>
                         </div>
 
                         {/* Interactive Family Legend */}
                         <div className={styles.familyLegend}>
-                            {families.map((fam) => {
+                            {displayFamilies.map((fam) => {
                                 const isCurrent = activeFamily?.name === fam.name;
                                 return (
                                     <div
@@ -234,10 +213,16 @@ export const ScentTasteChart = () => {
                                         />
                                         <div className={styles.legendDetails}>
                                             <div className={styles.legendTop}>
-                                                <span className={styles.legendName}>{fam.name}</span>
-                                                <span className={styles.legendPct}>{fam.percentage}%</span>
+                                                <span className={styles.legendName}>
+                                                    {fam.name}
+                                                </span>
+                                                <span className={styles.legendPct}>
+                                                    {fam.percentage}%
+                                                </span>
                                             </div>
-                                            <p className={styles.legendDesc}>{fam.description}</p>
+                                            <p className={styles.legendDesc}>
+                                                {fam.description}
+                                            </p>
                                         </div>
                                     </div>
                                 );
@@ -246,141 +231,120 @@ export const ScentTasteChart = () => {
                     </div>
                 </div>
 
-                {/* 2. Olfactory Radar Chart (Multi-dimensional Profile) */}
+                {/* 2. Olfactory Radar Chart (Recharts RadarChart) */}
                 <div className={styles.diagramCard}>
                     <div className={styles.cardHeader}>
                         <div>
                             <span className={styles.eyebrow}>TASTE EQUILIBRIUM</span>
-                            <h4 className={styles.cardTitle}>Olfactory Radar Spectrum</h4>
+                            <h4 className={styles.cardTitle}>
+                                Olfactory Radar Spectrum
+                            </h4>
                         </div>
                         <span className={styles.metaHint}>6-Axis Harmony</span>
                     </div>
 
                     <div className={styles.radarLayout}>
-                        <svg
-                            width="320"
-                            height="320"
-                            viewBox="0 0 320 320"
-                            className={styles.radarSvg}
-                        >
-                            {/* Concentric grid polygons */}
-                            {gridPolygons.map((pts, idx) => (
-                                <polygon
-                                    key={idx}
-                                    points={pts}
-                                    fill="none"
-                                    stroke="#e5e0d7"
-                                    strokeWidth="1"
-                                    strokeDasharray={idx === 3 ? 'none' : '3 3'}
-                                />
-                            ))}
-
-                            {/* Spoke lines */}
-                            {radarData.map((_, i) => {
-                                const { x, y } = getRadarCoordinates(i, 100);
-                                return (
-                                    <line
-                                        key={i}
-                                        x1={radarCenter}
-                                        y1={radarCenter}
-                                        x2={x}
-                                        y2={y}
+                        <div className={styles.radarChartWrapper}>
+                            <ResponsiveContainer width="100%" height={290}>
+                                <RadarChart
+                                    cx="50%"
+                                    cy="50%"
+                                    outerRadius="68%"
+                                    data={radarChartData}
+                                    onMouseMove={(state) => {
+                                        if (state && state.activeLabel) {
+                                            const rawLabel = String(
+                                                state.activeLabel
+                                            ).replace(/\s*\(\d+%\)$/, '');
+                                            setActiveRadarLabel(rawLabel);
+                                        }
+                                    }}
+                                    onMouseLeave={() => setActiveRadarLabel(null)}
+                                >
+                                    <PolarGrid
                                         stroke="#e5e0d7"
-                                        strokeWidth="1"
+                                        strokeDasharray="3 3"
                                     />
-                                );
-                            })}
-
-                            {/* Shaded data polygon */}
-                            <polygon
-                                points={dataPolygonPoints}
-                                fill="rgba(197, 155, 39, 0.22)"
-                                stroke="#c59b27"
-                                strokeWidth="2.5"
-                                className={styles.radarPolygon}
-                            />
-
-                            {/* Vertex markers & labels with stable hover target (no cursor flee / jitter) */}
-                            {radarData.map((dim, i) => {
-                                const { x, y } = getRadarCoordinates(i, dim.value);
-                                const labelCoord = getRadarCoordinates(i, 118);
-                                const isHovered = hoveredRadarIdx === i;
-
-                                return (
-                                    <g
-                                        key={dim.label}
-                                        onMouseEnter={() => setHoveredRadarIdx(i)}
-                                        onMouseLeave={() => setHoveredRadarIdx(null)}
-                                        style={{ cursor: 'pointer' }}
-                                    >
-                                        {/* Large invisible circle to maintain solid, jitter-free cursor hover */}
-                                        <circle
-                                            cx={x}
-                                            cy={y}
-                                            r="16"
-                                            fill="transparent"
-                                        />
-
-                                        {/* Subtle halo on hover without coordinate displacement */}
-                                        {isHovered && (
-                                            <circle
-                                                cx={x}
-                                                cy={y}
-                                                r="9"
-                                                fill="rgba(197, 155, 39, 0.28)"
-                                            />
-                                        )}
-
-                                        {/* Crisp vertex dot */}
-                                        <circle
-                                            cx={x}
-                                            cy={y}
-                                            r={isHovered ? 6 : 4.5}
-                                            fill={isHovered ? '#836719' : '#c59b27'}
-                                            stroke="#fffefc"
-                                            strokeWidth="2"
-                                            className={styles.radarPoint}
-                                        />
-
-                                        {/* Label text */}
-                                        <text
-                                            x={labelCoord.x}
-                                            y={labelCoord.y + 4}
-                                            textAnchor={
-                                                Math.abs(labelCoord.x - radarCenter) < 15
-                                                    ? 'middle'
-                                                    : labelCoord.x > radarCenter
-                                                    ? 'start'
-                                                    : 'end'
-                                            }
-                                            className={`${styles.radarLabel} ${
-                                                isHovered ? styles.radarLabelHovered : ''
-                                            }`}
-                                        >
-                                            {dim.label} ({dim.value}%)
-                                        </text>
-                                    </g>
-                                );
-                            })}
-                        </svg>
+                                    <PolarAngleAxis
+                                        dataKey="axisLabel"
+                                        tick={{
+                                            fill: '#77736c',
+                                            fontSize: 10.5,
+                                            fontWeight: 500,
+                                            fontFamily: 'Inter, sans-serif',
+                                        }}
+                                    />
+                                    <PolarRadiusAxis
+                                        angle={90}
+                                        domain={[0, 100]}
+                                        tick={false}
+                                        axisLine={false}
+                                    />
+                                    <Radar
+                                        name="Olfactory Affinity"
+                                        dataKey="value"
+                                        stroke="#c59b27"
+                                        strokeWidth={2.5}
+                                        fill="#c59b27"
+                                        fillOpacity={0.22}
+                                        dot={{
+                                            r: 4.5,
+                                            fill: '#c59b27',
+                                            stroke: '#fffefc',
+                                            strokeWidth: 2,
+                                        }}
+                                        activeDot={{
+                                            r: 6,
+                                            fill: '#836719',
+                                            stroke: '#fffefc',
+                                            strokeWidth: 2,
+                                        }}
+                                    />
+                                    <Tooltip
+                                        formatter={(value) => [`${value}% Affinity`, 'Score']}
+                                        contentStyle={{
+                                            backgroundColor: '#fffefc',
+                                            border: '1px solid #e5e0d7',
+                                            borderRadius: '8px',
+                                            fontSize: '12px',
+                                            color: '#18181b',
+                                            boxShadow: '0 6px 20px rgba(0, 0, 0, 0.06)',
+                                        }}
+                                    />
+                                </RadarChart>
+                            </ResponsiveContainer>
+                        </div>
 
                         <div className={styles.radarSummary}>
                             <div className={styles.radarInsight}>
-                                <span className={styles.insightIcon}>✦</span>
+                                <span className={styles.insightIcon}>
+                                    <Sparkles size={14} />
+                                </span>
                                 <div>
                                     {activeRadarDim ? (
                                         <>
-                                            <strong>{activeRadarDim.label}:</strong> Affinity level is{' '}
+                                            <strong>{activeRadarDim.label}:</strong>{' '}
+                                            Affinity level is{' '}
                                             <span className={styles.highlightText}>
                                                 {activeRadarDim.value}%
                                             </span>
-                                            . Reflects your frequent selection of matching accords and notes.
+                                            . Reflects your frequent selection of matching
+                                            accords and notes.
                                         </>
                                     ) : (
                                         <>
-                                            <strong>Signature Equilibrium:</strong> Your profile peaks in{' '}
-                                            <span className={styles.highlightText}>Woody &amp; Earthy</span> and{' '}
-                                            <span className={styles.highlightText}>Citrus &amp; Bright</span> accords, indicating a preference for timeless freshness that settles into warm, cedar-anchored sillage.
+                                            <strong>Signature Equilibrium:</strong> Your
+                                            profile peaks in{' '}
+                                            <span className={styles.highlightText}>
+                                                {displayRadar[0]?.label || 'Woody & Earthy'}
+                                            </span>{' '}
+                                            and{' '}
+                                            <span className={styles.highlightText}>
+                                                {displayRadar[1]?.label || 'Citrus & Bright'}
+                                            </span>{' '}
+                                            accords, indicating a preference for timeless
+                                            freshness that settles into warm, cedar-anchored
+                                            sillage.
                                         </>
                                     )}
                                 </div>
@@ -394,10 +358,16 @@ export const ScentTasteChart = () => {
             <div className={styles.notesSection}>
                 <div className={styles.cardHeader}>
                     <div>
-                        <span className={styles.eyebrow}>INDIVIDUAL INGREDIENT AFFINITY</span>
-                        <h4 className={styles.cardTitle}>Top Selected Notes &amp; Ingredients</h4>
+                        <span className={styles.eyebrow}>
+                            INDIVIDUAL INGREDIENT AFFINITY
+                        </span>
+                        <h4 className={styles.cardTitle}>
+                            Top Selected Notes &amp; Ingredients
+                        </h4>
                     </div>
-                    <span className={styles.metaHint}>Calculated across search &amp; library selections</span>
+                    <span className={styles.metaHint}>
+                        Calculated across search &amp; library selections
+                    </span>
                 </div>
 
                 <div className={styles.notesGrid}>
@@ -406,7 +376,9 @@ export const ScentTasteChart = () => {
                         return (
                             <div
                                 key={note.name}
-                                className={`${styles.noteRow} ${isHovered ? styles.noteRowHover : ''}`}
+                                className={`${styles.noteRow} ${
+                                    isHovered ? styles.noteRowHover : ''
+                                }`}
                                 onMouseEnter={() => setHoveredNote(note.name)}
                                 onMouseLeave={() => setHoveredNote(null)}
                             >
@@ -414,8 +386,12 @@ export const ScentTasteChart = () => {
                                 <div className={styles.noteMain}>
                                     <div className={styles.noteMeta}>
                                         <div className={styles.noteTitleGroup}>
-                                            <span className={styles.noteName}>{note.name}</span>
-                                            <span className={styles.noteCategory}>{note.category}</span>
+                                            <span className={styles.noteName}>
+                                                {note.name}
+                                            </span>
+                                            <span className={styles.noteCategory}>
+                                                {note.category}
+                                            </span>
                                         </div>
                                         <div className={styles.noteStats}>
                                             <span className={styles.noteCount}>

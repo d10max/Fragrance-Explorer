@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Eye, EyeOff, X, Sparkles, AlertCircle } from 'lucide-react';
 import { useProfile } from '@/context/ProfileContext';
 import styles from './AuthModal.module.scss';
 
@@ -16,7 +17,25 @@ export const AuthModal = () => {
     const [bio, setBio] = useState('');
     const [error, setError] = useState('');
 
+    useEffect(() => {
+        if (!isAuthModalOpen) return;
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                closeAuthModal();
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [isAuthModalOpen, closeAuthModal]);
+
     if (!isAuthModalOpen) return null;
+
+    const handleClose = () => {
+        setError('');
+        setPassword('');
+        setConfirmPassword('');
+        closeAuthModal();
+    };
 
     const handleSwitchMode = (newMode: 'register' | 'login') => {
         setMode(newMode);
@@ -43,7 +62,17 @@ export const AuthModal = () => {
                 return;
             }
 
-            register({ name, email, password, level, bio });
+            const result = register({ name, email, password, level, bio });
+            if (!result.success) {
+                setError(result.error || 'Could not register account.');
+                return;
+            }
+
+            setName('');
+            setEmail('');
+            setPassword('');
+            setConfirmPassword('');
+            setBio('');
         } else {
             if (!email.trim() || !password) {
                 setError('Please provide your email and password.');
@@ -52,13 +81,24 @@ export const AuthModal = () => {
 
             const success = login(email, password);
             if (!success) {
-                setError('Invalid email or password. Please verify your credentials.');
+                setError(
+                    'Invalid email or password. Please verify your credentials or use Demo Mode below.'
+                );
+                return;
             }
+
+            setPassword('');
         }
     };
 
     return (
-        <div className={styles.overlay} onClick={closeAuthModal}>
+        <div
+            className={styles.overlay}
+            onClick={handleClose}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="auth-modal-title"
+        >
             <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
                 {/* Header with Close */}
                 <div className={styles.modalHeader}>
@@ -66,7 +106,7 @@ export const AuthModal = () => {
                         <span className={styles.eyebrow}>
                             FRAGRANCE EXPLORER &middot; MEMBERSHIP
                         </span>
-                        <h3 className={styles.title}>
+                        <h3 id="auth-modal-title" className={styles.title}>
                             {mode === 'register'
                                 ? 'Create Connoisseur Profile'
                                 : 'Sign In to Your Wardrobe'}
@@ -75,9 +115,10 @@ export const AuthModal = () => {
                     <button
                         type="button"
                         className={styles.closeBtn}
-                        onClick={closeAuthModal}
+                        onClick={handleClose}
+                        aria-label="Close authentication modal"
                     >
-                        &times;
+                        <X size={20} strokeWidth={1.75} />
                     </button>
                 </div>
 
@@ -104,14 +145,25 @@ export const AuthModal = () => {
                 </div>
 
                 {/* Error Banner */}
-                {error && <div className={styles.errorAlert}>{error}</div>}
+                {error && (
+                    <div className={styles.errorAlert} role="alert">
+                        <AlertCircle
+                            size={15}
+                            style={{ marginRight: 6, verticalAlign: 'text-bottom' }}
+                        />
+                        {error}
+                    </div>
+                )}
 
                 <form onSubmit={handleSubmit} className={styles.form}>
                     {mode === 'register' ? (
                         <>
                             <div className={styles.fieldGroup}>
-                                <label className={styles.label}>Your Name</label>
+                                <label htmlFor="auth-name" className={styles.label}>
+                                    Your Name
+                                </label>
                                 <input
+                                    id="auth-name"
                                     type="text"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
@@ -123,8 +175,11 @@ export const AuthModal = () => {
                             </div>
 
                             <div className={styles.fieldGroup}>
-                                <label className={styles.label}>Email Address</label>
+                                <label htmlFor="auth-reg-email" className={styles.label}>
+                                    Email Address
+                                </label>
                                 <input
+                                    id="auth-reg-email"
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
@@ -137,16 +192,29 @@ export const AuthModal = () => {
                             {/* Password Field */}
                             <div className={styles.fieldGroup}>
                                 <div className={styles.labelRow}>
-                                    <label className={styles.label}>Create Password</label>
+                                    <label htmlFor="auth-reg-pwd" className={styles.label}>
+                                        Create Password
+                                    </label>
                                     <button
                                         type="button"
                                         className={styles.togglePwdBtn}
                                         onClick={() => setShowPassword((prev) => !prev)}
                                     >
-                                        {showPassword ? 'Hide' : 'Show'}
+                                        {showPassword ? (
+                                            <>
+                                                <EyeOff size={13} style={{ marginRight: 4, verticalAlign: 'middle' }} />
+                                                Hide
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Eye size={13} style={{ marginRight: 4, verticalAlign: 'middle' }} />
+                                                Show
+                                            </>
+                                        )}
                                     </button>
                                 </div>
                                 <input
+                                    id="auth-reg-pwd"
                                     type={showPassword ? 'text' : 'password'}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
@@ -159,8 +227,11 @@ export const AuthModal = () => {
 
                             {/* Confirm Password Field */}
                             <div className={styles.fieldGroup}>
-                                <label className={styles.label}>Confirm Password</label>
+                                <label htmlFor="auth-reg-confirm" className={styles.label}>
+                                    Confirm Password
+                                </label>
                                 <input
+                                    id="auth-reg-confirm"
                                     type={showPassword ? 'text' : 'password'}
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
@@ -172,10 +243,11 @@ export const AuthModal = () => {
                             </div>
 
                             <div className={styles.fieldGroup}>
-                                <label className={styles.label}>
+                                <label htmlFor="auth-reg-level" className={styles.label}>
                                     Olfactory Experience Level
                                 </label>
                                 <select
+                                    id="auth-reg-level"
                                     value={level}
                                     onChange={(e) => setLevel(e.target.value)}
                                     className={styles.select}
@@ -199,10 +271,11 @@ export const AuthModal = () => {
                             </div>
 
                             <div className={styles.fieldGroup}>
-                                <label className={styles.label}>
+                                <label htmlFor="auth-reg-bio" className={styles.label}>
                                     Fragrance Notes or Philosophy (Optional)
                                 </label>
                                 <input
+                                    id="auth-reg-bio"
                                     type="text"
                                     value={bio}
                                     onChange={(e) => setBio(e.target.value)}
@@ -218,8 +291,11 @@ export const AuthModal = () => {
                     ) : (
                         <>
                             <div className={styles.fieldGroup}>
-                                <label className={styles.label}>Email Address</label>
+                                <label htmlFor="auth-login-email" className={styles.label}>
+                                    Email Address
+                                </label>
                                 <input
+                                    id="auth-login-email"
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
@@ -232,16 +308,29 @@ export const AuthModal = () => {
 
                             <div className={styles.fieldGroup}>
                                 <div className={styles.labelRow}>
-                                    <label className={styles.label}>Password</label>
+                                    <label htmlFor="auth-login-pwd" className={styles.label}>
+                                        Password
+                                    </label>
                                     <button
                                         type="button"
                                         className={styles.togglePwdBtn}
                                         onClick={() => setShowPassword((prev) => !prev)}
                                     >
-                                        {showPassword ? 'Hide' : 'Show'}
+                                        {showPassword ? (
+                                            <>
+                                                <EyeOff size={13} style={{ marginRight: 4, verticalAlign: 'middle' }} />
+                                                Hide
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Eye size={13} style={{ marginRight: 4, verticalAlign: 'middle' }} />
+                                                Show
+                                            </>
+                                        )}
                                     </button>
                                 </div>
                                 <input
+                                    id="auth-login-pwd"
                                     type={showPassword ? 'text' : 'password'}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
@@ -261,7 +350,10 @@ export const AuthModal = () => {
                 {/* Quick Demo Access Bar */}
                 <div className={styles.demoBar}>
                     <div className={styles.demoInfo}>
-                        <span className={styles.demoLabel}>EXAM / DEMO MODE</span>
+                        <span className={styles.demoLabel}>
+                            <Sparkles size={11} style={{ marginRight: 4, verticalAlign: 'middle' }} />
+                            EXAM / DEMO MODE
+                        </span>
                         <p className={styles.demoHint}>
                             Want to test with full pre-loaded data &amp; charts immediately?
                         </p>

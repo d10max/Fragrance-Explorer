@@ -20,6 +20,7 @@ TestResults/
 *.suo
 appsettings.Development.json
 appsettings.Local.json
+**/appsettings.Development.json
 
 # ==========================================
 # 3. Frontend / React / Vite / Node.js

@@ -6,6 +6,7 @@ using FragranceExplorer.BLL.Parser.Perfumes.Services;
 using FragranceExplorer.BLL.Repositories;
 using FragranceExplorer.BLL.Services;
 using FragranceExplorer.BLL.Strategies;
+using FragranceExplorer.DAL;
 
 namespace FragranceExplorer_Back;
 
@@ -26,6 +27,8 @@ public class Program
         }
 
         var builder = WebApplication.CreateBuilder(args);
+
+        builder.Services.AddDal(builder.Configuration);
 
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();

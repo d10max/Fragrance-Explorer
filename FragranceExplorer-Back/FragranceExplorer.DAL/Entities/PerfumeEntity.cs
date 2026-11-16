@@ -14,6 +14,28 @@ public class PerfumeEntity : BaseEntity
 
     public double Rating { get; set; }
 
+    public int? Year { get; set; }
+
+    public string Slug { get; set; } = string.Empty;
+
+    public string? Description { get; set; }
+
+    public int? People { get; set; }
+
+    public List<string> Perfumers { get; set; } = [];
+
+    public double? Longevity { get; set; }
+
+    public double? Sillage { get; set; }
+
+    public string? BestSeasons { get; set; }
+
+    public string? VibeQuote { get; set; }
+
+    public string? Family { get; set; }
+
+    public string? Concentration { get; set; }
+
     public BrandEntity Brand { get; set; } = null!;
 
     public ICollection<PerfumeNoteEntity> PerfumeNotes { get; set; } = [];

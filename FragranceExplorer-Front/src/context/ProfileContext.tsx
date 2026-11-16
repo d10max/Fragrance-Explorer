@@ -1,5 +1,16 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import { PERFUMES_COLLECTION, type PerfumeItem } from '@/pages/perfume-catalog-page/perfumes.data';
+import {
+    createContext,
+    useContext,
+    useState,
+    useEffect,
+    useMemo,
+    useCallback,
+    type ReactNode,
+} from 'react';
+import {
+    PERFUMES_COLLECTION,
+    type PerfumeItem,
+} from '@/pages/perfume-catalog-page/perfumes.data';
 
 export interface UserProfile {
     name: string;
@@ -56,17 +67,28 @@ export interface DiscoveryHistoryItem {
     resultCount: number;
 }
 
+export interface AuthActionResult {
+    success: boolean;
+    error?: string;
+}
+
+interface RegisteredUserEntry {
+    profile: UserProfile;
+    passwordHash?: string;
+    password?: string; // legacy support
+}
+
 interface ProfileContextType {
     user: UserProfile | null;
     isAuthenticated: boolean;
-    updateUser: (updates: Partial<UserProfile>) => void;
+    updateUser: (updates: Partial<UserProfile>) => AuthActionResult;
     register: (data: {
         name: string;
         email: string;
         password?: string;
         level?: string;
         bio?: string;
-    }) => void;
+    }) => AuthActionResult;
     login: (email: string, password?: string) => boolean;
     logout: () => void;
     loadDemoProfile: () => void;
@@ -78,6 +100,7 @@ interface ProfileContextType {
     isFavorite: (id: string) => boolean;
     analytics: TasteAnalytics;
     history: DiscoveryHistoryItem[];
+    addHistoryEntry: (entry: Omit<DiscoveryHistoryItem, 'id' | 'date'>) => void;
     clearHistory: () => void;
     isAuthModalOpen: boolean;
     openAuthModal: () => void;
@@ -135,6 +158,37 @@ const DEMO_HISTORY: DiscoveryHistoryItem[] = [
     },
 ];
 
+const BASE_FAMILIES_META: Omit<FamilyStat, 'count' | 'percentage'>[] = [
+    {
+        name: 'Woody',
+        color: '#c59b27',
+        bgBadge: '#eee9e2',
+        textBadge: '#8b7963',
+        description: 'Cedarwood, Sandalwood, Vetiver & Dry Woods',
+    },
+    {
+        name: 'Citrus',
+        color: '#d4a32e',
+        bgBadge: '#f5eed9',
+        textBadge: '#b89737',
+        description: 'Bergamot, Bitter Orange, Neroli & Zest',
+    },
+    {
+        name: 'Fresh',
+        color: '#77958a',
+        bgBadge: '#eaf0ec',
+        textBadge: '#77958a',
+        description: 'Cardamom, Green Fig, Aquatic & Herbal Notes',
+    },
+    {
+        name: 'Spicy',
+        color: '#b67c67',
+        bgBadge: '#f5e7e1',
+        textBadge: '#b67c67',
+        description: 'Pink Pepper, Tonka Bean, Saffron & Warm Amber',
+    },
+];
+
 const CURRENT_USER_STORAGE_KEY = 'fe_current_user_session';
 const REGISTERED_USERS_KEY = 'fe_registered_users_registry';
 
@@ -147,250 +201,422 @@ function calculateInitials(name: string): string {
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
+// Deterministic client-side salted hash so passwords are never stored in raw plaintext
+function hashPassword(password: string, emailSalt: string): string {
+    const input = `${emailSalt.toLowerCase()}::fe_salt_v1::${password}`;
+    let h1 = 0xdeadbeef ^ input.length;
+    let h2 = 0x41c6ce57 ^ input.length;
+    for (let i = 0; i < input.length; i++) {
+        const ch = input.charCodeAt(i);
+        h1 = Math.imul(h1 ^ ch, 2654435761);
+        h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return `fe_h1_${(h2 >>> 0).toString(16).padStart(8, '0')}${(h1 >>> 0).toString(16).padStart(8, '0')}`;
+}
+
+function readStoredUser(): UserProfile | null {
+    try {
+        const saved = localStorage.getItem(CURRENT_USER_STORAGE_KEY);
+        return saved ? (JSON.parse(saved) as UserProfile) : null;
+    } catch (err) {
+        console.warn('Failed to read user session:', err);
+        return null;
+    }
+}
+
+function readUserFavorites(email: string): string[] {
+    try {
+        const saved = localStorage.getItem(`fe_user_favorites_${email}`);
+        if (saved) return JSON.parse(saved) as string[];
+        return email === DEMO_USER.email ? DEMO_FAVORITES : [];
+    } catch (err) {
+        console.warn('Failed to read user favorites:', err);
+        return [];
+    }
+}
+
+function readUserHistory(email: string): DiscoveryHistoryItem[] {
+    try {
+        const saved = localStorage.getItem(`fe_user_history_${email}`);
+        if (saved) return JSON.parse(saved) as DiscoveryHistoryItem[];
+        return email === DEMO_USER.email ? DEMO_HISTORY : [];
+    } catch (err) {
+        console.warn('Failed to read user history:', err);
+        return [];
+    }
+}
+
+function readRegistry(): Record<string, RegisteredUserEntry> {
+    try {
+        const raw = localStorage.getItem(REGISTERED_USERS_KEY);
+        return raw ? (JSON.parse(raw) as Record<string, RegisteredUserEntry>) : {};
+    } catch (err) {
+        console.warn('Failed to read user registry:', err);
+        return {};
+    }
+}
+
+function formatNowLabel(): string {
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const mins = String(now.getMinutes()).padStart(2, '0');
+    return `Today, ${hours}:${mins}`;
+}
+
 export const ProfileProvider = ({ children }: { children: ReactNode }) => {
-    // Current user state (null if guest)
-    const [user, setUser] = useState<UserProfile | null>(() => {
-        try {
-            const saved = localStorage.getItem(CURRENT_USER_STORAGE_KEY);
-            return saved ? JSON.parse(saved) : null;
-        } catch {
-            return null;
-        }
-    });
+    const [user, setUser] = useState<UserProfile | null>(() => readStoredUser());
 
     const [favoriteIds, setFavoriteIds] = useState<string[]>(() => {
-        try {
-            if (!user) return [];
-            const key = `fe_user_favorites_${user.email}`;
-            const saved = localStorage.getItem(key);
-            return saved ? JSON.parse(saved) : [];
-        } catch {
-            return [];
-        }
+        const initialUser = readStoredUser();
+        return initialUser ? readUserFavorites(initialUser.email) : [];
     });
 
     const [history, setHistory] = useState<DiscoveryHistoryItem[]>(() => {
-        try {
-            if (!user) return [];
-            const key = `fe_user_history_${user.email}`;
-            const saved = localStorage.getItem(key);
-            return saved ? JSON.parse(saved) : [];
-        } catch {
-            return [];
-        }
+        const initialUser = readStoredUser();
+        return initialUser ? readUserHistory(initialUser.email) : [];
     });
 
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
-    // Sync session and user favorites
+    // Persist active user session to localStorage
     useEffect(() => {
         try {
             if (user) {
                 localStorage.setItem(CURRENT_USER_STORAGE_KEY, JSON.stringify(user));
-                // Load favorites for this specific user
-                const key = `fe_user_favorites_${user.email}`;
-                const savedFavs = localStorage.getItem(key);
-                if (savedFavs) {
-                    setFavoriteIds(JSON.parse(savedFavs));
-                } else if (user.email === DEMO_USER.email) {
-                    setFavoriteIds(DEMO_FAVORITES);
-                } else {
-                    setFavoriteIds([]);
-                }
-
-                // Load history for this specific user
-                const histKey = `fe_user_history_${user.email}`;
-                const savedHist = localStorage.getItem(histKey);
-                if (savedHist) {
-                    setHistory(JSON.parse(savedHist));
-                } else if (user.email === DEMO_USER.email) {
-                    setHistory(DEMO_HISTORY);
-                } else {
-                    setHistory([]);
-                }
             } else {
                 localStorage.removeItem(CURRENT_USER_STORAGE_KEY);
-                setFavoriteIds([]);
-                setHistory([]);
             }
-        } catch (e) {
-            console.error('Session sync error:', e);
+        } catch (err) {
+            console.error('Session sync error:', err);
         }
-    }, [user?.email]);
+    }, [user]);
 
-    // Save favorites whenever they change for the logged-in user
+    // Persist user favorites to localStorage
     useEffect(() => {
         try {
             if (user) {
-                const key = `fe_user_favorites_${user.email}`;
-                localStorage.setItem(key, JSON.stringify(favoriteIds));
+                localStorage.setItem(
+                    `fe_user_favorites_${user.email}`,
+                    JSON.stringify(favoriteIds)
+                );
             }
-        } catch (e) {
-            console.error('Favorites sync error:', e);
+        } catch (err) {
+            console.error('Favorites sync error:', err);
         }
-    }, [favoriteIds, user?.email]);
+    }, [favoriteIds, user]);
 
-    const openAuthModal = () => setIsAuthModalOpen(true);
-    const closeAuthModal = () => setIsAuthModalOpen(false);
-
-    const requireAuth = (callback: () => void) => {
-        if (user) {
-            callback();
-        } else {
-            setIsAuthModalOpen(true);
-        }
-    };
-
-    const register = (data: {
-        name: string;
-        email: string;
-        password?: string;
-        level?: string;
-        bio?: string;
-    }) => {
-        const currentDate = new Date();
-        const monthNames = [
-            'January', 'February', 'March', 'April', 'May', 'June',
-            'July', 'August', 'September', 'October', 'November', 'December'
-        ];
-        const memberSince = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
-
-        const newUser: UserProfile = {
-            name: data.name.trim(),
-            email: data.email.trim().toLowerCase(),
-            bio:
-                data.bio?.trim() ||
-                'Niche fragrance enthusiast crafting a personal olfactory wardrobe.',
-            initials: calculateInitials(data.name),
-            memberSince,
-            signatureScentId: '',
-            level: data.level || 'Fragrance Enthusiast',
-        };
-
-        // Save into local registry with password
+    // Persist user discovery history to localStorage
+    useEffect(() => {
         try {
-            const registryRaw = localStorage.getItem(REGISTERED_USERS_KEY);
-            const registry: Record<string, { profile: UserProfile; password?: string }> = registryRaw
-                ? JSON.parse(registryRaw)
-                : {};
-            registry[newUser.email] = {
-                profile: newUser,
-                password: data.password || '',
+            if (user) {
+                localStorage.setItem(
+                    `fe_user_history_${user.email}`,
+                    JSON.stringify(history)
+                );
+            }
+        } catch (err) {
+            console.error('History sync error:', err);
+        }
+    }, [history, user]);
+
+    const openAuthModal = useCallback(() => setIsAuthModalOpen(true), []);
+    const closeAuthModal = useCallback(() => setIsAuthModalOpen(false), []);
+
+    const requireAuth = useCallback(
+        (callback: () => void) => {
+            if (user) {
+                callback();
+            } else {
+                setIsAuthModalOpen(true);
+            }
+        },
+        [user]
+    );
+
+    const addHistoryEntry = useCallback(
+        (entry: Omit<DiscoveryHistoryItem, 'id' | 'date'>) => {
+            if (!user) return;
+            setHistory((prev) => {
+                const deduplicated = prev.filter(
+                    (item) => !(item.query === entry.query && item.mode === entry.mode)
+                );
+                const newItem: DiscoveryHistoryItem = {
+                    ...entry,
+                    id: `h-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+                    date: formatNowLabel(),
+                };
+                return [newItem, ...deduplicated].slice(0, 25);
+            });
+        },
+        [user]
+    );
+
+    const register = useCallback(
+        (data: {
+            name: string;
+            email: string;
+            password?: string;
+            level?: string;
+            bio?: string;
+        }): AuthActionResult => {
+            const normalizedEmail = data.email.trim().toLowerCase();
+            if (!normalizedEmail || !data.name.trim()) {
+                return {
+                    success: false,
+                    error: 'Please provide both your name and a valid email address.',
+                };
+            }
+
+            const registry = readRegistry();
+            if (normalizedEmail === DEMO_USER.email || registry[normalizedEmail]) {
+                return {
+                    success: false,
+                    error: 'An account with this email already exists. Please switch to Sign In.',
+                };
+            }
+
+            const currentDate = new Date();
+            const monthNames = [
+                'January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December',
+            ];
+            const memberSince = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+
+            const newUser: UserProfile = {
+                name: data.name.trim(),
+                email: normalizedEmail,
+                bio:
+                    data.bio?.trim() ||
+                    'Niche fragrance enthusiast crafting a personal olfactory wardrobe.',
+                initials: calculateInitials(data.name),
+                memberSince,
+                signatureScentId: '',
+                level: data.level || 'Fragrance Enthusiast',
             };
-            localStorage.setItem(REGISTERED_USERS_KEY, JSON.stringify(registry));
-        } catch {}
 
-        setUser(newUser);
-        setFavoriteIds([]);
-        setHistory([
-            {
-                id: `h-${Date.now()}`,
-                query: 'Welcome to Fragrance Explorer',
-                mode: 'catalog',
-                date: 'Just now',
-                resultCount: 1,
-            },
-        ]);
-        closeAuthModal();
-    };
+            const initialHistory: DiscoveryHistoryItem[] = [
+                {
+                    id: `h-${Date.now()}`,
+                    query: 'Joined Fragrance Explorer Connoisseur Club',
+                    mode: 'catalog',
+                    date: formatNowLabel(),
+                    resultCount: 128,
+                },
+            ];
 
-    const login = (email: string, password?: string): boolean => {
-        const normalized = email.trim().toLowerCase();
-        if (normalized === DEMO_USER.email) {
-            loadDemoProfile();
-            closeAuthModal();
-            return true;
-        }
-
-        try {
-            const registryRaw = localStorage.getItem(REGISTERED_USERS_KEY);
-            if (registryRaw) {
-                const registry: Record<string, any> = JSON.parse(registryRaw);
-                const entry = registry[normalized];
-                if (entry) {
-                    const profile: UserProfile = entry.profile || entry;
-                    const savedPassword = entry.password;
-                    // If password was stored, check it
-                    if (savedPassword && password && savedPassword !== password) {
-                        return false;
-                    }
-                    setUser(profile);
-                    closeAuthModal();
-                    return true;
-                }
+            try {
+                registry[newUser.email] = {
+                    profile: newUser,
+                    passwordHash: hashPassword(data.password || '', newUser.email),
+                };
+                localStorage.setItem(REGISTERED_USERS_KEY, JSON.stringify(registry));
+                localStorage.setItem(`fe_user_favorites_${newUser.email}`, JSON.stringify([]));
+                localStorage.setItem(
+                    `fe_user_history_${newUser.email}`,
+                    JSON.stringify(initialHistory)
+                );
+            } catch (err) {
+                console.error('Failed to save registered user:', err);
             }
-        } catch {}
 
-        return false;
-    };
+            setUser(newUser);
+            setFavoriteIds([]);
+            setHistory(initialHistory);
+            closeAuthModal();
+            return { success: true };
+        },
+        [closeAuthModal]
+    );
 
-    const logout = () => {
+    const loadDemoProfile = useCallback(() => {
+        const demoFavs = readUserFavorites(DEMO_USER.email);
+        const demoHist = readUserHistory(DEMO_USER.email);
+        setUser(DEMO_USER);
+        setFavoriteIds(demoFavs.length > 0 ? demoFavs : DEMO_FAVORITES);
+        setHistory(demoHist.length > 0 ? demoHist : DEMO_HISTORY);
+        closeAuthModal();
+    }, [closeAuthModal]);
+
+    const login = useCallback(
+        (email: string, password?: string): boolean => {
+            const normalized = email.trim().toLowerCase();
+            if (!password) return false;
+
+            const registry = readRegistry();
+            const entry = registry[normalized];
+            if (entry) {
+                const profile: UserProfile = entry.profile;
+                const expectedHash = hashPassword(password, normalized);
+
+                const isValidPassword = entry.passwordHash
+                    ? entry.passwordHash === expectedHash
+                    : entry.password === password;
+
+                if (!isValidPassword) {
+                    return false;
+                }
+
+                setUser(profile);
+                setFavoriteIds(readUserFavorites(normalized));
+                setHistory(readUserHistory(normalized));
+                closeAuthModal();
+                return true;
+            }
+
+            return false;
+        },
+        [closeAuthModal]
+    );
+
+    const logout = useCallback(() => {
         setUser(null);
         setFavoriteIds([]);
         setHistory([]);
-    };
+    }, []);
 
-    const loadDemoProfile = () => {
-        setUser(DEMO_USER);
-        setFavoriteIds(DEMO_FAVORITES);
-        setHistory(DEMO_HISTORY);
-        closeAuthModal();
-    };
-
-    const updateUser = (updates: Partial<UserProfile>) => {
-        if (!user) return;
-        setUser((prev) => {
-            if (!prev) return null;
-            const updated = { ...prev, ...updates };
-            if (updates.name && (!updates.initials || updates.initials === prev.initials)) {
-                updated.initials = calculateInitials(updates.name);
+    const updateUser = useCallback(
+        (updates: Partial<UserProfile>): AuthActionResult => {
+            if (!user) {
+                return { success: false, error: 'No active user session.' };
             }
-            return updated;
-        });
-    };
 
-    const addFavorite = (id: string) => {
-        if (!user) {
-            openAuthModal();
-            return;
-        }
-        setFavoriteIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
-    };
+            const oldEmail = user.email;
+            const newEmail = updates.email
+                ? updates.email.trim().toLowerCase()
+                : oldEmail;
 
-    const removeFavorite = (id: string) => {
-        if (!user) return;
-        setFavoriteIds((prev) => prev.filter((item) => item !== id));
-    };
+            const registry = readRegistry();
 
-    const toggleFavorite = (id: string) => {
-        if (!user) {
-            openAuthModal();
-            return;
-        }
-        setFavoriteIds((prev) =>
-            prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-        );
-    };
+            if (newEmail !== oldEmail) {
+                if (
+                    (newEmail === DEMO_USER.email && oldEmail !== DEMO_USER.email) ||
+                    registry[newEmail]
+                ) {
+                    return {
+                        success: false,
+                        error: 'This email address is already registered to another profile.',
+                    };
+                }
+            }
 
-    const isFavorite = (id: string) => Boolean(user && favoriteIds.includes(id));
+            const updatedName = updates.name ? updates.name.trim() : user.name;
+            const updatedUser: UserProfile = {
+                ...user,
+                ...updates,
+                name: updatedName,
+                email: newEmail,
+                initials: calculateInitials(updatedName),
+            };
 
-    const clearHistory = () => {
+            try {
+                if (newEmail !== oldEmail) {
+                    // Migrate favorites and history to new email key
+                    localStorage.setItem(
+                        `fe_user_favorites_${newEmail}`,
+                        JSON.stringify(favoriteIds)
+                    );
+                    localStorage.setItem(
+                        `fe_user_history_${newEmail}`,
+                        JSON.stringify(history)
+                    );
+                    localStorage.removeItem(`fe_user_favorites_${oldEmail}`);
+                    localStorage.removeItem(`fe_user_history_${oldEmail}`);
+
+                    if (registry[oldEmail]) {
+                        const oldEntry = registry[oldEmail];
+                        delete registry[oldEmail];
+                        registry[newEmail] = {
+                            ...oldEntry,
+                            profile: updatedUser,
+                        };
+                    }
+                } else if (registry[oldEmail]) {
+                    registry[oldEmail] = {
+                        ...registry[oldEmail],
+                        profile: updatedUser,
+                    };
+                }
+                localStorage.setItem(REGISTERED_USERS_KEY, JSON.stringify(registry));
+            } catch (err) {
+                console.error('Failed to persist profile update:', err);
+            }
+
+            setUser(updatedUser);
+            return { success: true };
+        },
+        [user, favoriteIds, history]
+    );
+
+    const addFavorite = useCallback(
+        (id: string) => {
+            if (!user) {
+                openAuthModal();
+                return;
+            }
+            const perfume = PERFUMES_COLLECTION.find((p) => p.id === id);
+            setFavoriteIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
+            if (perfume) {
+                addHistoryEntry({
+                    query: `Saved ${perfume.name} (${perfume.brand}) to Wardrobe`,
+                    mode: 'catalog',
+                    resultCount: 1,
+                });
+            }
+        },
+        [user, openAuthModal, addHistoryEntry]
+    );
+
+    const removeFavorite = useCallback(
+        (id: string) => {
+            if (!user) return;
+            setFavoriteIds((prev) => prev.filter((item) => item !== id));
+        },
+        [user]
+    );
+
+    const toggleFavorite = useCallback(
+        (id: string) => {
+            if (!user) {
+                openAuthModal();
+                return;
+            }
+            const isCurrentlyFav = favoriteIds.includes(id);
+            if (isCurrentlyFav) {
+                removeFavorite(id);
+            } else {
+                addFavorite(id);
+            }
+        },
+        [user, favoriteIds, openAuthModal, removeFavorite, addFavorite]
+    );
+
+    const isFavorite = useCallback(
+        (id: string) => Boolean(user && favoriteIds.includes(id)),
+        [user, favoriteIds]
+    );
+
+    const clearHistory = useCallback(() => {
         setHistory([]);
         if (user) {
             try {
                 localStorage.removeItem(`fe_user_history_${user.email}`);
-            } catch {}
+            } catch (err) {
+                console.warn('Failed to clear history from storage:', err);
+            }
         }
-    };
+    }, [user]);
 
-    // Calculate real perfume items from favoriteIds
-    const favoritePerfumes: PerfumeItem[] = favoriteIds
-        .map((id) => PERFUMES_COLLECTION.find((p) => p.id === id))
-        .filter((p): p is PerfumeItem => Boolean(p));
+    const favoritePerfumes: PerfumeItem[] = useMemo(
+        () =>
+            favoriteIds
+                .map((id) => PERFUMES_COLLECTION.find((p) => p.id === id))
+                .filter((p): p is PerfumeItem => Boolean(p)),
+        [favoriteIds]
+    );
 
-    // Dynamic taste analysis strictly based on user's saved perfumes
-    const analytics: TasteAnalytics = (() => {
-        // If user has 0 saved perfumes (e.g. freshly registered)
+    const analytics: TasteAnalytics = useMemo(() => {
         if (favoritePerfumes.length === 0) {
             return {
                 hasData: false,
@@ -400,44 +626,11 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
                 vibePersona: 'Olfactory Novice',
                 vibeDescription:
                     'Your signature scent archetype and visual taste radar will activate as you discover and save fragrances to your wardrobe.',
-                families: [
-                    {
-                        name: 'Woody',
-                        count: 0,
-                        percentage: 0,
-                        color: '#c59b27',
-                        bgBadge: '#eee9e2',
-                        textBadge: '#8b7963',
-                        description: 'Cedarwood, Sandalwood, Vetiver & Dry Woods',
-                    },
-                    {
-                        name: 'Citrus',
-                        count: 0,
-                        percentage: 0,
-                        color: '#d4a32e',
-                        bgBadge: '#f5eed9',
-                        textBadge: '#b89737',
-                        description: 'Bergamot, Bitter Orange, Neroli & Zest',
-                    },
-                    {
-                        name: 'Fresh',
-                        count: 0,
-                        percentage: 0,
-                        color: '#77958a',
-                        bgBadge: '#eaf0ec',
-                        textBadge: '#77958a',
-                        description: 'Cardamom, Green Fig, Aquatic & Herbal Notes',
-                    },
-                    {
-                        name: 'Spicy',
-                        count: 0,
-                        percentage: 0,
-                        color: '#b67c67',
-                        bgBadge: '#f5e7e1',
-                        textBadge: '#b67c67',
-                        description: 'Pink Pepper, Tonka Bean, Saffron & Warm Amber',
-                    },
-                ],
+                families: BASE_FAMILIES_META.map((meta) => ({
+                    ...meta,
+                    count: 0,
+                    percentage: 0,
+                })),
                 topNotes: [],
                 radarData: [
                     { label: 'Woody & Earthy', value: 0, maxValue: 100 },
@@ -447,12 +640,11 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
                     { label: 'Spicy Warmth', value: 0, maxValue: 100 },
                     { label: 'Soft Floral', value: 0, maxValue: 100 },
                 ],
-                exploredCount: 0,
+                exploredCount: history.length,
                 comparisonsCount: 0,
             };
         }
 
-        // Real calculations when user has 1+ saved perfumes
         const familyCounts: Record<'Woody' | 'Citrus' | 'Fresh' | 'Spicy', number> = {
             Woody: 0,
             Citrus: 0,
@@ -472,48 +664,24 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
         const woodyPct = Math.round((familyCounts.Woody / totalCount) * 100);
         const citrusPct = Math.round((familyCounts.Citrus / totalCount) * 100);
         const freshPct = Math.round((familyCounts.Fresh / totalCount) * 100);
-        const spicyPct = Math.max(0, 100 - (woodyPct + citrusPct + freshPct));
+        const spicyPct =
+            familyCounts.Spicy > 0
+                ? Math.max(1, 100 - (woodyPct + citrusPct + freshPct))
+                : 0;
 
-        const families: FamilyStat[] = [
-            {
-                name: 'Woody',
-                count: familyCounts.Woody,
-                percentage: woodyPct,
-                color: '#c59b27',
-                bgBadge: '#eee9e2',
-                textBadge: '#8b7963',
-                description: 'Cedarwood, Sandalwood, Vetiver & Dry Woods',
-            },
-            {
-                name: 'Citrus',
-                count: familyCounts.Citrus,
-                percentage: citrusPct,
-                color: '#d4a32e',
-                bgBadge: '#f5eed9',
-                textBadge: '#b89737',
-                description: 'Bergamot, Bitter Orange, Neroli & Zest',
-            },
-            {
-                name: 'Fresh',
-                count: familyCounts.Fresh,
-                percentage: freshPct,
-                color: '#77958a',
-                bgBadge: '#eaf0ec',
-                textBadge: '#77958a',
-                description: 'Cardamom, Green Fig, Aquatic & Herbal Notes',
-            },
-            {
-                name: 'Spicy',
-                count: familyCounts.Spicy,
-                percentage: spicyPct,
-                color: '#b67c67',
-                bgBadge: '#f5e7e1',
-                textBadge: '#b67c67',
-                description: 'Pink Pepper, Tonka Bean, Saffron & Warm Amber',
-            },
-        ];
+        const pctMap: Record<'Woody' | 'Citrus' | 'Fresh' | 'Spicy', number> = {
+            Woody: woodyPct,
+            Citrus: citrusPct,
+            Fresh: freshPct,
+            Spicy: spicyPct,
+        };
 
-        // Notes frequency strictly from real saved perfumes
+        const families: FamilyStat[] = BASE_FAMILIES_META.map((meta) => ({
+            ...meta,
+            count: familyCounts[meta.name],
+            percentage: pctMap[meta.name],
+        }));
+
         const noteCounts: Record<string, number> = {};
         favoritePerfumes.forEach((p) => {
             p.keyNotes.forEach((n) => {
@@ -530,27 +698,61 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
             count,
             percentage: Math.min(100, Math.round((count / totalCount) * 100)),
             category:
-                name.includes('Cedar') || name.includes('Vetiver') || name.includes('Sandalwood')
+                name.includes('Cedar') ||
+                name.includes('Vetiver') ||
+                name.includes('Sandalwood') ||
+                name.includes('Wood') ||
+                name.includes('Oud')
                     ? 'Woody'
-                    : name.includes('Bergamot') || name.includes('Orange') || name.includes('Lemon')
+                    : name.includes('Bergamot') ||
+                      name.includes('Orange') ||
+                      name.includes('Lemon') ||
+                      name.includes('Grapefruit') ||
+                      name.includes('Mandarin')
                     ? 'Citrus'
-                    : name.includes('Pepper') || name.includes('Saffron')
+                    : name.includes('Pepper') ||
+                      name.includes('Saffron') ||
+                      name.includes('Cardamom') ||
+                      name.includes('Vanilla') ||
+                      name.includes('Tonka')
                     ? 'Spicy'
                     : 'Fresh',
         }));
 
-        // Sort families to find dominant one
         const sortedFamilies = [...families].sort((a, b) => b.count - a.count);
         const dominant = sortedFamilies[0];
 
-        // Radar chart dimensions derived from their real preferences
         const radarData: RadarDimension[] = [
-            { label: 'Woody & Earthy', value: Math.min(100, Math.round(woodyPct * 0.9) + (woodyPct > 0 ? 15 : 5)), maxValue: 100 },
-            { label: 'Citrus & Bright', value: Math.min(100, Math.round(citrusPct * 0.9) + (citrusPct > 0 ? 15 : 5)), maxValue: 100 },
-            { label: 'Fresh Green', value: Math.min(100, Math.round(freshPct * 0.9) + (freshPct > 0 ? 15 : 5)), maxValue: 100 },
-            { label: 'Resinous Amber', value: Math.min(100, Math.round((woodyPct + spicyPct) * 0.5) + 10), maxValue: 100 },
-            { label: 'Spicy Warmth', value: Math.min(100, Math.round(spicyPct * 0.9) + (spicyPct > 0 ? 15 : 5)), maxValue: 100 },
-            { label: 'Soft Floral', value: 20, maxValue: 100 },
+            {
+                label: 'Woody & Earthy',
+                value: Math.min(100, Math.round(woodyPct * 0.9) + (woodyPct > 0 ? 15 : 8)),
+                maxValue: 100,
+            },
+            {
+                label: 'Citrus & Bright',
+                value: Math.min(100, Math.round(citrusPct * 0.9) + (citrusPct > 0 ? 15 : 8)),
+                maxValue: 100,
+            },
+            {
+                label: 'Fresh Green',
+                value: Math.min(100, Math.round(freshPct * 0.9) + (freshPct > 0 ? 15 : 8)),
+                maxValue: 100,
+            },
+            {
+                label: 'Resinous Amber',
+                value: Math.min(100, Math.round((woodyPct + spicyPct) * 0.5) + 12),
+                maxValue: 100,
+            },
+            {
+                label: 'Spicy Warmth',
+                value: Math.min(100, Math.round(spicyPct * 0.9) + (spicyPct > 0 ? 15 : 8)),
+                maxValue: 100,
+            },
+            {
+                label: 'Soft Floral',
+                value: Math.min(100, Math.round((freshPct + citrusPct) * 0.35) + 16),
+                maxValue: 100,
+            },
         ];
 
         return {
@@ -566,45 +768,74 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
                     : freshPct >= 40
                     ? 'The Crisp Botanical Purist'
                     : 'The Modern Eclectic Connoisseur',
-            vibeDescription: `Your personal edit is led by ${dominant.name.toLowerCase()} accords (${dominant.percentage}%), featuring distinct notes of ${topNotes.slice(0, 3).map((n) => n.name).join(', ')}.`,
+            vibeDescription: `Your personal edit is led by ${dominant.name.toLowerCase()} accords (${dominant.percentage}%), featuring distinct notes of ${topNotes
+                .slice(0, 3)
+                .map((n) => n.name)
+                .join(', ')}.`,
             families,
             topNotes,
             radarData,
-            exploredCount: totalCount * 4 + 8,
+            exploredCount: Math.max(history.length, totalCount * 3),
             comparisonsCount: Math.min(totalCount * 2, 8),
         };
-    })();
+    }, [favoritePerfumes, history.length]);
+
+    const contextValue = useMemo<ProfileContextType>(
+        () => ({
+            user,
+            isAuthenticated: Boolean(user),
+            updateUser,
+            register,
+            login,
+            logout,
+            loadDemoProfile,
+            favoriteIds,
+            favoritePerfumes,
+            addFavorite,
+            removeFavorite,
+            toggleFavorite,
+            isFavorite,
+            analytics,
+            history,
+            addHistoryEntry,
+            clearHistory,
+            isAuthModalOpen,
+            openAuthModal,
+            closeAuthModal,
+            requireAuth,
+        }),
+        [
+            user,
+            updateUser,
+            register,
+            login,
+            logout,
+            loadDemoProfile,
+            favoriteIds,
+            favoritePerfumes,
+            addFavorite,
+            removeFavorite,
+            toggleFavorite,
+            isFavorite,
+            analytics,
+            history,
+            addHistoryEntry,
+            clearHistory,
+            isAuthModalOpen,
+            openAuthModal,
+            closeAuthModal,
+            requireAuth,
+        ]
+    );
 
     return (
-        <ProfileContext.Provider
-            value={{
-                user,
-                isAuthenticated: Boolean(user),
-                updateUser,
-                register,
-                login,
-                logout,
-                loadDemoProfile,
-                favoriteIds,
-                favoritePerfumes,
-                addFavorite,
-                removeFavorite,
-                toggleFavorite,
-                isFavorite,
-                analytics,
-                history,
-                clearHistory,
-                isAuthModalOpen,
-                openAuthModal,
-                closeAuthModal,
-                requireAuth,
-            }}
-        >
+        <ProfileContext.Provider value={contextValue}>
             {children}
         </ProfileContext.Provider>
     );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useProfile = () => {
     const context = useContext(ProfileContext);
     if (!context) {

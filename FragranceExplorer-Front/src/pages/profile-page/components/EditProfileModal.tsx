@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { X, Check, AlertCircle } from 'lucide-react';
+import { X, Check, AlertCircle, Eye, EyeOff, KeyRound } from 'lucide-react';
 import { useProfile, type UserProfile } from '@/context/ProfileContext';
 import { PERFUMES_COLLECTION } from '@/pages/perfume-catalog-page/perfumes.data';
 import styles from './EditProfileModal.module.scss';
@@ -24,6 +24,14 @@ const EditProfileForm = ({ user, onClose }: EditProfileFormProps) => {
     const [signatureScentId, setSignatureScentId] = useState(
         user.signatureScentId || ''
     );
+
+    // Password change state
+    const [isPasswordSectionOpen, setIsPasswordSectionOpen] = useState(false);
+    const [currentPassword, setCurrentPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmNewPassword, setConfirmNewPassword] = useState('');
+    const [showPasswords, setShowPasswords] = useState(false);
+
     const [error, setError] = useState('');
     const [isSaved, setIsSaved] = useState(false);
     const timerRef = useRef<number | null>(null);
@@ -52,12 +60,30 @@ const EditProfileForm = ({ user, onClose }: EditProfileFormProps) => {
             return;
         }
 
+        if (isPasswordSectionOpen && (currentPassword || newPassword || confirmNewPassword)) {
+            if (!currentPassword) {
+                setError('Please enter your current password to set a new one.');
+                return;
+            }
+            if (newPassword.length < 6) {
+                setError('New password must be at least 6 characters long.');
+                return;
+            }
+            if (newPassword !== confirmNewPassword) {
+                setError('New passwords do not match.');
+                return;
+            }
+        }
+
         const result = updateUser({
             name: name.trim(),
             email: email.trim().toLowerCase(),
             bio: bio.trim(),
             level,
             signatureScentId,
+            ...(isPasswordSectionOpen && newPassword
+                ? { currentPassword, newPassword }
+                : {}),
         });
 
         if (!result.success) {
@@ -100,20 +126,7 @@ const EditProfileForm = ({ user, onClose }: EditProfileFormProps) => {
 
                 <form onSubmit={handleSubmit} className={styles.form}>
                     {error && (
-                        <div
-                            style={{
-                                padding: '10px 14px',
-                                borderRadius: '6px',
-                                backgroundColor: '#fdf2f2',
-                                border: '1px solid #f5c2c2',
-                                color: '#9b2c2c',
-                                fontSize: '12px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '6px',
-                            }}
-                            role="alert"
-                        >
+                        <div className={styles.errorAlert} role="alert">
                             <AlertCircle size={15} />
                             <span>{error}</span>
                         </div>
@@ -196,10 +209,119 @@ const EditProfileForm = ({ user, onClose }: EditProfileFormProps) => {
                             id="edit-profile-bio"
                             value={bio}
                             onChange={(e) => setBio(e.target.value)}
-                            rows={3}
+                            rows={2}
                             className={styles.textarea}
                             placeholder="Describe your signature accords, favorite notes, and perfume philosophy..."
                         />
+                    </div>
+
+                    {/* Change Password Section */}
+                    <div className={styles.passwordSection}>
+                        <div className={styles.passwordHeader}>
+                            <button
+                                type="button"
+                                className={styles.passwordToggleBtn}
+                                onClick={() => {
+                                    setIsPasswordSectionOpen((prev) => !prev);
+                                    setCurrentPassword('');
+                                    setNewPassword('');
+                                    setConfirmNewPassword('');
+                                    setError('');
+                                }}
+                            >
+                                <KeyRound size={14} />
+                                <span>
+                                    {isPasswordSectionOpen
+                                        ? 'Cancel Password Change'
+                                        : 'Change Account Password'}
+                                </span>
+                            </button>
+
+                            {isPasswordSectionOpen && (
+                                <button
+                                    type="button"
+                                    className={styles.showPwdBtn}
+                                    onClick={() => setShowPasswords((prev) => !prev)}
+                                >
+                                    {showPasswords ? (
+                                        <>
+                                            <EyeOff size={13} />
+                                            <span>Hide</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Eye size={13} />
+                                            <span>Show</span>
+                                        </>
+                                    )}
+                                </button>
+                            )}
+                        </div>
+
+                        {isPasswordSectionOpen && (
+                            <div className={styles.passwordFields}>
+                                <div className={styles.fieldGroup}>
+                                    <label
+                                        htmlFor="edit-current-password"
+                                        className={styles.label}
+                                    >
+                                        Current Password
+                                    </label>
+                                    <input
+                                        id="edit-current-password"
+                                        type={showPasswords ? 'text' : 'password'}
+                                        value={currentPassword}
+                                        onChange={(e) =>
+                                            setCurrentPassword(e.target.value)
+                                        }
+                                        className={styles.input}
+                                        placeholder="Enter current password"
+                                    />
+                                </div>
+
+                                <div className={styles.passwordGrid}>
+                                    <div className={styles.fieldGroup}>
+                                        <label
+                                            htmlFor="edit-new-password"
+                                            className={styles.label}
+                                        >
+                                            New Password
+                                        </label>
+                                        <input
+                                            id="edit-new-password"
+                                            type={showPasswords ? 'text' : 'password'}
+                                            value={newPassword}
+                                            onChange={(e) =>
+                                                setNewPassword(e.target.value)
+                                            }
+                                            minLength={6}
+                                            className={styles.input}
+                                            placeholder="Min. 6 characters"
+                                        />
+                                    </div>
+
+                                    <div className={styles.fieldGroup}>
+                                        <label
+                                            htmlFor="edit-confirm-password"
+                                            className={styles.label}
+                                        >
+                                            Confirm New Password
+                                        </label>
+                                        <input
+                                            id="edit-confirm-password"
+                                            type={showPasswords ? 'text' : 'password'}
+                                            value={confirmNewPassword}
+                                            onChange={(e) =>
+                                                setConfirmNewPassword(e.target.value)
+                                            }
+                                            minLength={6}
+                                            className={styles.input}
+                                            placeholder="Repeat new password"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     <div className={styles.modalFooter}>

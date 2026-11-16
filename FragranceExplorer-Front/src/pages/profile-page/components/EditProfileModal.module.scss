@@ -22,9 +22,10 @@
     border-radius: 12px;
     width: 100%;
     max-width: 520px;
+    max-height: 92vh;
     box-shadow: 0 20px 48px rgba(0, 0, 0, 0.15);
     animation: modalSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    overflow: hidden;
+    overflow-y: auto;
 }
 
 @keyframes modalSlide {
@@ -119,6 +120,94 @@
 .textarea {
     resize: vertical;
     line-height: 1.5;
+}
+
+.errorAlert {
+    padding: 10px 14px;
+    border-radius: 6px;
+    background-color: #fdf2f2;
+    border: 1px solid #f5c2c2;
+    color: #9b2c2c;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.passwordSection {
+    border-top: 1px solid c.$border-subtle;
+    padding-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.passwordHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.passwordToggleBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: transparent;
+    border: 1px solid c.$border-subtle;
+    border-radius: 6px;
+    padding: 7px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: c.$text-primary;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    svg {
+        color: c.$brand-gold-primary;
+    }
+
+    &:hover {
+        border-color: c.$brand-gold-primary;
+        background-color: c.$brand-gold-soft;
+    }
+}
+
+.showPwdBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: transparent;
+    border: none;
+    font-size: 11px;
+    font-weight: 500;
+    color: c.$brand-gold-primary;
+    cursor: pointer;
+    padding: 2px 4px;
+
+    &:hover {
+        color: c.$brand-gold-hover;
+        text-decoration: underline;
+    }
+}
+
+.passwordFields {
+    background-color: c.$bg-page;
+    border: 1px solid c.$border-subtle;
+    border-radius: 8px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.passwordGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+
+    @media (max-width: 480px) {
+        grid-template-columns: 1fr;
+    }
 }
 
 .modalFooter {

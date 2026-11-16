@@ -78,10 +78,15 @@ interface RegisteredUserEntry {
     password?: string; // legacy support
 }
 
+export interface UpdateUserPayload extends Partial<UserProfile> {
+    currentPassword?: string;
+    newPassword?: string;
+}
+
 interface ProfileContextType {
     user: UserProfile | null;
     isAuthenticated: boolean;
-    updateUser: (updates: Partial<UserProfile>) => AuthActionResult;
+    updateUser: (updates: UpdateUserPayload) => AuthActionResult;
     register: (data: {
         name: string;
         email: string;
@@ -202,8 +207,8 @@ function calculateInitials(name: string): string {
 }
 
 // Deterministic client-side salted hash so passwords are never stored in raw plaintext
-function hashPassword(password: string, emailSalt: string): string {
-    const input = `${emailSalt.toLowerCase()}::fe_salt_v1::${password}`;
+function hashPassword(password: string, customSalt = 'fe_global_salt_v1'): string {
+    const input = `${customSalt.toLowerCase()}::fe_salt_v1::${password}`;
     let h1 = 0xdeadbeef ^ input.length;
     let h2 = 0x41c6ce57 ^ input.length;
     for (let i = 0; i < input.length; i++) {
@@ -214,6 +219,23 @@ function hashPassword(password: string, emailSalt: string): string {
     h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
     h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
     return `fe_h1_${(h2 >>> 0).toString(16).padStart(8, '0')}${(h1 >>> 0).toString(16).padStart(8, '0')}`;
+}
+
+function verifyStoredPassword(
+    entry: RegisteredUserEntry,
+    inputPassword: string,
+    email: string
+): boolean {
+    if (entry.passwordHash) {
+        return (
+            entry.passwordHash === hashPassword(inputPassword) ||
+            entry.passwordHash === hashPassword(inputPassword, email)
+        );
+    }
+    if (entry.password !== undefined) {
+        return entry.password === inputPassword;
+    }
+    return true;
 }
 
 function readStoredUser(): UserProfile | null {
@@ -409,7 +431,7 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
             try {
                 registry[newUser.email] = {
                     profile: newUser,
-                    passwordHash: hashPassword(data.password || '', newUser.email),
+                    passwordHash: hashPassword(data.password || ''),
                 };
                 localStorage.setItem(REGISTERED_USERS_KEY, JSON.stringify(registry));
                 localStorage.setItem(`fe_user_favorites_${newUser.email}`, JSON.stringify([]));
@@ -448,13 +470,7 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
             const entry = registry[normalized];
             if (entry) {
                 const profile: UserProfile = entry.profile;
-                const expectedHash = hashPassword(password, normalized);
-
-                const isValidPassword = entry.passwordHash
-                    ? entry.passwordHash === expectedHash
-                    : entry.password === password;
-
-                if (!isValidPassword) {
+                if (!verifyStoredPassword(entry, password, normalized)) {
                     return false;
                 }
 
@@ -477,17 +493,19 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
     const updateUser = useCallback(
-        (updates: Partial<UserProfile>): AuthActionResult => {
+        (updates: UpdateUserPayload): AuthActionResult => {
             if (!user) {
                 return { success: false, error: 'No active user session.' };
             }
 
+            const { currentPassword, newPassword, ...profileUpdates } = updates;
             const oldEmail = user.email;
-            const newEmail = updates.email
-                ? updates.email.trim().toLowerCase()
+            const newEmail = profileUpdates.email
+                ? profileUpdates.email.trim().toLowerCase()
                 : oldEmail;
 
             const registry = readRegistry();
+            const existingEntry = registry[oldEmail];
 
             if (newEmail !== oldEmail) {
                 if (
@@ -501,10 +519,37 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
                 }
             }
 
-            const updatedName = updates.name ? updates.name.trim() : user.name;
+            let updatedPasswordHash = existingEntry?.passwordHash;
+            if (newPassword) {
+                if (newPassword.length < 6) {
+                    return {
+                        success: false,
+                        error: 'New password must be at least 6 characters long.',
+                    };
+                }
+                if (
+                    existingEntry &&
+                    (existingEntry.passwordHash || existingEntry.password)
+                ) {
+                    if (
+                        !currentPassword ||
+                        !verifyStoredPassword(existingEntry, currentPassword, oldEmail)
+                    ) {
+                        return {
+                            success: false,
+                            error: 'Current password is incorrect.',
+                        };
+                    }
+                }
+                updatedPasswordHash = hashPassword(newPassword);
+            }
+
+            const updatedName = profileUpdates.name
+                ? profileUpdates.name.trim()
+                : user.name;
             const updatedUser: UserProfile = {
                 ...user,
-                ...updates,
+                ...profileUpdates,
                 name: updatedName,
                 email: newEmail,
                 initials: calculateInitials(updatedName),
@@ -524,18 +569,20 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
                     localStorage.removeItem(`fe_user_favorites_${oldEmail}`);
                     localStorage.removeItem(`fe_user_history_${oldEmail}`);
 
-                    if (registry[oldEmail]) {
-                        const oldEntry = registry[oldEmail];
-                        delete registry[oldEmail];
-                        registry[newEmail] = {
-                            ...oldEntry,
-                            profile: updatedUser,
-                        };
-                    }
-                } else if (registry[oldEmail]) {
-                    registry[oldEmail] = {
-                        ...registry[oldEmail],
+                    delete registry[oldEmail];
+                    registry[newEmail] = {
                         profile: updatedUser,
+                        ...(updatedPasswordHash
+                            ? { passwordHash: updatedPasswordHash }
+                            : {}),
+                    };
+                } else {
+                    registry[oldEmail] = {
+                        ...(existingEntry || {}),
+                        profile: updatedUser,
+                        ...(updatedPasswordHash
+                            ? { passwordHash: updatedPasswordHash }
+                            : {}),
                     };
                 }
                 localStorage.setItem(REGISTERED_USERS_KEY, JSON.stringify(registry));

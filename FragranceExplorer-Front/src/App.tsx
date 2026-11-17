@@ -6,6 +6,7 @@ import { PerfumeDetailPage } from '@/pages/perfume-detail-page/PerfumeDetailPage
 import { PerfumeHousePage } from '@/pages/perfume-house-page/PerfumeHousePage';
 import { PerfumeComparePage } from '@/pages/perfume-compare-page/PerfumeComparePage';
 import { ProfilePage } from '@/pages/profile-page/ProfilePage';
+import { FEATURES } from '@/const/common';
 import { ROUTES } from './const/routes';
 
 export const App = () => {
@@ -40,10 +41,12 @@ export const App = () => {
                         path={ROUTES.PERFUME_COMPARE.PATH}
                         element={<PerfumeComparePage />}
                     />
-                    <Route
-                        path={ROUTES.PROFILE.PATH}
-                        element={<ProfilePage />}
-                    />
+                    {FEATURES.ENABLE_PROFILE && (
+                        <Route
+                            path={ROUTES.PROFILE.PATH}
+                            element={<ProfilePage />}
+                        />
+                    )}
                 </Route>
             </Routes>
         </BrowserRouter>

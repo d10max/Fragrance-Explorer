@@ -5,6 +5,7 @@ import { CompareProvider } from '@/context/CompareContext';
 import { ProfileProvider } from '@/context/ProfileContext';
 import { CompareTray } from '@/components/shared/compare-tray/CompareTray';
 import { AuthModal } from '@/components/shared/auth-modal/AuthModal';
+import { FEATURES } from '@/const/common';
 
 export const Layout = () => {
     return (
@@ -16,7 +17,7 @@ export const Layout = () => {
                 </main>
                 <CompareTray />
                 <Footer />
-                <AuthModal />
+                {FEATURES.ENABLE_PROFILE && <AuthModal />}
             </CompareProvider>
         </ProfileProvider>
     );

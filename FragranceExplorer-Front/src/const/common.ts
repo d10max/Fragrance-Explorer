@@ -1,3 +1,7 @@
+export const FEATURES = {
+    ENABLE_PROFILE: false, // change to true to re-enable the profile 
+}
+
 export const COMMON_TEXT = {
     APP_NAME: 'Fragrance-Explorer',
     TABS: {

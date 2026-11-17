@@ -6,6 +6,7 @@ import { getHouseByIdOrName } from '@/pages/perfume-catalog-page/houses.data';
 import { PerfumeBottle } from '@/pages/perfume-catalog-page/components/PerfumeBottle';
 import { useCompare } from '@/context/CompareContext';
 import { useProfile } from '@/context/ProfileContext';
+import { FEATURES } from '@/const/common';
 import { ROUTES } from '@/const/routes';
 import styles from './PerfumeDetailPage.module.scss';
 
@@ -168,9 +169,11 @@ export const PerfumeDetailPage = () => {
                     <h1 className={styles.perfumeName}>{perfume.name}</h1>
 
                     <div className={styles.badgesRow}>
-                        <span className={styles.matchBadge}>
-                            {perfume.matchPercentage || 96}% Match with your profile
-                        </span>
+                        {FEATURES.ENABLE_PROFILE && (
+                            <span className={styles.matchBadge}>
+                                {perfume.matchPercentage || 96}% Match with your profile
+                            </span>
+                        )}
                         {familiesList.map((fam) => (
                             <span
                                 key={fam}
@@ -291,21 +294,23 @@ export const PerfumeDetailPage = () => {
                         >
                             Find Similar Scents &rarr;
                         </button>
-                        <button
-                            type="button"
-                            className={`${styles.compareBtn} ${
-                                isFav ? styles.compareBtnActive : ''
-                            }`}
-                            onClick={() => requireAuth(() => toggleFavorite(perfume.id))}
-                            title={isFav ? 'Remove from Wardrobe' : 'Save to Personal Wardrobe'}
-                        >
-                            <Bookmark
-                                size={14}
-                                fill={isFav ? 'currentColor' : 'none'}
-                                style={{ marginRight: 6, verticalAlign: 'text-bottom' }}
-                            />
-                            {isFav ? 'Saved in My Wardrobe' : 'Save to My Wardrobe'}
-                        </button>
+                        {FEATURES.ENABLE_PROFILE && (
+                            <button
+                                type="button"
+                                className={`${styles.compareBtn} ${
+                                    isFav ? styles.compareBtnActive : ''
+                                }`}
+                                onClick={() => requireAuth(() => toggleFavorite(perfume.id))}
+                                title={isFav ? 'Remove from Wardrobe' : 'Save to Personal Wardrobe'}
+                            >
+                                <Bookmark
+                                    size={14}
+                                    fill={isFav ? 'currentColor' : 'none'}
+                                    style={{ marginRight: 6, verticalAlign: 'text-bottom' }}
+                                />
+                                {isFav ? 'Saved in My Wardrobe' : 'Save to My Wardrobe'}
+                            </button>
+                        )}
                         <button
                             type="button"
                             className={`${styles.compareBtn} ${

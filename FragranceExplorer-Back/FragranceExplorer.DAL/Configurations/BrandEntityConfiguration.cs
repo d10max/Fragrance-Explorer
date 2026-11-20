@@ -32,6 +32,13 @@ public class BrandEntityConfiguration : IEntityTypeConfiguration<BrandEntity>
             nav.ToJson();
         });
 
+        builder.Property(b => b.Slug)
+            .IsRequired()
+            .HasMaxLength(DbConstants.BrandNameMaxLength);
+
+        builder.HasIndex(b => b.Slug)
+            .IsUnique();
+
         var dictionaryComparer = new ValueComparer<Dictionary<string, int>>(
             (d1, d2) => d1 != null && d2 != null && d1.Count == d2.Count && !d1.Except(d2).Any(),
             d => d.Aggregate(0, (a, v) => HashCode.Combine(a, v.Key.GetHashCode(), v.Value.GetHashCode())),

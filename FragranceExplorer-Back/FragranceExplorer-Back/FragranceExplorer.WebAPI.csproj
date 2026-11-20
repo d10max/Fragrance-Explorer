@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>FragranceExplorer_Back</RootNamespace>
+    <UserSecretsId>e783a7ba-3632-4cb2-8e0f-af339e33e9b7</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

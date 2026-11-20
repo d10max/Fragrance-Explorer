@@ -1,4 +1,4 @@
-﻿namespace FragranceExplorer.DAL.Entities;
+namespace FragranceExplorer.DAL.Entities;
 
 public class BrandEntity : BaseEntity
 {
@@ -27,4 +27,16 @@ public class BrandEntity : BaseEntity
     public Dictionary<string, int> FamilyCounts { get; set; } = [];
 
     public ICollection<PerfumeEntity> Perfumes { get; set; } = [];
+
+    public string Slug { get; set; } = string.Empty;
+
+    public string? Initials { get; set; }
+
+    public string? DossierEyebrow { get; set; }
+
+    public string? Count { get; set; }
+
+    public string? DnaBadge { get; set; }
+
+    public string? ReviewsLabel { get; set; }
 }

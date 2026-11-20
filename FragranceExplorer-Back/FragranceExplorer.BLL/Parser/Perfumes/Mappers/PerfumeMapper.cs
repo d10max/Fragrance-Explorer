@@ -1,16 +1,22 @@
+using System.Text.Json;
 using FragranceExplorer.BLL.Constants;
+using FragranceExplorer.BLL.Models;
 using FragranceExplorer.BLL.Parser.Perfumes.Interfaces;
 using FragranceExplorer.BLL.Parser.Perfumes.Models;
-using FragranceExplorer.BLL.Models;
 using FragranceExplorer.DAL.Enums;
 
 namespace FragranceExplorer.BLL.Parser.Perfumes.Mappers;
 
 public class PerfumeMapper : IPerfumeMapper
 {
+    private static readonly Lazy<Dictionary<string, string>> AccordToFamilyMap = new(LoadAccordToFamilyMap);
+
     private readonly IAccordMapper _accordMapper;
     private readonly INoteMapper _noteMapper;
-    private static string NormalizeText(string? value, string fallback = "Not specified") => string.IsNullOrWhiteSpace(value) ? fallback : value.Trim();
+
+    private static string NormalizeText(string? value, string fallback = "Not specified") =>
+        string.IsNullOrWhiteSpace(value) ? fallback : value.Trim();
+
     public PerfumeMapper(IAccordMapper accordMapper, INoteMapper noteMapper)
     {
         _accordMapper = accordMapper ?? throw new ArgumentNullException(nameof(accordMapper));
@@ -23,7 +29,7 @@ public class PerfumeMapper : IPerfumeMapper
 
     public Perfume? MapToDomain(RawPerfumeDto? dto)
     {
-        if (dto is null || dto.Id <= 0) 
+        if (dto is null || dto.Id <= 0)
         {
             return null;
         }
@@ -46,15 +52,41 @@ public class PerfumeMapper : IPerfumeMapper
         var family = ResolveFamily(dto.Accords);
         var concentration = ResolveConcentration(name, description);
 
-        var perfume = new Perfume(dto.Id, name, brand, gender, rating, imageUrl, year, slug, description, people, longevity, sillage, bestSeasons, vibeQuote, family, concentration, perfumers, similarPerfumeIds);
+        var perfume = new Perfume(
+            dto.Id,
+            name,
+            brand,
+            gender,
+            rating,
+            imageUrl,
+            year,
+            slug,
+            description,
+            people,
+            longevity,
+            sillage,
+            bestSeasons,
+            vibeQuote,
+            family,
+            concentration,
+            perfumers,
+            similarPerfumeIds);
 
         foreach (var accord in _accordMapper.MapMany(dto.Accords))
         {
             perfume.AddAccord(accord);
         }
 
-        foreach (var note in _noteMapper.MapNotes(dto.Notes))
+        var mappedNotes = _noteMapper.MapNotes(dto.Notes).ToList();
+        var hasPyramidNotes = mappedNotes.Any(n => n.NoteLayer != NoteLayer.Flat);
+
+        foreach (var note in mappedNotes)
         {
+            if (hasPyramidNotes && note.NoteLayer == NoteLayer.Flat)
+            {
+                continue;
+            }
+
             perfume.AddNote(note);
         }
 
@@ -113,14 +145,77 @@ public class PerfumeMapper : IPerfumeMapper
     {
         if (accords == null || accords.Count == 0) return "Woody";
 
+        var map = AccordToFamilyMap.Value;
+
+        foreach (var accord in accords.OrderByDescending(a => a.Strength))
+        {
+            var accordName = accord.Name?.Trim().ToLowerInvariant();
+            if (string.IsNullOrEmpty(accordName))
+            {
+                continue;
+            }
+
+            if (map.TryGetValue(accordName, out var mappedFamily))
+            {
+                return mappedFamily;
+            }
+        }
+
         var topAccord = accords.OrderByDescending(a => a.Strength).FirstOrDefault()?.Name?.ToLowerInvariant() ?? "";
 
         if (topAccord.Contains("citrus")) return "Citrus";
-        if (topAccord.Contains("spicy")) return "Spicy";
-        if (topAccord.Contains("fresh") || topAccord.Contains("green") || topAccord.Contains("aromatic")) return "Fresh";
-        if (topAccord.Contains("amber") || topAccord.Contains("floral") || topAccord.Contains("sweet") || topAccord.Contains("vanilla")) return "Amber";
+        if (topAccord.Contains("spicy") || topAccord.Contains("amber") || topAccord.Contains("sweet") || topAccord.Contains("vanilla")) return "Spicy";
+        if (topAccord.Contains("fresh") || topAccord.Contains("green") || topAccord.Contains("aromatic") || topAccord.Contains("floral") || topAccord.Contains("fruity")) return "Fresh";
 
         return "Woody";
+    }
+
+    private static Dictionary<string, string> LoadAccordToFamilyMap()
+    {
+        var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+        try
+        {
+            var currentDir = new DirectoryInfo(AppContext.BaseDirectory);
+            string? mappingPath = null;
+
+            while (currentDir is not null)
+            {
+                var candidate = Path.Combine(currentDir.FullName, "FragranceExplorer.BLL", "Parser", "family_mapping.json");
+                if (File.Exists(candidate))
+                {
+                    mappingPath = candidate;
+                    break;
+                }
+
+                currentDir = currentDir.Parent;
+            }
+
+            if (mappingPath is null)
+            {
+                return result;
+            }
+
+            using var doc = JsonDocument.Parse(File.ReadAllText(mappingPath));
+            if (doc.RootElement.TryGetProperty("accord_to_family", out var accordElement) &&
+                accordElement.ValueKind == JsonValueKind.Object)
+            {
+                foreach (var prop in accordElement.EnumerateObject())
+                {
+                    var val = prop.Value.GetString();
+                    if (!string.IsNullOrWhiteSpace(val))
+                    {
+                        result[prop.Name] = val;
+                    }
+                }
+            }
+        }
+        catch
+        {
+            // Fallback to keyword rules if file cannot be read
+        }
+
+        return result;
     }
 
     private static string ResolveConcentration(string name, string? description)

@@ -1,4 +1,4 @@
-﻿using FragranceExplorer.DAL.Enums;
+using FragranceExplorer.DAL.Enums;
 
 namespace FragranceExplorer.DAL.Entities;
 
@@ -41,4 +41,6 @@ public class PerfumeEntity : BaseEntity
     public ICollection<PerfumeNoteEntity> PerfumeNotes { get; set; } = [];
 
     public ICollection<PerfumeAccordEntity> PerfumeAccords { get; set; } = [];
+
+    public List<int> SimilarPerfumeIds { get; set; } = [];
 }

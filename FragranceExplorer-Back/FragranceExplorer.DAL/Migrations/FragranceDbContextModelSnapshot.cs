@@ -60,10 +60,19 @@ namespace FragranceExplorer.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("text[]");
 
+                    b.Property<string>("Count")
+                        .HasColumnType("text");
+
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
                     b.Property<string>("DisplayName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DnaBadge")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DossierEyebrow")
                         .HasColumnType("text");
 
                     b.Property<string>("EstablishedLabel")
@@ -71,6 +80,9 @@ namespace FragranceExplorer.DAL.Migrations
 
                     b.Property<string>("FamilyCounts")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Initials")
                         .HasColumnType("text");
 
                     b.Property<string>("Location")
@@ -89,13 +101,24 @@ namespace FragranceExplorer.DAL.Migrations
                         .HasColumnType("double precision")
                         .HasDefaultValue(0.0);
 
+                    b.Property<string>("ReviewsLabel")
+                        .HasColumnType("text");
+
                     b.PrimitiveCollection<List<string>>("SimilarHouseIds")
                         .IsRequired()
                         .HasColumnType("text[]");
 
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.HasIndex("Slug")
                         .IsUnique();
 
                     b.ToTable("Brands", (string)null);
@@ -190,6 +213,10 @@ namespace FragranceExplorer.DAL.Migrations
                     b.Property<double?>("Sillage")
                         .HasColumnType("double precision");
 
+                    b.PrimitiveCollection<List<int>>("SimilarPerfumeIds")
+                        .IsRequired()
+                        .HasColumnType("integer[]");
+
                     b.Property<string>("Slug")
                         .IsRequired()
                         .HasMaxLength(2000)
@@ -224,7 +251,7 @@ namespace FragranceExplorer.DAL.Migrations
                     b.Property<double>("Weight")
                         .HasColumnType("double precision");
 
-                    b.HasKey("PerfumeId", "NoteId");
+                    b.HasKey("PerfumeId", "NoteId", "Layer");
 
                     b.HasIndex("NoteId");
 

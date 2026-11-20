@@ -10,7 +10,7 @@ public class PerfumeNoteEntityConfiguration : IEntityTypeConfiguration<PerfumeNo
     {
         builder.ToTable("PerfumeNotes");
 
-        builder.HasKey(pn => new { pn.PerfumeId, pn.NoteId });
+        builder.HasKey(pn => new { pn.PerfumeId, pn.NoteId, pn.Layer });
 
         builder.Property(pn => pn.Layer)
             .HasConversion<int>()

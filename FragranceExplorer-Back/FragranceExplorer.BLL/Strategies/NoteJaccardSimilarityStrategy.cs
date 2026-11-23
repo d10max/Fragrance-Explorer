@@ -1,36 +1,35 @@
 ﻿using FragranceExplorer.BLL.Constants;
-using FragranceExplorer.BLL.Models;
-using FragranceExplorer.DAL.Enums;
+using FragranceExplorer.BLL.Models.MathModels;
 
 namespace FragranceExplorer.BLL.Strategies;
 
 public class NoteJaccardSimilarityStrategy : ISimilarityStrategy
 {
-    public double CalculateSimilarity(Perfume target, Perfume candidate)
+    public double CalculateSimilarity(PerfumeMathModel target, PerfumeMathModel candidate)
     {
-        if (target.IsFlatStructure() || candidate.IsFlatStructure())
+        if (target.IsFlatStructure || candidate.IsFlatStructure)
         {
             return CalculateSingleLayerSimilarity(
-                target.ToNotesVector(),
-                candidate.ToNotesVector());
+                target.Notes,
+                candidate.Notes);
         }
 
         double topScore = CalculateSingleLayerSimilarity(
-            target.ToNotesVectorByLayer(NoteLayer.Top),
-            candidate.ToNotesVectorByLayer(NoteLayer.Top));
+            target.TopNotes,
+            candidate.TopNotes);
 
         double midScore = CalculateSingleLayerSimilarity(
-            target.ToNotesVectorByLayer(NoteLayer.Middle),
-            candidate.ToNotesVectorByLayer(NoteLayer.Middle));
+            target.MiddleNotes,
+            candidate.MiddleNotes);
 
         double baseScore = CalculateSingleLayerSimilarity(
-            target.ToNotesVectorByLayer(NoteLayer.Base),
-            candidate.ToNotesVectorByLayer(NoteLayer.Base));
+            target.BaseNotes,
+            candidate.BaseNotes);
 
         return (topScore * ScentConstants.TopNoteLayerWeight) + (baseScore * ScentConstants.BaseNoteLayerWeight) + (midScore * ScentConstants.MiddleNoteLayerWeight);
     }
 
-    private static double CalculateSingleLayerSimilarity(ScentVector<PerfumeNote> targetVector, ScentVector<PerfumeNote> candidateVector)
+    private static double CalculateSingleLayerSimilarity(ScentVector<NoteMathModel> targetVector, ScentVector<NoteMathModel> candidateVector)
     {
         var allNoteKeys = targetVector.Significances.Keys
             .Union(candidateVector.Significances.Keys);

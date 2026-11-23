@@ -1,3 +1,4 @@
+using FragranceExplorer.BLL;
 using FragranceExplorer.BLL.Parser.Houses.Interfaces;
 using FragranceExplorer.BLL.Parser.Houses.Services;
 using FragranceExplorer.BLL.Parser.Perfumes.Interfaces;
@@ -16,6 +17,7 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddDal(builder.Configuration);
+        builder.Services.AddBll();
 
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
@@ -24,34 +26,10 @@ public class Program
         builder.Services.AddSingleton<IPerfumeDataSetParser, PerfumeDataSetParser>();
         builder.Services.AddSingleton<IHouseDataSetParser, HouseDataSetParser>();
 
-        builder.Services.AddSingleton<InMemoryPerfumeRepository>();
-        builder.Services.AddSingleton<IPerfumeRepository>(sp => sp.GetRequiredService<InMemoryPerfumeRepository>());
 
-        builder.Services.AddSingleton<NoteJaccardSimilarityStrategy>();
-        builder.Services.AddSingleton<AccordCosineSimilarityStrategy>();
-
-        builder.Services.AddSingleton<RecommendationEngine>(sp =>
-        {
-            var accordStrategy = sp.GetRequiredService<AccordCosineSimilarityStrategy>();
-            var noteStrategy = sp.GetRequiredService<NoteJaccardSimilarityStrategy>();
-
-            return new RecommendationEngine(accordStrategy, noteStrategy);
-        });
-
-        builder.Services.AddSingleton<IPerfumeSearchService, PerfumeSearchService>();
+        builder.Services.AddMemoryCache();
 
         var app = builder.Build();
-
-        using (var scope = app.Services.CreateScope())
-        {
-            var repository = scope.ServiceProvider.GetRequiredService<InMemoryPerfumeRepository>();
-
-            Console.WriteLine("Starting dataset load into memory.");
-
-            await repository.InitializeAsync();
-
-            Console.WriteLine("Dataset loaded successfully.");
-        }
 
         if (app.Environment.IsDevelopment())
         {

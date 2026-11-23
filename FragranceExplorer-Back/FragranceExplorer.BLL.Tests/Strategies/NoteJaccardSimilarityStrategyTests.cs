@@ -1,7 +1,9 @@
-using FragranceExplorer.DAL.Enums;
-using FragranceExplorer.BLL.Models;
-using FragranceExplorer.BLL.Strategies;
 using FluentAssertions;
+using FragranceExplorer.BLL.Models;
+using FragranceExplorer.BLL.Models.MathModels;
+using FragranceExplorer.BLL.Strategies;
+using FragranceExplorer.DAL.Entities.MathDataEntities;
+using FragranceExplorer.DAL.Enums;
 using Xunit;
 
 namespace FragranceExplorer.BLL.Tests.Strategies;
@@ -14,15 +16,19 @@ public class NoteJaccardSimilarityStrategyTests
         // 1. Arrange
         var strategy = new NoteJaccardSimilarityStrategy();
 
-        var perfume1 = new Perfume(1, "Perfume A", "Brand A", GenderCategory.Unisex, 4.5);
-        perfume1.AddNote(new PerfumeNote("bergamot", 0.8, NoteLayer.Top));
-        perfume1.AddNote(new PerfumeNote("rose", 0.6, NoteLayer.Middle));
-        perfume1.AddNote(new PerfumeNote("amber", 0.9, NoteLayer.Base));
+        var notes1 = new List<NoteWeightData>([
+            new NoteWeightData(1, 0.8, NoteLayer.Top),
+            new NoteWeightData(2, 0.6, NoteLayer.Middle),
+            new NoteWeightData(3, 0.9, NoteLayer.Base)]);
+        var perfumeData1 = new PerfumeFormulaData(1, 2, 2, notes1, []);
+        var perfume1 = PerfumeMathModel.FromFormulaData(perfumeData1);
 
-        var perfume2 = new Perfume(2, "Perfume B", "Brand B", GenderCategory.Unisex, 4.0);
-        perfume2.AddNote(new PerfumeNote("bergamot", 0.8, NoteLayer.Top));
-        perfume2.AddNote(new PerfumeNote("rose", 0.6, NoteLayer.Middle));
-        perfume2.AddNote(new PerfumeNote("amber", 0.9, NoteLayer.Base));
+        var notes2 = new List<NoteWeightData>([
+            new NoteWeightData(1, 0.8, NoteLayer.Top),
+            new NoteWeightData(2, 0.6, NoteLayer.Middle),
+            new NoteWeightData(3, 0.9, NoteLayer.Base)]);
+        var perfumeData2 = new PerfumeFormulaData(2, 2, 2, notes2, []);
+        var perfume2 = PerfumeMathModel.FromFormulaData(perfumeData2);
 
         // 2. Act
         double actualSimilarity = strategy.CalculateSimilarity(perfume1, perfume2);
@@ -35,15 +41,19 @@ public class NoteJaccardSimilarityStrategyTests
     public  void CalculateSimilarity_WhenPerfumesHaveNotIdenticalPyramidNotes_ShouldReturnZero (){
         var strategy = new NoteJaccardSimilarityStrategy();
 
-        var perfume1 = new Perfume(1, "Perfume A", "Brand A", GenderCategory.Unisex, 4.5);
-        perfume1.AddNote(new PerfumeNote("bergamot", 0.8, NoteLayer.Top));
-        perfume1.AddNote(new PerfumeNote("rose", 0.6, NoteLayer.Middle));
-        perfume1.AddNote(new PerfumeNote("amber", 0.9, NoteLayer.Base));
+        var notes1 = new List<NoteWeightData>([
+            new NoteWeightData(1, 0.8, NoteLayer.Top),
+            new NoteWeightData(2, 0.6, NoteLayer.Middle),
+            new NoteWeightData(3, 0.9, NoteLayer.Base)]);
+        var perfumeData1 = new PerfumeFormulaData(1, 2, 2, notes1, []);
+        var perfume1 = PerfumeMathModel.FromFormulaData(perfumeData1);
 
-        var perfume2 = new Perfume(2, "Perfume B", "Brand B", GenderCategory.Unisex, 4.0);
-        perfume2.AddNote(new PerfumeNote("lather", 0.8, NoteLayer.Top));
-        perfume2.AddNote(new PerfumeNote("lemon", 0.6, NoteLayer.Middle));
-        perfume2.AddNote(new PerfumeNote("woody", 0.9, NoteLayer.Base));
+        var notes2 = new List<NoteWeightData>([
+            new NoteWeightData(4, 0.8, NoteLayer.Top),
+            new NoteWeightData(5, 0.6, NoteLayer.Middle),
+            new NoteWeightData(6, 0.9, NoteLayer.Base)]);
+        var perfumeData2 = new PerfumeFormulaData(2, 2, 2, notes2, []);
+        var perfume2 = PerfumeMathModel.FromFormulaData(perfumeData2);
 
         double actualSimilarity = strategy.CalculateSimilarity(perfume1, perfume2);
 
@@ -55,15 +65,19 @@ public class NoteJaccardSimilarityStrategyTests
     {
         var strategy = new NoteJaccardSimilarityStrategy();
 
-        var perfume1 = new Perfume(1, "Perfume A", "Brand A", GenderCategory.Unisex, 4.5);
-        perfume1.AddNote(new PerfumeNote("bergamot", 0.8, NoteLayer.Top));
-        perfume1.AddNote(new PerfumeNote("rose", 0.6, NoteLayer.Middle));
-        perfume1.AddNote(new PerfumeNote("amber", 0.9, NoteLayer.Base));
+        var notes1 = new List<NoteWeightData>([
+            new NoteWeightData(1, 0.8, NoteLayer.Top),
+            new NoteWeightData(2, 0.6, NoteLayer.Middle),
+            new NoteWeightData(3, 0.9, NoteLayer.Base)]);
+        var perfumeData1 = new PerfumeFormulaData(1, 2, 2, notes1, []);
+        var perfume1 = PerfumeMathModel.FromFormulaData(perfumeData1);
 
-        var perfume2 = new Perfume(2, "Perfume B", "Brand B", GenderCategory.Unisex, 4.0);
-        perfume2.AddNote(new PerfumeNote("lather", 0.8, NoteLayer.Top));
-        perfume2.AddNote(new PerfumeNote("lemon", 0.6, NoteLayer.Middle));
-        perfume2.AddNote(new PerfumeNote("amber", 0.9, NoteLayer.Base));
+        var notes2 = new List<NoteWeightData>([
+            new NoteWeightData(4, 0.8, NoteLayer.Top),
+            new NoteWeightData(5, 0.6, NoteLayer.Middle),
+            new NoteWeightData(3, 0.9, NoteLayer.Base)]);
+        var perfumeData2 = new PerfumeFormulaData(2, 2, 2, notes2, []);
+        var perfume2 = PerfumeMathModel.FromFormulaData(perfumeData2);
 
         double actualSimilarity = strategy.CalculateSimilarity(perfume1, perfume2);
         // Similar base "amber" note
@@ -75,15 +89,19 @@ public class NoteJaccardSimilarityStrategyTests
     public void CalculateSimilarity_WhenPerfumesHaveSimilarityInDifferentLayers_ShouldReturnZero () {
         var strategy = new NoteJaccardSimilarityStrategy();
 
-        var perfume1 = new Perfume(1, "Perfume A", "Brand A", GenderCategory.Unisex, 4.5);
-        perfume1.AddNote(new PerfumeNote("bergamot", 0.8, NoteLayer.Top));
-        perfume1.AddNote(new PerfumeNote("lather", 0.6, NoteLayer.Middle));
-        perfume1.AddNote(new PerfumeNote("amber", 0.9, NoteLayer.Base));
+        var notes1 = new List<NoteWeightData>([
+            new NoteWeightData(1, 0.8, NoteLayer.Top),
+            new NoteWeightData(2, 0.6, NoteLayer.Middle),
+            new NoteWeightData(3, 0.9, NoteLayer.Base)]);
+        var perfumeData1 = new PerfumeFormulaData(1, 2, 2, notes1, []);
+        var perfume1 = PerfumeMathModel.FromFormulaData(perfumeData1);
 
-        var perfume2 = new Perfume(2, "Perfume B", "Brand B", GenderCategory.Unisex, 4.0);
-        perfume2.AddNote(new PerfumeNote("lather", 0.8, NoteLayer.Top));
-        perfume2.AddNote(new PerfumeNote("lemon", 0.6, NoteLayer.Middle));
-        perfume2.AddNote(new PerfumeNote("rose", 0.9, NoteLayer.Base));
+        var notes2 = new List<NoteWeightData>([
+            new NoteWeightData(2, 0.8, NoteLayer.Top),
+            new NoteWeightData(5, 0.6, NoteLayer.Middle),
+            new NoteWeightData(6, 0.9, NoteLayer.Base)]);
+        var perfumeData2 = new PerfumeFormulaData(2, 2, 2, notes2, []);
+        var perfume2 = PerfumeMathModel.FromFormulaData(perfumeData2);
 
         double actualSimilarity = strategy.CalculateSimilarity(perfume1, perfume2);
 
@@ -94,8 +112,11 @@ public class NoteJaccardSimilarityStrategyTests
     public void CalculateSimilarity_WhenPerfumesHaveNotNotes_ShouldReturnZero (){
         var strategy = new NoteJaccardSimilarityStrategy();
 
-        var perfume1 = new Perfume(1, "Perfume A", "Brand A", GenderCategory.Unisex, 4.5);
-        var perfume2 = new Perfume(2, "Perfume B", "Brand B", GenderCategory.Unisex, 4.0);
+        var perfumeData1 = new PerfumeFormulaData(1, 2, 2, [], []);
+        var perfume1 = PerfumeMathModel.FromFormulaData(perfumeData1);
+
+        var perfumeData2 = new PerfumeFormulaData(2, 2, 2, [], []);
+        var perfume2 = PerfumeMathModel.FromFormulaData(perfumeData2);
 
         double actualSimilarity = strategy.CalculateSimilarity(perfume1, perfume2);
 

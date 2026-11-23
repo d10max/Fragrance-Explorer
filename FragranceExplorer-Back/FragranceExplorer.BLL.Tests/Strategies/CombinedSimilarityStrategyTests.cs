@@ -1,9 +1,9 @@
-using FragranceExplorer.BLL.Constants;
-using FragranceExplorer.DAL.Enums;
-using FragranceExplorer.BLL.Strategies;
-using FragranceExplorer.BLL.Models;
 using FluentAssertions;
-using Xunit;
+using FragranceExplorer.BLL.Constants;
+using FragranceExplorer.BLL.Models.MathModels;
+using FragranceExplorer.BLL.Strategies;
+using FragranceExplorer.DAL.Entities.MathDataEntities;
+using FragranceExplorer.DAL.Enums;
 
 namespace FragranceExplorer.BLL.Tests.Strategies;
 
@@ -44,13 +44,16 @@ public class CombinedSimilarityStrategyTests
         double noteWeight = 0.3;
 
         var combinedStrategy = new CombinedSimilarityStrategy(noteStrategy, accordStrategy, accordWeight, noteWeight);
-        var perfume1 = new Perfume(1, "Perfume A", "Brand A", GenderCategory.Unisex, 4.5);
-        perfume1.AddAccord(new PerfumeAccord("woody", 0.5));
-        perfume1.AddNote(new PerfumeNote("bergamot", 0.8, NoteLayer.Top));
 
-        var perfume2 = new Perfume(2, "Perfume B", "Brand B", GenderCategory.Unisex, 4.0);
-        perfume2.AddAccord(new PerfumeAccord("woody", 0.5));
-        perfume2.AddNote(new PerfumeNote("rose", 0.8, NoteLayer.Top));
+        var accord1 = new List<AccordWeightData>([new AccordWeightData(1, 0.5)]);
+        var note1 = new List<NoteWeightData>([new NoteWeightData(1, 0.8, NoteLayer.Top)]);
+        var perfumeData1 = new PerfumeFormulaData(1, 2, 2, note1, accord1);
+        var perfume1 = PerfumeMathModel.FromFormulaData(perfumeData1);
+
+        var accord2 = new List<AccordWeightData>([new AccordWeightData(1, 0.5)]);
+        var note2 = new List<NoteWeightData>([new NoteWeightData(2, 0.8, NoteLayer.Top)]);
+        var perfumeData2 = new PerfumeFormulaData(2, 2, 2, note2, accord2);
+        var perfume2 = PerfumeMathModel.FromFormulaData(perfumeData2);
 
         double actualSimilarity = combinedStrategy.CalculateSimilarity(perfume1, perfume2);
 

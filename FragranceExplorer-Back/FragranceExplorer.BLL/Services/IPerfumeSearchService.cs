@@ -5,5 +5,8 @@ namespace FragranceExplorer.BLL.Services;
 
 public interface IPerfumeSearchService
 {
-    IEnumerable<Perfume> Search(string query, int maxResults = ScentConstants.DefaultSearchResult);
+    IEnumerable<int> Search(
+        string query,
+        IEnumerable<PerfumeSearchEntry> catalog,
+        int maxResults = ScentConstants.DefaultSearchResult);
 }

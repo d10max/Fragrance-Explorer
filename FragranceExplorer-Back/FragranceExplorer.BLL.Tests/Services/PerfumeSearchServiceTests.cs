@@ -1,28 +1,31 @@
 using FluentAssertions;
 using FragranceExplorer.BLL.Models;
-using FragranceExplorer.BLL.Repositories;
 using FragranceExplorer.BLL.Services;
-using FragranceExplorer.DAL.Enums;
-using Xunit;
+using FragranceExplorer.DAL.Entities;
 
 namespace FragranceExplorer.BLL.Tests.Services;
 
 public class PerfumeSearchServiceTests
 {
-    private static List<Perfume> CreateSampleCatalog() =>
+    private readonly PerfumeSearchService _searchService = new();
+
+    private static PerfumeSearchEntry CreateEntry(int id, string name, string brand, double rating, int people) =>
+        PerfumeSearchEntry.FromSearchData(new PerfumeSearchData(id, name, brand, people, rating));
+
+    private static List<PerfumeSearchEntry> CreateSampleCatalog() =>
     [
-        new Perfume(1, "Acqua di Giò", "Giorgio Armani", GenderCategory.Male, 4.5, people: 2500),
-        new Perfume(2, "N°5", "Chanel", GenderCategory.Female, 4.2, people: 3000),
-        new Perfume(3, "Sauvage", "Dior", GenderCategory.Male, 4.4, people: 5000),
-        new Perfume(4, "Baccarat Rouge 540", "Maison Francis Kurkdjian", GenderCategory.Unisex, 4.6, people: 4200),
-        new Perfume(5, "L'Interdit", "Givenchy", GenderCategory.Female, 4.3, people: 1800)
+        CreateEntry(1, "Acqua di Giò", "Giorgio Armani", rating: 4.5, people: 2500),
+        CreateEntry(2, "N°5", "Chanel", rating: 4.2, people: 3000),
+        CreateEntry(3, "Sauvage", "Dior", rating: 4.4, people: 5000),
+        CreateEntry(4, "Baccarat Rouge 540", "Maison Francis Kurkdjian", rating: 4.6, people: 4200),
+        CreateEntry(5, "L'Interdit", "Givenchy", rating: 4.3, people: 1800)
     ];
 
     [Fact]
-    public void Constructor_WhenRepositoryIsNull_ShouldThrowArgumentNullException()
+    public void Search_WhenCatalogIsNull_ShouldThrowArgumentNullException()
     {
         // Act
-        Action act = () => _ = new PerfumeSearchService(null!);
+        Action act = () => _searchService.Search("Acqua", null!);
 
         // Assert
         act.Should().Throw<ArgumentNullException>();
@@ -32,62 +35,57 @@ public class PerfumeSearchServiceTests
     public void Search_ShouldReturnResults_WhenQueryIsValid()
     {
         // Arrange
-        var repository = new FakePerfumeRepository(CreateSampleCatalog());
-        var searchService = new PerfumeSearchService(repository);
+        var catalog = CreateSampleCatalog();
 
         // Act
-        var results = searchService.Search("Acqua").ToList();
+        var results = _searchService.Search("Acqua", catalog);
 
         // Assert
-        results.Should().ContainSingle(p => p.Name == "Acqua di Giò");
+        results.Should().ContainSingle().Which.Should().Be(1);
     }
 
     [Theory]
-    [InlineData("Sovage", "Sauvage")]
-    [InlineData("Bakarat Ruge 540", "Baccarat Rouge 540")]
-    [InlineData("Acqua di Gio", "Acqua di Giò")]
-    [InlineData("L'Interdit", "L'Interdit")]
+    [InlineData("Sovage", 3)]               // Sauvage
+    [InlineData("Bakarat Ruge 540", 4)]     // Baccarat Rouge 540
+    [InlineData("Acqua di Gio", 1)]         // Acqua di Giò
+    [InlineData("L'Interdit", 5)]           // L'Interdit
     public void Search_WhenQueryHasTyposOrMissingDiacritics_ShouldReturnExpectedTopMatch(
         string query,
-        string expectedPerfumeName)
+        int expectedPerfumeId)
     {
         // Arrange
-        var repository = new FakePerfumeRepository(CreateSampleCatalog());
-        var searchService = new PerfumeSearchService(repository);
+        var catalog = CreateSampleCatalog();
 
         // Act
-        var results = searchService.Search(query).ToList();
+        var results = _searchService.Search(query, catalog);
 
         // Assert
         results.Should().NotBeEmpty();
-        results[0].Name.Should().Be(expectedPerfumeName);
+        results.First().Should().Be(expectedPerfumeId);
     }
 
     [Fact]
     public void Search_WhenBrandAndNameOrderIsSwapped_ShouldReturnMatchingPerfume()
     {
         // Arrange
-        var repository = new FakePerfumeRepository(CreateSampleCatalog());
-        var searchService = new PerfumeSearchService(repository);
+        var catalog = CreateSampleCatalog();
 
         // Act
-        var results = searchService.Search("Sauvage Dior").ToList();
+        var results = _searchService.Search("Sauvage Dior", catalog);
 
         // Assert
         results.Should().NotBeEmpty();
-        results[0].Name.Should().Be("Sauvage");
-        results[0].Brand.Should().Be("Dior");
+        results.First().Should().Be(3); // Sauvage by Dior
     }
 
     [Fact]
     public void Search_WhenQueryDoesNotMatchAnything_ShouldReturnEmpty()
     {
         // Arrange
-        var repository = new FakePerfumeRepository(CreateSampleCatalog());
-        var searchService = new PerfumeSearchService(repository);
+        var catalog = CreateSampleCatalog();
 
         // Act
-        var results = searchService.Search("zzzzxxxxqqqq12345");
+        var results = _searchService.Search("zzzzxxxxqqqq12345", catalog);
 
         // Assert
         results.Should().BeEmpty();
@@ -103,11 +101,10 @@ public class PerfumeSearchServiceTests
         int maxResults)
     {
         // Arrange
-        var repository = new FakePerfumeRepository(CreateSampleCatalog());
-        var searchService = new PerfumeSearchService(repository);
+        var catalog = CreateSampleCatalog();
 
         // Act
-        var results = searchService.Search(query, maxResults);
+        var results = _searchService.Search(query, catalog, maxResults);
 
         // Assert
         results.Should().BeEmpty();
@@ -117,26 +114,17 @@ public class PerfumeSearchServiceTests
     public void Search_WhenScoresAreEqual_ShouldOrderByPeopleThenByRating()
     {
         // Arrange
-        var catalog = new List<Perfume>
+        var catalog = new List<PerfumeSearchEntry>
         {
-            new(1, "Sauvage", "Dior", GenderCategory.Male, rating: 4.1, people: 100),
-            new(2, "Sauvage", "Dior", GenderCategory.Male, rating: 4.8, people: 500),
-            new(3, "Sauvage", "Dior", GenderCategory.Male, rating: 4.9, people: 100)
+            CreateEntry(1, "Sauvage", "Dior", rating: 4.1, people: 100),
+            CreateEntry(2, "Sauvage", "Dior", rating: 4.8, people: 500),
+            CreateEntry(3, "Sauvage", "Dior", rating: 4.9, people: 100)
         };
-        var repository = new FakePerfumeRepository(catalog);
-        var searchService = new PerfumeSearchService(repository);
 
         // Act
-        var results = searchService.Search("Sauvage").ToList();
+        var results = _searchService.Search("Sauvage", catalog);
 
         // Assert
-        results.Select(p => p.Id).Should().ContainInOrder(2, 3, 1);
-    }
-
-    private sealed class FakePerfumeRepository(IEnumerable<Perfume> perfumes) : IPerfumeRepository
-    {
-        public IEnumerable<Perfume> GetAll() => perfumes;
-
-        public Perfume? GetById(int id) => perfumes.FirstOrDefault(p => p.Id == id);
+        results.Should().ContainInOrder(2, 3, 1);
     }
 }

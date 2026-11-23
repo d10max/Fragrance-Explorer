@@ -1,5 +1,5 @@
 ﻿using FragranceExplorer.BLL.Constants;
-using FragranceExplorer.BLL.Models;
+using FragranceExplorer.BLL.Models.MathModels;
 
 namespace FragranceExplorer.BLL.Strategies;
 
@@ -29,7 +29,7 @@ public class CombinedSimilarityStrategy : ISimilarityStrategy
         _accordWeight = accordWeight;
         _noteWeight = noteWeight;
     }
-    public double CalculateSimilarity(Perfume target, Perfume candidate)
+    public double CalculateSimilarity(PerfumeMathModel target, PerfumeMathModel candidate)
     {
         double accordSimilarityScore = _accordStrategy.CalculateSimilarity(target, candidate);
         double noteSimilarityScore = _noteStrategy.CalculateSimilarity(target, candidate);

@@ -1,5 +1,6 @@
 ﻿using FragranceExplorer.DAL.Context;
 using FragranceExplorer.DAL.Entities;
+using FragranceExplorer.DAL.Entities.MathDataEntities;
 using FragranceExplorer.DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -44,6 +45,38 @@ public class PerfumeRepository : IPerfumeRepository
             .Include(p => p.PerfumeAccords)
                 .ThenInclude(pa => pa.Accord)
             .Where(p => idList.Contains(p.Id))
+            .ToListAsync(ct);
+    }
+
+    public async Task<IEnumerable<PerfumeFormulaData>> GetAllFormulasAsync(CancellationToken ct = default)
+    {
+        return await _context.Perfumes
+            .AsNoTracking()
+            .AsSplitQuery()
+            .Select(p => new PerfumeFormulaData(
+                p.Id,
+                p.People,
+                p.Rating,
+                p.PerfumeNotes
+                    .Select(pn => new NoteWeightData(pn.NoteId, pn.Weight, pn.Layer))
+                    .ToList(),
+                p.PerfumeAccords
+                    .Select(pa => new AccordWeightData(pa.AccordId, pa.Weight))
+                    .ToList()
+            ))
+            .ToListAsync(ct);
+    }
+
+    public async Task<IEnumerable<PerfumeSearchData>> GetAllForSearchAsync(CancellationToken ct = default)
+    {
+        return await _context.Perfumes
+            .AsNoTracking()
+            .Select(p => new PerfumeSearchData(
+                p.Id,
+                p.Name,
+                p.Brand.Name,
+                p.People,
+                p.Rating))
             .ToListAsync(ct);
     }
 }

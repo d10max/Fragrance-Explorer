@@ -1,8 +1,7 @@
-using FragranceExplorer.DAL.Enums;
-using FragranceExplorer.BLL.Models;
 using FragranceExplorer.BLL.Strategies;
 using FluentAssertions;
-using Xunit;
+using FragranceExplorer.BLL.Models.MathModels;
+using FragranceExplorer.DAL.Entities.MathDataEntities;
 
 namespace FragranceExplorer.BLL.Tests.Strategies;
 
@@ -14,13 +13,13 @@ public class AccordCosineSimilarityStrategyTests
         // 1. Arrange
         var strategy = new AccordCosineSimilarityStrategy();
 
-        var perfume1 = new Perfume(1, "Perfume A", "Brand A", GenderCategory.Unisex, 4.5);
-        perfume1.AddAccord(new PerfumeAccord("woody", 0.3));
-        perfume1.AddAccord(new PerfumeAccord("citrus", 0.4));
+        var accords1 = new List<AccordWeightData>([new AccordWeightData(1, 0.3), new AccordWeightData(2, 0.4)]);
+        var perfumeData1 = new PerfumeFormulaData(1, 1, 1, [], accords1);
+        var perfume1 = PerfumeMathModel.FromFormulaData(perfumeData1);
 
-        var perfume2 = new Perfume(2, "Perfume B", "Brand B", GenderCategory.Unisex, 4.0);
-        perfume2.AddAccord(new PerfumeAccord("woody", 0.3));
-        perfume2.AddAccord(new PerfumeAccord("citrus", 0.4));
+        var accords2 = new List<AccordWeightData>([new AccordWeightData(1, 0.3), new AccordWeightData(2, 0.4)]);
+        var perfumeData2 = new PerfumeFormulaData(2, 2, 2, [], accords2);
+        var perfume2 = PerfumeMathModel.FromFormulaData(perfumeData2);
 
         // 2. Act
         double actualSimilarity = strategy.CalculateSimilarity(perfume1, perfume2);
@@ -35,13 +34,13 @@ public class AccordCosineSimilarityStrategyTests
         // 1. Arrange
         var strategy = new AccordCosineSimilarityStrategy();
 
-        var perfume1 = new Perfume(1, "Perfume A", "Brand A", GenderCategory.Unisex, 4.5);
-        perfume1.AddAccord(new PerfumeAccord("woody", 0.3));
-        perfume1.AddAccord(new PerfumeAccord("citrus", 0.4));
+        var accords1 = new List<AccordWeightData>([new AccordWeightData(1, 0.3), new AccordWeightData(2, 0.4)]);
+        var perfumeData1 = new PerfumeFormulaData(1, 2, 2, [], accords1);
+        var perfume1 = PerfumeMathModel.FromFormulaData(perfumeData1);
 
-        var perfume2 = new Perfume(2, "Perfume B", "Brand B", GenderCategory.Unisex, 4.0);
-        perfume2.AddAccord(new PerfumeAccord("floral", 0.3));
-        perfume2.AddAccord(new PerfumeAccord("fruity", 0.4));
+        var accords2 = new List<AccordWeightData>([new AccordWeightData(3, 0.3), new AccordWeightData(4, 0.4)]);
+        var perfumeData2 = new PerfumeFormulaData(2, 2, 2, [], accords2);
+        var perfume2 = PerfumeMathModel.FromFormulaData(perfumeData2);
 
         // 2. Act
         double actualSimilarity = strategy.CalculateSimilarity(perfume1, perfume2);
@@ -56,13 +55,13 @@ public class AccordCosineSimilarityStrategyTests
         // 1. Arrange
         var strategy = new AccordCosineSimilarityStrategy();
 
-        var perfume1 = new Perfume(1, "Perfume A", "Brand A", GenderCategory.Unisex, 4.5);
-        perfume1.AddAccord(new PerfumeAccord("woody", 0.3));
-        perfume1.AddAccord(new PerfumeAccord("citrus", 0.4));
+        var accords1 = new List<AccordWeightData>([new AccordWeightData(1, 0.3), new AccordWeightData(2, 0.4)]);
+        var perfumeData1 = new PerfumeFormulaData(1, 2, 2, [], accords1);
+        var perfume1 = PerfumeMathModel.FromFormulaData(perfumeData1);
 
-        var perfume2 = new Perfume(2, "Perfume B", "Brand B", GenderCategory.Unisex, 4.0);
-        perfume2.AddAccord(new PerfumeAccord("woody", 0.5));
-        perfume2.AddAccord(new PerfumeAccord("vanilla", 0.3));
+        var accords2 = new List<AccordWeightData>([new AccordWeightData(1, 0.5), new AccordWeightData(3, 0.3)]);
+        var perfumeData2 = new PerfumeFormulaData(2, 2, 2, [], accords2);
+        var perfume2 = PerfumeMathModel.FromFormulaData(perfumeData2);
 
         // 2. Act
         double actualSimilarity = strategy.CalculateSimilarity(perfume1, perfume2);

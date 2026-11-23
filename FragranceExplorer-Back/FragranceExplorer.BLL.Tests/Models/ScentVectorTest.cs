@@ -1,5 +1,4 @@
-using FragranceExplorer.BLL.Models;
-using Xunit;
+using FragranceExplorer.BLL.Models.MathModels;
 using FluentAssertions;
 
 namespace FragranceExplorer.BLL.Tests.Models;
@@ -10,9 +9,9 @@ public class ScentVectorTest
     public void Magnitude_WhenVectorHasComponents_ShouldReturnCorrectResult() 
     {
         // Arrange
-        var vector = new ScentVector<PerfumeAccord> ();
-        vector.AddSignificance(new PerfumeAccord("woody", 0.3));
-        vector.AddSignificance(new PerfumeAccord("citrus", 0.4));
+        var vector = new ScentVector<AccordMathModel> ();
+        vector.AddSignificance(new AccordMathModel(1, 0.3));
+        vector.AddSignificance(new AccordMathModel(2, 0.4));
         // expect sqrt(0.3^2 + 0.4^2) = sqrt(0.09 + 0.16) = 0.5
         
         // Act
@@ -25,7 +24,7 @@ public class ScentVectorTest
     public void Magnitude_WhenVectorHasNoComponents_ShouldReturnZero()
     {
         // Arrange
-        var vector = new ScentVector<PerfumeAccord> ();
+        var vector = new ScentVector<AccordMathModel> ();
         // Act
         double actualMagnitude = vector.Magnitude();
         // Assert
@@ -35,14 +34,14 @@ public class ScentVectorTest
     [Fact]
     public void DotProduct_WhenVectorsHaveCommonComponents_ShouldReturnCorrectResult()
     {
-        var vector1 = new ScentVector<PerfumeAccord>();
-        var vector2 = new ScentVector<PerfumeAccord>();
+        var vector1 = new ScentVector<AccordMathModel>();
+        var vector2 = new ScentVector<AccordMathModel>();
 
-        vector1.AddSignificance(new PerfumeAccord("woody", 0.5));
-        vector1.AddSignificance(new PerfumeAccord("vanilla", 0.3));
+        vector1.AddSignificance(new AccordMathModel(1, 0.5));
+        vector1.AddSignificance(new AccordMathModel(2, 0.3));
 
-        vector2.AddSignificance(new PerfumeAccord("woody", 0.4));
-        vector2.AddSignificance(new PerfumeAccord("citrus", 0.8));
+        vector2.AddSignificance(new AccordMathModel(1, 0.4));
+        vector2.AddSignificance(new AccordMathModel(4, 0.8));
         
         double actualDotProduct = vector1.DotProduct(vector2); // expect (0.5 * 0.4) = 0.2
         
@@ -53,14 +52,14 @@ public class ScentVectorTest
     public void DotProduct_WhenVectorsHaveNoCommonComponents_ShouldReturnZero()
     {
         // Arrange
-        var vector1 = new ScentVector<PerfumeAccord>();
-        var vector2 = new ScentVector<PerfumeAccord>();
+        var vector1 = new ScentVector<AccordMathModel>();
+        var vector2 = new ScentVector<AccordMathModel>();
         
-        vector1.AddSignificance(new PerfumeAccord("woody", 0.5));
-        vector1.AddSignificance(new PerfumeAccord("vanilla", 0.3));
+        vector1.AddSignificance(new AccordMathModel(1, 0.5));
+        vector1.AddSignificance(new AccordMathModel(2, 0.3));
 
-        vector2.AddSignificance(new PerfumeAccord("citrus", 0.8));
-        vector2.AddSignificance(new PerfumeAccord("floral", 0.9));
+        vector2.AddSignificance(new AccordMathModel(3, 0.8));
+        vector2.AddSignificance(new AccordMathModel(4, 0.9));
         
         // Act
         double actualDotProduct = vector1.DotProduct(vector2);
@@ -73,7 +72,7 @@ public class ScentVectorTest
     public void DotProduct_WhenVectorIsNull_ShouldThrowArgumentNullException()
     {
         // Arrange
-        var vector = new ScentVector<PerfumeAccord>();
+        var vector = new ScentVector<AccordMathModel>();
         
         // Act
         Action act = () => vector.DotProduct(null!);

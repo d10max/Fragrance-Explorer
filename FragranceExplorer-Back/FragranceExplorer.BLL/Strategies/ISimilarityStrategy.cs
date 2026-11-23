@@ -1,8 +1,8 @@
-﻿using FragranceExplorer.BLL.Models;
+﻿using FragranceExplorer.BLL.Models.MathModels;
 
 namespace FragranceExplorer.BLL.Strategies;
 
 public interface ISimilarityStrategy
 {
-    double CalculateSimilarity(Perfume target, Perfume candidate);
+    double CalculateSimilarity(PerfumeMathModel target, PerfumeMathModel candidate);
 }

@@ -1,5 +1,5 @@
 ﻿using FragranceExplorer.BLL.Constants;
-using FragranceExplorer.BLL.Models;
+using FragranceExplorer.BLL.Models.MathModels;
 using FragranceExplorer.BLL.Strategies;
 using FragranceExplorer.DAL.Enums;
 
@@ -19,9 +19,9 @@ public class RecommendationEngine
         _noteStrategy = noteStrategy;
     }
 
-    public IEnumerable<ScoredPerfume> GetRecommendations(
-        Perfume target,
-        IEnumerable<Perfume> catalog,
+    public IEnumerable<SimilarityResult> GetRecommendations(
+        PerfumeMathModel target,
+        IEnumerable<PerfumeMathModel> catalog,
         int maxResults,
         SearchProfile searchProfile = SearchProfile.Default)
     {
@@ -35,12 +35,17 @@ public class RecommendationEngine
 
         return catalog
             .AsParallel()
-            .Where(perfume => perfume.Id != target.Id)
-            .Select(perfume => new ScoredPerfume(
-                perfume,
-                activeStrategy.CalculateSimilarity(target, perfume)))
-            .OrderByDescending(result => result.Score)
+            .Where(candidate => candidate.Id != target.Id)
+            .Select(candidate => (
+                Candidate: candidate,
+                Score: activeStrategy.CalculateSimilarity(target, candidate)
+            ))
+            .Where(x => x.Score > 0)
+            .OrderByDescending(x => x.Score)
+            .ThenByDescending(x => x.Candidate.People)
+            .ThenByDescending(x => x.Candidate.Rating)
             .Take(maxResults)
+            .Select(x => new SimilarityResult(x.Candidate.Id, x.Score))
             .ToList();
     }
 }

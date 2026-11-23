@@ -1,15 +1,15 @@
-﻿using FragranceExplorer.BLL.Models;
+﻿using FragranceExplorer.BLL.Models.MathModels;
 
 namespace FragranceExplorer.BLL.Strategies;
 
 public class AccordCosineSimilarityStrategy : ISimilarityStrategy
 {
-    public double CalculateSimilarity(Perfume target, Perfume candidate)
+    public double CalculateSimilarity(PerfumeMathModel target, PerfumeMathModel candidate)
     {
-        var targetVector = target.ToAccordsVector();
-        var candidateVector = candidate.ToAccordsVector();
+        var targetAccordVector = target.Accords;
+        var candidateAccordVector = candidate.Accords;
 
-        var similarity = targetVector.DotProduct(candidateVector) / (targetVector.Magnitude() * candidateVector.Magnitude());
+        var similarity = targetAccordVector.DotProduct(candidateAccordVector) / (targetAccordVector.Magnitude() * candidateAccordVector.Magnitude());
 
         return similarity;
     }

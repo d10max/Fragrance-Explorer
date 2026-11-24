@@ -3,9 +3,6 @@ using FragranceExplorer.BLL.Parser.Houses.Interfaces;
 using FragranceExplorer.BLL.Parser.Houses.Services;
 using FragranceExplorer.BLL.Parser.Perfumes.Interfaces;
 using FragranceExplorer.BLL.Parser.Perfumes.Services;
-using FragranceExplorer.BLL.Repositories;
-using FragranceExplorer.BLL.Services;
-using FragranceExplorer.BLL.Strategies;
 using FragranceExplorer.DAL;
 
 namespace FragranceExplorer_Back;
@@ -15,6 +12,16 @@ public class Program
     public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowFrontend", policy =>
+            {
+                policy.WithOrigins("http://localhost:5173")
+                      .AllowAnyHeader()
+                      .AllowAnyMethod();
+            });
+        });
 
         builder.Services.AddDal(builder.Configuration);
         builder.Services.AddBll();
@@ -30,6 +37,8 @@ public class Program
         builder.Services.AddMemoryCache();
 
         var app = builder.Build();
+
+        app.UseCors("AllowFrontend");
 
         if (app.Environment.IsDevelopment())
         {

@@ -3,9 +3,6 @@ using FragranceExplorer.BLL.Parser.Houses.Interfaces;
 using FragranceExplorer.BLL.Parser.Houses.Services;
 using FragranceExplorer.BLL.Parser.Perfumes.Interfaces;
 using FragranceExplorer.BLL.Parser.Perfumes.Services;
-using FragranceExplorer.BLL.Repositories;
-using FragranceExplorer.BLL.Services;
-using FragranceExplorer.BLL.Strategies;
 using FragranceExplorer.DAL;
 
 namespace FragranceExplorer_Back;

@@ -1,6 +1,6 @@
 export const FEATURES = {
-    ENABLE_PROFILE: false, // change to true to re-enable the profile 
-}
+    ENABLE_PROFILE: false, // change to true to re-enable the profile
+};
 
 export const COMMON_TEXT = {
     APP_NAME: 'Fragrance-Explorer',
@@ -14,6 +14,8 @@ export const COMMON_TEXT = {
             "Search perfume, brand, or note (e.g. Bal d'Afrique, Byredo, Vetiver)...",
         BUTTON_ADD_PERFUME: '+ Add',
     },
+    FAILED_TO_LOAD_PERFUMES_LIST: 'Failed to load perfumes list.',
+    FAILED_TO_LOAD_RECOMMENDATIONS: 'Failed to load recommendations.',
 };
 
 export const SEARCH_DROPDOWN = {

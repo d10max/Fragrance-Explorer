@@ -1,10 +1,10 @@
-import type { PerfumeSearchResult } from '@/types/common/perfume';
+import type { RecommendedPerfume } from '@/types/common/perfume';
 import { SearchResultCard } from './components/SearchResultCard';
 import { SEARCH_RESULTS_GRID_TEXT } from '@/const/common';
 import styles from '@/pages/perfume-finder-page/components/search-results-grid/SearchResults.Grid.module.scss';
 
 export interface SearchResultsGridProps {
-    results: PerfumeSearchResult[];
+    results: RecommendedPerfume[];
     hasSearched: boolean;
 }
 

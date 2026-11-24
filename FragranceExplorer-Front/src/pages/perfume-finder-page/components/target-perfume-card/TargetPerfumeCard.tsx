@@ -1,11 +1,11 @@
-import type { Perfume } from '@/types/common/perfume';
+import type { PerfumeSearchItem } from '@/types/common/perfume';
 import { Button } from '@/components/shared/button/Button';
 import { CloseIcon } from '@/assets/icons/CloseIcon';
 import { TARGET_PERFUME_CARD_TEXT } from '@/const/common';
 import styles from './TargetPerfumeCard.module.scss';
 
 interface TargetPerfumeCardProps {
-    selectedPerfume: Perfume | null;
+    selectedPerfume: PerfumeSearchItem | null;
     onRemove: () => void;
 }
 
@@ -47,7 +47,7 @@ export const TargetPerfumeCard: React.FC<TargetPerfumeCardProps> = ({
                             className={styles.image}
                         />
                         <span className={styles.brand}>
-                            {selectedPerfume.brand}
+                            {selectedPerfume.brandName}
                         </span>
                         <h3 className={styles.name}>{selectedPerfume.name}</h3>
                     </div>

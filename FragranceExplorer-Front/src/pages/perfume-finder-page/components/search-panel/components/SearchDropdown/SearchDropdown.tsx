@@ -1,11 +1,11 @@
-import type { Perfume } from '@/types/common/perfume';
+import type { PerfumeSearchItem } from '@/types/common/perfume';
 import { SearchDropdownItem } from '../SearchDropdownItem/SearchDropdownItem';
 import { SEARCH_DROPDOWN } from '@/const/common';
 import styles from './SearchDropdown.module.scss';
 
 export interface SearchDropdownProps {
-    perfumes: Perfume[];
-    onAddPerfume: (perfume: Perfume) => void;
+    perfumes: PerfumeSearchItem[];
+    onAddPerfume: (perfume: PerfumeSearchItem) => void;
     isOpen: boolean;
 }
 
@@ -32,6 +32,7 @@ export const SearchDropdown = ({
                     {perfumes.length > 0 ? (
                         perfumes.map((perfume) => (
                             <SearchDropdownItem
+                                key={perfume.id}
                                 perfume={perfume}
                                 onAdd={onAddPerfume}
                             />

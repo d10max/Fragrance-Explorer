@@ -43,6 +43,25 @@ export interface Perfume {
 
 export type SearchMode = 'balanced' | 'clones' | 'similar';
 
+export const SEARCH_MODE_TO_PROFILE: Record<SearchMode, number> = {
+    balanced: 1,
+    clones: 2,
+    similar: 3,
+};
+
+export interface RecommendedPerfume {
+    id: number;
+    name: string;
+    brandName: string;
+    imageUrl: string;
+    description: string;
+    similarityScore: number;
+}
+
+export interface PerfumeRecommendationsResponseDto {
+    recommendedPerfumes: RecommendedPerfume[];
+}
+
 export interface PerfumeSearchResult {
     perfume: Perfume;
     score: number;
@@ -50,4 +69,15 @@ export interface PerfumeSearchResult {
 
 export interface SearchResults {
     perfumes: PerfumeSearchResult[];
+}
+
+export interface PerfumeSearchItem {
+    id: number;
+    name: string;
+    brandName: string;
+    imageUrl: string;
+}
+
+export interface PerfumeSearchResponseDto {
+    items: PerfumeSearchItem[];
 }

@@ -1,23 +1,22 @@
 import { SearchInput } from '@/components/shared/search-input/SearchInput';
-import type { Perfume } from '@/types/common/perfume';
-import { searchPerfumes } from '@/utils/searchPerfumes';
+import type { PerfumeSearchItem } from '@/types/common/perfume';
 import { COMMON_TEXT } from '@/const/common';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { SearchDropdown } from './components/SearchDropdown/SearchDropdown';
 import styles from './SearchPanel.module.scss';
+import { usePerfumeSearch } from '@/hooks/usePerfumeSearch';
 
 export interface SearchPanelProps {
-    onSelectPerfume: (perfume: Perfume) => void;
-    perfumes: Perfume[];
+    onSelectPerfume: (perfume: PerfumeSearchItem) => void;
     isDropdownOpen?: boolean;
 }
 
 export const SearchPanel = ({
     onSelectPerfume,
-    perfumes,
     isDropdownOpen = true,
 }: SearchPanelProps) => {
     const [searchQuery, setSearchQuery] = useState('');
+    const { results } = usePerfumeSearch(searchQuery);
 
     const handleInputChange = (value: string) => {
         setSearchQuery(value);
@@ -27,9 +26,10 @@ export const SearchPanel = ({
         setSearchQuery('');
     };
 
-    const filteredPerfumes = useMemo(() => {
-        return searchPerfumes(perfumes, searchQuery);
-    }, [perfumes, searchQuery]);
+    const handleSelect = (perfume: PerfumeSearchItem) => {
+        onSelectPerfume(perfume);
+        handleClear();
+    };
 
     return (
         <div className={styles.container}>
@@ -41,11 +41,8 @@ export const SearchPanel = ({
                 showSearchButton={false}
             />
             <SearchDropdown
-                perfumes={filteredPerfumes}
-                onAddPerfume={(perfume) => {
-                    onSelectPerfume(perfume);
-                    handleClear();
-                }}
+                perfumes={results}
+                onAddPerfume={handleSelect}
                 isOpen={isDropdownOpen}
             />
         </div>
